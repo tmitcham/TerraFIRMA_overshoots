@@ -13,3 +13,7 @@
 
 # Ignore PKL files
 **/*.pkl
+
+#Ignore pp and Licence files
+**/*.pp
+**/MetOffice*
