@@ -33,7 +33,7 @@ if len(sys.argv) == 3 and sys.argv[2] != '0':
     maskFile = sys.argv[2] + ' 1'
     mask = maskFile.split('.2d.hdf5')[0]
     
-outfile = '/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/processed_data/' + directory[55:60] + '_diagnostics.csv'
+outfile = '/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/processed_data/' + directory[66:71] + '_diagnostics.csv'
 
 if masked:
     outfile = '/gws/nopw/j04/terrafirma/tm17544/' + directory[43:48] + '_' +  mask + '_diagnostics.csv'
