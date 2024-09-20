@@ -5,9 +5,9 @@
 #do
 #directory="/home/users/tm17544/gws_terrafirma/overshoots/raw_data/$id/icesheet/"
 #echo "Running diagnostics.py on dir: $directory" 
-#python diagnostics.py $directory
+#python diagnostics_AIS.py $directory
 #done
 
 directory="/home/users/tm17544/gws_terrafirma/overshoots/raw_data/$1/icesheet/"
 echo "Running diagnostics.py on dir: $directory" 
-python diagnostics.py $directory
+python diagnostics_AIS.py $directory
