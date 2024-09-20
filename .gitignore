@@ -1,0 +1,15 @@
+# Ignore HDF5 files
+**/*.h5
+**/*.hdf5
+
+# Ignore PNG files
+**/*.png
+
+# Ignore GIF files
+**/*.gif
+
+# Ignore CSV files
+**/*.csv
+
+# Ignore PKL files
+**/*.pkl
