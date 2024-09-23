@@ -298,7 +298,7 @@ plt.savefig('../figures/AISVAFvsTime.png', dpi = 600,  bbox_inches='tight')
 initialmassSLE = icesheet_d["cx209"]["massSLE"].iloc[0]
 initialmassSLEpi = icesheet_d["cs568"]["massSLE"].iloc[0]
 
-print("Starting AIS VAF vs Time plot...")
+print("Starting AIS VAF Anomaly vs Time plot...")
 
 count = 0
 
@@ -346,7 +346,7 @@ plt.savefig('../figures/AISVAFAnomalyvsTime.png', dpi = 600,  bbox_inches='tight
 initialmassSLE = icesheet_d["cx209"]["massSLE"].iloc[0]
 initialmassSLEpi = icesheet_d["cs568"]["massSLE"].iloc[0]
 
-print("Starting AIS VAF vs Time plot...")
+print("Starting AIS VAF Anomaly for Ramp Ups vs Time plot...")
 
 count = 0
 
@@ -382,7 +382,7 @@ plt.ylabel("$\Delta$VAF Anomaly (m SLE)")
 plt.xlabel('Years')
 plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
 
-print("Finished and saving AIS VAF Anomaly Ramp Ups vs Time plot...")
+print("Finished and saving AIS VAF Anomaly for Ramp Ups vs Time plot...")
 
 plt.savefig('../figures/AISVAFAnomalyRampsvsTime.png', dpi = 600,  bbox_inches='tight')  
 #plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
