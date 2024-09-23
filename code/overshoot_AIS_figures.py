@@ -28,6 +28,8 @@ from amrfile import io as amrio
 #      "dc052", "dc248", "dc249", "dc565", "dd210", "dc032", "dc123", "dc130"]
 
 id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130"] #, "cw988", "cw989"]
+idanom = ["cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130"] #, "cw988", "cw989"]
+idramp = ["cx209", "cw988", "cw989"]
 
 #run_type = ["pi-ctrl","ramp-up", "stab 1.5C", "stab 2C", "stab 2.5C", "stab 3C", "stab 4C", "stab 5C", 
 #           "stab 6C", "_ramp-down -8 2C 50yr", "_ramp-down -8 2C 200yr", "_ramp-down -8 1.5C 50yr", "_ramp-down -8 4C 50yr", "_ramp-down -8 3C 50yr", "_ramp-down -8 5C 50yr", "_ramp-down -4 2C 50yr",
@@ -38,8 +40,12 @@ id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "d
 #            "ramp-down -4 1.5C 50yr", "ramp-down -4 1.5C 200yr", "ramp-down -4 3C 200yr", "ramp-down -4 2C 200yr", "ramp-down -4 4C 200yr", "ramp-down -4 3C 30yr", "ramp-down -4 4C 50yr", "ramp-down -4 5C 50yr"]
 
 run_type = ["Ctrl","Ramp-Up 1", "1.5C", "2C", "3C", "4C", "5C", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr"] #, "Ramp-Up 2", "Ramp-Up 3"]
+run_type_anom = ["Ramp-Up 1", "1.5C", "2C", "3C", "4C", "5C", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr"] #, "Ramp-Up 2", "Ramp-Up 3"]
+run_type_ramp = ["Ramp-Up 1", "Ramp-Up 2", "Ramp-Up 3"]
 
 runs = dict(zip(id, run_type)) 
+runs_anom = dict(zip(idanom, run_type_anom))
+runs_ramp = dict(zip(idramp, run_type_ramp))
 
 #             pi     ru     1.5        2    2.5   3    4       5             6      rd2  rd2      rd1.5    rd4   rd3     rd5       rd2      rd1.5       rd1.5       rd3  rd2  rd4  rd3  rd4       rd5
 #line_cols = ["gray","k", "tab:purple", "b", "c", "g", "y", "tab:orange", "tab:red", "b", "b", "tab:purple", "y", "g","tab:orange", "b", "tab:purple", "tab:purple", "g", "b", "y", "g", "y", "tab:orange"]
@@ -47,6 +53,12 @@ runs = dict(zip(id, run_type))
 
 line_cols = ['#000000','#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0'] #,'#C30F0E','#C30F0E']
 line_stys = ["dotted","solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed"] #,"dotted","dashdot"]
+
+line_cols_anom = ['#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0'] #,'#C30F0E','#C30F0E']
+line_stys_anom = ["solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed"] #,"dotted","dashdot"]
+
+line_cols_ramp = ['#C30F0E','#C30F0E','#C30F0E']
+line_stys_ramp = ["solid","dotted","dashed"]
 
 count = 0
 
@@ -135,7 +147,7 @@ else:
         else:
             AIS_stats.time = AIS_stats.apply(lambda x: int(x.file[16:20]), axis=1)
         
-        AIS_stats["massSLE"] = AIS_stats["iceVolumeAbove"]*(918/(1028*3.625e14))
+        AIS_stats["massSLE"] = AIS_stats["volumeAbove"]*(918/(1028*3.625e14))
 
         AIS_stats["global_delta_T"] = np.nan
 
@@ -183,6 +195,7 @@ def smooth(y, box_pts):
 
 ####################################################################################
 
+"""
 # Plot global T vs Time graph
 
 print("Starting Global Temp vs Time plot...")
@@ -224,7 +237,9 @@ plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
 print("Finished and saving Global Temp vs Time plot...")
 
 plt.savefig('../figures/GlobalTvsTime.png', dpi = 600, bbox_inches='tight')
-#plt.savefig('GlobalTvsTime.png', dpi = 600, bbox_inches='tight')  
+#plt.savefig('GlobalTvsTime.png', dpi = 600, bbox_inches='tight')
+
+"""
 
 ####################################################################################
 
@@ -270,6 +285,283 @@ plt.savefig('../figures/AISVAFvsTime.png', dpi = 600,  bbox_inches='tight')
 
 ####################################################################################
 
+# Plot VAF Anomaly vs Time graph
+
+initialmassSLE = icesheet_d["cx209"]["massSLE"].iloc[0]
+initialmassSLEpi = icesheet_d["cs568"]["massSLE"].iloc[0]
+
+print("Starting AIS VAF vs Time plot...")
+
+count = 0
+
+plt.figure(figsize=(4, 3))
+
+for i in idanom:
+
+    plot_data = icesheet_d[i]
+    ctrl_data = icesheet_d["cs568"]
+
+    plt.plot(plot_data.time - 1850, ((plot_data.massSLE-initialmassSLE)-(ctrl_data.massSLE-initialmassSLEpi)), label = runs_anom[i], lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count])
+
+    count = count + 1
+
+#plt.grid(linestyle=':')
+
+ax = plt.gca()
+ax.set_xlim([0, 650])
+ax.set_ylim([0, 0.5])
+
+ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5]) 
+ax.set_yticklabels(['0', '-0.1', '-0.2', '-0.3', '-0.4', '-0.5']) 
+
+plt.ylabel("$\Delta$VAF Anomaly (m SLE)")
+plt.xlabel('Years')
+plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
+
+print("Finished and saving AIS VAF Anomaly vs Time plot...")
+
+plt.savefig('../figures/AISVAFAnomalyvsTime.png', dpi = 600,  bbox_inches='tight')  
+#plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
+
+####################################################################################
+
+# Plot VAF Anomaly Ramp-Up vs Time graph
+
+initialmassSLE = icesheet_d["cx209"]["massSLE"].iloc[0]
+initialmassSLEpi = icesheet_d["cs568"]["massSLE"].iloc[0]
+
+print("Starting AIS VAF vs Time plot...")
+
+count = 0
+
+plt.figure(figsize=(4, 3))
+
+for i in idramp:
+
+    plot_data = icesheet_d[i]
+    ctrl_data = icesheet_d["cs568"]
+
+    plt.plot(plot_data.time - 1850, ((plot_data.massSLE-initialmassSLE)-(ctrl_data.massSLE-initialmassSLEpi)), label = runs_ramp[i], lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count])
+
+    count = count + 1
+
+#plt.grid(linestyle=':')
+
+ax = plt.gca()
+ax.set_xlim([0, 650])
+ax.set_ylim([0, 0.5])
+
+ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5]) 
+ax.set_yticklabels(['0', '-0.1', '-0.2', '-0.3', '-0.4', '-0.5']) 
+
+plt.ylabel("$\Delta$VAF Anomaly (m SLE)")
+plt.xlabel('Years')
+plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
+
+print("Finished and saving AIS VAF Anomaly Ramp Ups vs Time plot...")
+
+plt.savefig('../figures/AISVAFAnomalyRampsvsTime.png', dpi = 600,  bbox_inches='tight')  
+#plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
+
+####################################################################################
+
+# Plot GroundedSMB vs Time graph
+
+print("Starting AIS Grounded SMB vs Time plot...")
+
+count = 0
+
+plt.figure(figsize=(4, 3))
+
+for i in id:
+
+    plot_data = icesheet_d[i]
+
+    plt.plot(plot_data.time - 1850, ((plot_data.smbGrounded)/918.0), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+
+    count = count + 1
+
+#plt.grid(linestyle=':')
+
+ax = plt.gca()
+ax.set_xlim([0, 650])
+
+plt.ylabel("Grounded SMB (Gt yr$^{-1}$)")
+plt.xlabel('Years')
+plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
+
+print("Finished and saving AIS Grounded SMB vs Time plot...")
+
+plt.savefig('../figures/AISGroundedSMBvsTime.png', dpi = 600,  bbox_inches='tight')  
+#plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
+
+####################################################################################
+
+# Plot VAF Anomaly vs Time graph
+
+print("Starting AIS Grounded SMB Anomaly vs Time plot...")
+
+count = 0
+
+plt.figure(figsize=(4, 3))
+
+for i in idanom:
+
+    plot_data = icesheet_d[i]
+    ctrl_data = icesheet_d["cs568"]
+
+    plt.plot(plot_data.time - 1850, (((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918), label = runs_anom[i], lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count])
+
+    count = count + 1
+
+#plt.grid(linestyle=':')
+
+ax = plt.gca()
+ax.set_xlim([0, 650])
+
+plt.ylabel("Grounded SMB Anomaly (Gt yr$^{-1}$)")
+plt.xlabel('Years')
+plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
+
+print("Finished and saving AIS Grounded SMB Anomaly vs Time plot...")
+
+plt.savefig('../figures/AISGroundedSMBAnomalyvsTime.png', dpi = 600,  bbox_inches='tight')  
+#plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
+
+####################################################################################
+
+# Plot SMB Anomaly Ramp-Up vs Time graph
+
+print("Starting AIS Grounded SMB Anomaly for Ramp Ups vs Time plot...")
+
+count = 0
+
+plt.figure(figsize=(4, 3))
+
+for i in idramp:
+
+    plot_data = icesheet_d[i]
+    ctrl_data = icesheet_d["cs568"]
+
+    plt.plot(plot_data.time - 1850, (((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918), label = runs_ramp[i], lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count])
+
+    count = count + 1
+
+#plt.grid(linestyle=':')
+
+ax = plt.gca()
+ax.set_xlim([0, 650])
+
+plt.ylabel("Grounded SMB Anomaly (Gt yr$^{-1}$)")
+plt.xlabel('Years')
+plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
+
+print("Finished and saving AIS Grounded SMB Anomaly for Ramp Ups vs Time plot...")
+
+plt.savefig('../figures/AISGroundedSMBAnomalyRampsvsTime.png', dpi = 600,  bbox_inches='tight')  
+#plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
+
+####################################################################################
+
+# Plot Discharge vs Time graph
+
+print("Starting AIS Grounding Line Discharge vs Time plot...")
+
+count = 0
+
+plt.figure(figsize=(4, 3))
+
+for i in id:
+
+    plot_data = icesheet_d[i]
+
+    plt.plot(plot_data.time - 1850, ((plot_data.fluxDivFileGrounded)/918.0), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+
+    count = count + 1
+
+#plt.grid(linestyle=':')
+
+ax = plt.gca()
+ax.set_xlim([0, 650])
+
+plt.ylabel("GL Discharge (Gt yr$^{-1}$)")
+plt.xlabel('Years')
+plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
+
+print("Finished and saving AIS Grounding Line Discharge vs Time plot...")
+
+plt.savefig('../figures/AISGLDischargevsTime.png', dpi = 600,  bbox_inches='tight')  
+#plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
+
+####################################################################################
+
+# Plot Discharge Anomaly vs Time graph
+
+print("Starting AIS Grounding Line Discharge Anomaly vs Time plot...")
+
+count = 0
+
+plt.figure(figsize=(4, 3))
+
+for i in idanom:
+
+    plot_data = icesheet_d[i]
+    ctrl_data = icesheet_d["cs568"]
+
+    plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918), label = runs_anom[i], lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count])
+
+    count = count + 1
+
+#plt.grid(linestyle=':')
+
+ax = plt.gca()
+ax.set_xlim([0, 650])
+
+plt.ylabel("GL Discharge Anomaly (Gt yr$^{-1}$)")
+plt.xlabel('Years')
+plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
+
+print("Finished and saving AIS Grounding Line Discharge Anomaly vs Time plot...")
+
+plt.savefig('../figures/AISGlDischargeAnomalyvsTime.png', dpi = 600,  bbox_inches='tight')  
+#plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
+
+####################################################################################
+
+# Plot Discharge Anomaly Ramp-Up vs Time graph
+
+print("Starting AIS Grounding Line Discharge for Ramp Ups vs Time plot...")
+
+count = 0
+
+plt.figure(figsize=(4, 3))
+
+for i in idramp:
+
+    plot_data = icesheet_d[i]
+    ctrl_data = icesheet_d["cs568"]
+
+    plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918), label = runs_ramp[i], lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count])
+
+    count = count + 1
+
+#plt.grid(linestyle=':')
+
+ax = plt.gca()
+ax.set_xlim([0, 650])
+
+plt.ylabel("Gl Discharge Anomaly (Gt yr$^{-1}$)")
+plt.xlabel('Years')
+plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
+
+print("Finished and saving AIS Grounding Line Discharge Anomaly for Ramp Ups vs Time plot...")
+
+plt.savefig('../figures/AISGlDischargeAnomalyRampsvsTime.png', dpi = 600,  bbox_inches='tight')  
+#plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
+
+####################################################################################
+
+"""
 # Plot GroundedArea vs Time graph
 
 initalGA = icesheet_d["cx209"]["groundedArea"].iloc[0]
@@ -361,6 +653,7 @@ print("Finished and saving AIS VAF vs Temp plot...")
 plt.savefig('../figures/AISVAFvsT.png', dpi = 600, bbox_inches='tight')
 #plt.savefig('AISMassvsT.png', dpi = 600, bbox_inches='tight')
 
+"""
 
 ####################################################################################
 
