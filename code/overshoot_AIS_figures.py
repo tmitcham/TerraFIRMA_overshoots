@@ -64,7 +64,7 @@ count = 0
 
 # Get atmosphere data
 
-if os.path.exists('../processed_data/atmos_data_missing.pkl'):
+if os.path.exists('../processed_data/atmos_data.pkl'):
 
     print("Loading atmosphere data from file...")
 
@@ -140,7 +140,8 @@ else:
     for i in id:
 
         print(f"Working on {i}: {runs[i]}")
-        AIS_stats = pd.read_csv(f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/{i}_diagnostics.csv")
+        #AIS_stats = pd.read_csv(f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/{i}_diagnostics.csv")
+        AIS_stats = pd.read_csv(f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/data_for_plots/{i}_diagnostics.csv")
 
         if i == "cs568":    
             AIS_stats.time = AIS_stats.apply(lambda x: int(x.file[16:20]), axis=1)-100
