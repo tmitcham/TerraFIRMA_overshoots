@@ -143,6 +143,8 @@ else:
         #AIS_stats = pd.read_csv(f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/{i}_diagnostics.csv")
         AIS_stats = pd.read_csv(f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/data_for_plots/{i}_diagnostics.csv")
 
+        AIS_stats = AIS_stats.dropna(how='any')
+
         if i == "cs568":    
             AIS_stats.time = AIS_stats.apply(lambda x: int(x.file[16:20]), axis=1)-100
         else:
