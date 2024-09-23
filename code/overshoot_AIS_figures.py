@@ -27,17 +27,17 @@ from amrfile import io as amrio
 #      "cz378", "cz944", "da800", "da697", "da892", "db223", "dc251", "dc051", 
 #      "dc052", "dc248", "dc249", "dc565", "dd210", "dc032", "dc123", "dc130"]
 
-id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130", "cw988", "cw989"]
+id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130"] #, "cw988", "cw989"]
 
 #run_type = ["pi-ctrl","ramp-up", "stab 1.5C", "stab 2C", "stab 2.5C", "stab 3C", "stab 4C", "stab 5C", 
 #           "stab 6C", "_ramp-down -8 2C 50yr", "_ramp-down -8 2C 200yr", "_ramp-down -8 1.5C 50yr", "_ramp-down -8 4C 50yr", "_ramp-down -8 3C 50yr", "_ramp-down -8 5C 50yr", "_ramp-down -4 2C 50yr",
 #           "_ramp-down -4 1.5C 50yr", "_ramp-down -4 1.5C 200yr", "_ramp-down -4 3C 200yr", "_ramp-down -4 2C 200yr", "_ramp-down -4 4C 200yr", "_ramp-down -4 3C 30yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr"]
 
-#run_type = ["pi-ctrl","ramp-up", "stab 1.5C", "stab 2C", "stab 2.5C", "stab 3C", "stab 4C", "stab 5C", 
+#run_type = ["pi-ctrl","ramp-up", "stab 1.5C", "stab 2C", "stab 2.5C", "stab 3C", "stab 4C", "stab 5C", less 
 #            "stab 6C", "ramp-down -8 2C 50yr", "ramp-down -8 2C 200yr", "ramp-down -8 1.5C 50yr", "ramp-down -8 4C 50yr", "ramp-down -8 3C 50yr", "ramp-down -8 5C 50yr", "ramp-down -4 2C 50yr",
 #            "ramp-down -4 1.5C 50yr", "ramp-down -4 1.5C 200yr", "ramp-down -4 3C 200yr", "ramp-down -4 2C 200yr", "ramp-down -4 4C 200yr", "ramp-down -4 3C 30yr", "ramp-down -4 4C 50yr", "ramp-down -4 5C 50yr"]
 
-run_type = ["Ctrl","Ramp-Up 1", "1.5C", "2C", "3C", "4C", "5C", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr", "Ramp-Up 2", "Ramp-Up 3"]
+run_type = ["Ctrl","Ramp-Up 1", "1.5C", "2C", "3C", "4C", "5C", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr"] #, "Ramp-Up 2", "Ramp-Up 3"]
 
 runs = dict(zip(id, run_type)) 
 
@@ -45,8 +45,8 @@ runs = dict(zip(id, run_type))
 #line_cols = ["gray","k", "tab:purple", "b", "c", "g", "y", "tab:orange", "tab:red", "b", "b", "tab:purple", "y", "g","tab:orange", "b", "tab:purple", "tab:purple", "g", "b", "y", "g", "y", "tab:orange"]
 #line_stys = ["solid","solid","solid","solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed"] 
 
-line_cols = ['#000000','#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#C30F0E','#C30F0E']
-line_stys = ["dotted","solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed","dotted","dashdot"]
+line_cols = ['#000000','#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0'] #,'#C30F0E','#C30F0E']
+line_stys = ["dotted","solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed"] #,"dotted","dashdot"]
 
 count = 0
 
@@ -69,7 +69,7 @@ else:
     for i in id:
 
         print(f"Working on {i}: {runs[i]}")
-        atmos_dir = f"/home/users/tm17544/gws_terrafirma/overshoots/raw_data/{i}/atmos/"
+        atmos_dir = f"/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/{i}/atmos/"
         atmos_files = sorted(os.listdir(atmos_dir))
         atmos_files_matched = fnmatch.filter(atmos_files, f"{i}*.pp")
 
@@ -128,7 +128,7 @@ else:
     for i in id:
 
         print(f"Working on {i}: {runs[i]}")
-        AIS_stats = pd.read_csv(f"/gws/nopw/j04/terrafirma/tm17544/overshoots/processed_data/{i}_stats.csv")
+        AIS_stats = pd.read_csv(f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/{i}_diagnostics.csv")
 
         if i == "cs568":    
             AIS_stats.time = AIS_stats.apply(lambda x: int(x.file[16:20]), axis=1)-100
