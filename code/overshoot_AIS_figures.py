@@ -131,6 +131,10 @@ if os.path.exists('../processed_data/icesheet_data_missing.pkl'):
 
         icesheet_d = pickle.load(file)
 
+    icesheet_d["dc051"] = icesheet_d["dc051"].reindex(icesheet_d["dc051"].index.tolist() + [186.5])
+    icesheet_d["dc051"] = icesheet_d["dc051"].sort_index().reset_index(drop=True)
+    icesheet_d["dc051"].iloc[:,1:] = icesheet_d["dc051"].iloc[:,1:].interpolate(method='linear')
+
 else:
 
     print("Getting ice sheet data...")
@@ -305,16 +309,24 @@ plt.figure(figsize=(4, 3))
 
 for i in idanom:
 
+    print(f"Plotting {i}: {runs_anom[i]}")
+
     plot_data = icesheet_d[i]
     plot_data_max_time = plot_data.time.max()
+    plot_data_min_time = plot_data.time.min()
 
     ctrl_data = icesheet_d["cs568"]
     ctrl_data_max_time = ctrl_data.time.max()
+    ctrl_data_min_time = ctrl_data.time.min()
 
+    min_time = max(plot_data_min_time, ctrl_data_min_time)
     max_time = min(plot_data_max_time, ctrl_data_max_time)
 
-    plot_data = plot_data[plot_data.time <= max_time]
-    ctrl_data = ctrl_data[ctrl_data.time <= max_time]
+    plot_data = plot_data[(plot_data.time <= max_time) & (plot_data.time >= min_time)]
+    ctrl_data = ctrl_data[(ctrl_data.time <= max_time) & (ctrl_data.time >= min_time)]
+
+    plot_data = plot_data.reset_index(drop=True)
+    ctrl_data = ctrl_data.reset_index(drop=True)
 
     plt.plot(plot_data.time - 1850, ((plot_data.massSLE-initialmassSLE)-(ctrl_data.massSLE-initialmassSLEpi)), label = runs_anom[i], lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count])
 
@@ -323,11 +335,7 @@ for i in idanom:
 #plt.grid(linestyle=':')
 
 ax = plt.gca()
-ax.set_xlim([0, 650])
-ax.set_ylim([0, 0.5])
-
-ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5]) 
-ax.set_yticklabels(['0', '-0.1', '-0.2', '-0.3', '-0.4', '-0.5']) 
+ax.set_xlim([0, 600])
 
 plt.ylabel("$\Delta$VAF Anomaly (m SLE)")
 plt.xlabel('Years')
@@ -371,11 +379,7 @@ for i in idramp:
 #plt.grid(linestyle=':')
 
 ax = plt.gca()
-ax.set_xlim([0, 650])
-ax.set_ylim([0, 0.5])
-
-ax.set_yticks([0, 0.1, 0.2, 0.3, 0.4, 0.5]) 
-ax.set_yticklabels(['0', '-0.1', '-0.2', '-0.3', '-0.4', '-0.5']) 
+ax.set_xlim([0, 400])
 
 plt.ylabel("$\Delta$VAF Anomaly (m SLE)")
 plt.xlabel('Years')
@@ -394,20 +398,30 @@ print("Starting AIS Grounded SMB vs Time plot...")
 
 count = 0
 
+box_size = 11
+
 plt.figure(figsize=(4, 3))
 
 for i in id:
 
     plot_data = icesheet_d[i]
 
-    plt.plot(plot_data.time - 1850, ((plot_data.smbGrounded)/918.0), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+    plt.plot(plot_data.time - 1850, ((plot_data.smbGrounded)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.1)
 
+    ma_y = smooth((plot_data.smbGrounded)/918e6, box_size)
+    
+    ma_x = (plot_data.time - 1850).values
+    ma_x = ma_x[int((box_size-1)/2):]
+    ma_x = ma_x[:-int((box_size-1)/2)]
+    
+    plt.plot(ma_x, ma_y, label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+    
     count = count + 1
 
 #plt.grid(linestyle=':')
 
 ax = plt.gca()
-ax.set_xlim([0, 650])
+ax.set_xlim([0, 600])
 
 plt.ylabel("Grounded SMB (Gt yr$^{-1}$)")
 plt.xlabel('Years')
@@ -514,7 +528,7 @@ for i in id:
 
     plot_data = icesheet_d[i]
 
-    plt.plot(plot_data.time - 1850, ((plot_data.fluxDivFileGrounded)/918.0), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+    plt.plot(plot_data.time - 1850, ((plot_data.fluxDivFileGrounded)/918e6), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
 
     count = count + 1
 
@@ -546,23 +560,29 @@ for i in idanom:
 
     plot_data = icesheet_d[i]
     plot_data_max_time = plot_data.time.max()
+    plot_data_min_time = plot_data.time.min()
 
     ctrl_data = icesheet_d["cs568"]
     ctrl_data_max_time = ctrl_data.time.max()
+    ctrl_data_min_time = ctrl_data.time.min()
 
+    min_time = max(plot_data_min_time, ctrl_data_min_time)
     max_time = min(plot_data_max_time, ctrl_data_max_time)
 
-    plot_data = plot_data[plot_data.time <= max_time]
-    ctrl_data = ctrl_data[ctrl_data.time <= max_time]
+    plot_data = plot_data[(plot_data.time <= max_time) & (plot_data.time >= min_time)]
+    ctrl_data = ctrl_data[(ctrl_data.time <= max_time) & (ctrl_data.time >= min_time)]
 
-    plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918), label = runs_anom[i], lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count])
+    plot_data = plot_data.reset_index(drop=True)
+    ctrl_data = ctrl_data.reset_index(drop=True)
+
+    plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), label = runs_anom[i], lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count])
 
     count = count + 1
 
 #plt.grid(linestyle=':')
 
 ax = plt.gca()
-ax.set_xlim([0, 650])
+ax.set_xlim([0, 600])
 
 plt.ylabel("GL Discharge Anomaly (Gt yr$^{-1}$)")
 plt.xlabel('Years')
@@ -587,23 +607,29 @@ for i in idramp:
 
     plot_data = icesheet_d[i]
     plot_data_max_time = plot_data.time.max()
+    plot_data_min_time = plot_data.time.min()
 
     ctrl_data = icesheet_d["cs568"]
     ctrl_data_max_time = ctrl_data.time.max()
+    ctrl_data_min_time = ctrl_data.time.min()
 
+    min_time = max(plot_data_min_time, ctrl_data_min_time)
     max_time = min(plot_data_max_time, ctrl_data_max_time)
 
-    plot_data = plot_data[plot_data.time <= max_time]
-    ctrl_data = ctrl_data[ctrl_data.time <= max_time]
+    plot_data = plot_data[(plot_data.time <= max_time) & (plot_data.time >= min_time)]
+    ctrl_data = ctrl_data[(ctrl_data.time <= max_time) & (ctrl_data.time >= min_time)]
 
-    plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918), label = runs_ramp[i], lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count])
+    plot_data = plot_data.reset_index(drop=True)
+    ctrl_data = ctrl_data.reset_index(drop=True)
+
+    plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), label = runs_ramp[i], lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count])
 
     count = count + 1
 
 #plt.grid(linestyle=':')
 
 ax = plt.gca()
-ax.set_xlim([0, 650])
+ax.set_xlim([0, 400])
 
 plt.ylabel("Gl Discharge Anomaly (Gt yr$^{-1}$)")
 plt.xlabel('Years')
