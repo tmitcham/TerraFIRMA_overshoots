@@ -64,7 +64,7 @@ count = 0
 
 # Get atmosphere data
 
-if os.path.exists('../processed_data/atmos_data.pkl'):
+if os.path.exists('../processed_data/atmos_data_missing.pkl'):
 
     print("Loading atmosphere data from file...")
 
@@ -123,7 +123,7 @@ if count > 0:
 
 initialT = atmos_d["cx209"][0,1]
 
-if os.path.exists('../processed_data/icesheet_data.pkl'):
+if os.path.exists('../processed_data/icesheet_data_missing.pkl'):
 
     print("Loading ice sheet data from file...")
 
@@ -140,11 +140,10 @@ else:
     for i in id:
 
         print(f"Working on {i}: {runs[i]}")
-        #AIS_stats = pd.read_csv(f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/{i}_diagnostics.csv")
-        AIS_stats = pd.read_csv(f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/data_for_plots/{i}_diagnostics.csv")
+        AIS_stats = pd.read_csv(f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/{i}_diagnostics.csv")
 
-        AIS_stats = AIS_stats.dropna(how='any')
-        AIS_stats["file"] = AIS_stats["file"].astype(str)
+        # AIS_stats = AIS_stats.dropna(how='any')
+        # AIS_stats["file"] = AIS_stats["file"].astype(str)
 
         if i == "cs568":    
             AIS_stats.time = AIS_stats.apply(lambda x: int(x.file[16:20]), axis=1)-100
