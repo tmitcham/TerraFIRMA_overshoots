@@ -64,7 +64,7 @@ count = 0
 
 # Get atmosphere data
 
-if os.path.exists('../processed_data/atmos_data_missing.pkl'):
+if os.path.exists('../processed_data/atmos_data.pkl'):
 
     print("Loading atmosphere data from file...")
 
@@ -123,7 +123,7 @@ if count > 0:
 
 initialT = atmos_d["cx209"][0,1]
 
-if os.path.exists('../processed_data/icesheet_data_missing.pkl'):
+if os.path.exists('../processed_data/icesheet_data.pkl'):
 
     print("Loading ice sheet data from file...")
 
@@ -434,7 +434,7 @@ plt.savefig('../figures/AISGroundedSMBvsTime.png', dpi = 600,  bbox_inches='tigh
 
 ####################################################################################
 
-# Plot VAF Anomaly vs Time graph
+# Plot SMB Anomaly vs Time graph
 
 print("Starting AIS Grounded SMB Anomaly vs Time plot...")
 
