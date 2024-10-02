@@ -363,14 +363,20 @@ for i in idramp:
 
     plot_data = icesheet_d[i]
     plot_data_max_time = plot_data.time.max()
+    plot_data_min_time = plot_data.time.min()
 
     ctrl_data = icesheet_d["cs568"]
     ctrl_data_max_time = ctrl_data.time.max()
+    ctrl_data_min_time = ctrl_data.time.min()
 
+    min_time = max(plot_data_min_time, ctrl_data_min_time)
     max_time = min(plot_data_max_time, ctrl_data_max_time)
 
-    plot_data = plot_data[plot_data.time <= max_time]
-    ctrl_data = ctrl_data[ctrl_data.time <= max_time]
+    plot_data = plot_data[(plot_data.time <= max_time) & (plot_data.time >= min_time)]
+    ctrl_data = ctrl_data[(ctrl_data.time <= max_time) & (ctrl_data.time >= min_time)]
+
+    plot_data = plot_data.reset_index(drop=True)
+    ctrl_data = ctrl_data.reset_index(drop=True)
 
     plt.plot(plot_data.time - 1850, ((plot_data.massSLE-initialmassSLE)-(ctrl_data.massSLE-initialmassSLEpi)), label = runs_ramp[i], lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count])
 
@@ -446,14 +452,20 @@ for i in idanom:
 
     plot_data = icesheet_d[i]
     plot_data_max_time = plot_data.time.max()
+    plot_data_min_time = plot_data.time.min()
 
     ctrl_data = icesheet_d["cs568"]
     ctrl_data_max_time = ctrl_data.time.max()
+    ctrl_data_min_time = ctrl_data.time.min()
 
+    min_time = max(plot_data_min_time, ctrl_data_min_time)
     max_time = min(plot_data_max_time, ctrl_data_max_time)
 
-    plot_data = plot_data[plot_data.time <= max_time]
-    ctrl_data = ctrl_data[ctrl_data.time <= max_time]
+    plot_data = plot_data[(plot_data.time <= max_time) & (plot_data.time >= min_time)]
+    ctrl_data = ctrl_data[(ctrl_data.time <= max_time) & (ctrl_data.time >= min_time)]
+
+    plot_data = plot_data.reset_index(drop=True)
+    ctrl_data = ctrl_data.reset_index(drop=True)
 
     plt.plot(plot_data.time - 1850, (((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918), label = runs_anom[i], lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count])
 
@@ -487,14 +499,20 @@ for i in idramp:
 
     plot_data = icesheet_d[i]
     plot_data_max_time = plot_data.time.max()
+    plot_data_min_time = plot_data.time.min()
 
     ctrl_data = icesheet_d["cs568"]
     ctrl_data_max_time = ctrl_data.time.max()
+    ctrl_data_min_time = ctrl_data.time.min()
 
+    min_time = max(plot_data_min_time, ctrl_data_min_time)
     max_time = min(plot_data_max_time, ctrl_data_max_time)
 
-    plot_data = plot_data[plot_data.time <= max_time]
-    ctrl_data = ctrl_data[ctrl_data.time <= max_time]
+    plot_data = plot_data[(plot_data.time <= max_time) & (plot_data.time >= min_time)]
+    ctrl_data = ctrl_data[(ctrl_data.time <= max_time) & (ctrl_data.time >= min_time)]
+
+    plot_data = plot_data.reset_index(drop=True)
+    ctrl_data = ctrl_data.reset_index(drop=True)
 
     plt.plot(plot_data.time - 1850, (((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918), label = runs_ramp[i], lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count])
 
