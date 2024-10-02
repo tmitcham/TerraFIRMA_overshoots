@@ -681,7 +681,7 @@ for i in idramp:
     ma_x = ma_x[int((box_size-1)/2):]
     ma_x = ma_x[:-int((box_size-1)/2)]
     
-    plt.plot(ma_x, ma_y, label = runs_anom[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+    plt.plot(ma_x, ma_y, label = runs_ramp[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
 
     count = count + 1
 
