@@ -427,7 +427,7 @@ for i in id:
 #plt.grid(linestyle=':')
 
 ax = plt.gca()
-ax.set_xlim([0, 600])
+ax.set_xlim([0, 650])
 
 plt.ylabel("Grounded SMB (Gt yr$^{-1}$)")
 plt.xlabel('Years')
@@ -467,14 +467,22 @@ for i in idanom:
     plot_data = plot_data.reset_index(drop=True)
     ctrl_data = ctrl_data.reset_index(drop=True)
 
-    plt.plot(plot_data.time - 1850, (((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918), label = runs_anom[i], lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count])
+    plt.plot(plot_data.time - 1850, (((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918e6), label = runs_anom[i], lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count], alpha = 0.1)
+
+    ma_y = smooth((((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918e6), box_size)
+    
+    ma_x = (plot_data.time - 1850).values
+    ma_x = ma_x[int((box_size-1)/2):]
+    ma_x = ma_x[:-int((box_size-1)/2)]
+    
+    plt.plot(ma_x, ma_y, label = runs_anom[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
 
     count = count + 1
 
 #plt.grid(linestyle=':')
 
 ax = plt.gca()
-ax.set_xlim([0, 650])
+ax.set_xlim([0, 600])
 
 plt.ylabel("Grounded SMB Anomaly (Gt yr$^{-1}$)")
 plt.xlabel('Years')
@@ -514,14 +522,22 @@ for i in idramp:
     plot_data = plot_data.reset_index(drop=True)
     ctrl_data = ctrl_data.reset_index(drop=True)
 
-    plt.plot(plot_data.time - 1850, (((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918), label = runs_ramp[i], lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count])
+    plt.plot(plot_data.time - 1850, (((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918), label = runs_ramp[i], lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count], alpha = 0.1)
+
+    ma_y = smooth((((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918e6), box_size)
+    
+    ma_x = (plot_data.time - 1850).values
+    ma_x = ma_x[int((box_size-1)/2):]
+    ma_x = ma_x[:-int((box_size-1)/2)]
+    
+    plt.plot(ma_x, ma_y, label = runs_ramp[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
 
     count = count + 1
 
 #plt.grid(linestyle=':')
 
 ax = plt.gca()
-ax.set_xlim([0, 650])
+ax.set_xlim([0, 400])
 
 plt.ylabel("Grounded SMB Anomaly (Gt yr$^{-1}$)")
 plt.xlabel('Years')
@@ -546,7 +562,16 @@ for i in id:
 
     plot_data = icesheet_d[i]
 
-    plt.plot(plot_data.time - 1850, ((plot_data.fluxDivFileGrounded)/918e6), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+    plt.plot(plot_data.time - 1850, ((plot_data.fluxDivFileGrounded)/918e6), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.1)
+
+    ma_y = smooth(((plot_data.fluxDivFileGrounded)/918e6), box_size)
+    
+    ma_x = (plot_data.time - 1850).values
+    ma_x = ma_x[int((box_size-1)/2):]
+    ma_x = ma_x[:-int((box_size-1)/2)]
+    
+    plt.plot(ma_x, ma_y, label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+
 
     count = count + 1
 
@@ -593,7 +618,15 @@ for i in idanom:
     plot_data = plot_data.reset_index(drop=True)
     ctrl_data = ctrl_data.reset_index(drop=True)
 
-    plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), label = runs_anom[i], lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count])
+    plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), label = runs_anom[i], lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count], alpha = 0.1)
+
+    ma_y = smooth((((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), box_size)
+
+    ma_x = (plot_data.time - 1850).values
+    ma_x = ma_x[int((box_size-1)/2):]
+    ma_x = ma_x[:-int((box_size-1)/2)]
+    
+    plt.plot(ma_x, ma_y, label = runs_anom[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
 
     count = count + 1
 
@@ -641,6 +674,14 @@ for i in idramp:
     ctrl_data = ctrl_data.reset_index(drop=True)
 
     plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), label = runs_ramp[i], lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count])
+
+    ma_y = smooth((((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), box_size)
+
+    ma_x = (plot_data.time - 1850).values
+    ma_x = ma_x[int((box_size-1)/2):]
+    ma_x = ma_x[:-int((box_size-1)/2)]
+    
+    plt.plot(ma_x, ma_y, label = runs_anom[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
 
     count = count + 1
 
