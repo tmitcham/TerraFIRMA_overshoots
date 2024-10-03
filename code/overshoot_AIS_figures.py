@@ -27,9 +27,9 @@ from amrfile import io as amrio
 #      "cz378", "cz944", "da800", "da697", "da892", "db223", "dc251", "dc051", 
 #      "dc052", "dc248", "dc249", "dc565", "dd210", "dc032", "dc123", "dc130"]
 
-id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130", "cw988", "cw989"]
-idanom = ["cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130"] #, "cw988", "cw989"]
-idramp = ["cx209", "cw988", "cw989"]
+id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130", "cw988", "cw989", "cw990"]
+idanom = ["cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130"]
+idramp = ["cx209", "cw988", "cw989", "cw990"]
 
 #run_type = ["pi-ctrl","ramp-up", "stab 1.5C", "stab 2C", "stab 2.5C", "stab 3C", "stab 4C", "stab 5C", 
 #           "stab 6C", "_ramp-down -8 2C 50yr", "_ramp-down -8 2C 200yr", "_ramp-down -8 1.5C 50yr", "_ramp-down -8 4C 50yr", "_ramp-down -8 3C 50yr", "_ramp-down -8 5C 50yr", "_ramp-down -4 2C 50yr",
@@ -39,9 +39,9 @@ idramp = ["cx209", "cw988", "cw989"]
 #            "stab 6C", "ramp-down -8 2C 50yr", "ramp-down -8 2C 200yr", "ramp-down -8 1.5C 50yr", "ramp-down -8 4C 50yr", "ramp-down -8 3C 50yr", "ramp-down -8 5C 50yr", "ramp-down -4 2C 50yr",
 #            "ramp-down -4 1.5C 50yr", "ramp-down -4 1.5C 200yr", "ramp-down -4 3C 200yr", "ramp-down -4 2C 200yr", "ramp-down -4 4C 200yr", "ramp-down -4 3C 30yr", "ramp-down -4 4C 50yr", "ramp-down -4 5C 50yr"]
 
-run_type = ["Ctrl","Ramp-Up 1", "1.5C", "2C", "3C", "4C", "5C", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr", "Ramp-Up 2", "Ramp-Up 3"]
-run_type_anom = ["Ramp-Up 1", "1.5C", "2C", "3C", "4C", "5C", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr"] #, "Ramp-Up 2", "Ramp-Up 3"]
-run_type_ramp = ["Ramp-Up 1", "Ramp-Up 2", "Ramp-Up 3"]
+run_type = ["Ctrl","Ramp-Up 1", "1.5C", "2C", "3C", "4C", "5C", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr", "Ramp-Up 2", "Ramp-Up 3", "Ramp-Up 4"]
+run_type_anom = ["Ramp-Up 1", "1.5C", "2C", "3C", "4C", "5C", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr"]
+run_type_ramp = ["Ramp-Up 1", "Ramp-Up 2", "Ramp-Up 3", "Ramp-Up 4"]
 
 runs = dict(zip(id, run_type)) 
 runs_anom = dict(zip(idanom, run_type_anom))
@@ -51,20 +51,20 @@ runs_ramp = dict(zip(idramp, run_type_ramp))
 #line_cols = ["gray","k", "tab:purple", "b", "c", "g", "y", "tab:orange", "tab:red", "b", "b", "tab:purple", "y", "g","tab:orange", "b", "tab:purple", "tab:purple", "g", "b", "y", "g", "y", "tab:orange"]
 #line_stys = ["solid","solid","solid","solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed"] 
 
-line_cols = ['#000000','#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0'] #,'#C30F0E','#C30F0E']
-line_stys = ["dotted","solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed"] #,"dotted","dashdot"]
+line_cols = ['#000000','#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0']
+line_stys = ["dotted","solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed"]
 
-line_cols_anom = ['#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0'] #,'#C30F0E','#C30F0E']
-line_stys_anom = ["solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed"] #,"dotted","dashdot"]
+line_cols_anom = ['#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0']
+line_stys_anom = ["solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed"]
 
 line_cols_ramp = ['#C30F0E','#C30F0E','#C30F0E']
-line_stys_ramp = ["solid","dotted","dashed"]
+line_stys_ramp = ["solid","dotted","dashed","dashdot"]
 
 count = 0
 
 # Get atmosphere data
 
-if os.path.exists('../processed_data/atmos_data.pkl'):
+if os.path.exists('../processed_data/atmos_data_missing.pkl'):
 
     print("Loading atmosphere data from file...")
 
@@ -123,7 +123,7 @@ if count > 0:
 
 initialT = atmos_d["cx209"][0,1]
 
-if os.path.exists('../processed_data/icesheet_data.pkl'):
+if os.path.exists('../processed_data/icesheet_data_missing.pkl'):
 
     print("Loading ice sheet data from file...")
 
@@ -337,6 +337,9 @@ for i in idanom:
 ax = plt.gca()
 ax.set_xlim([0, 600])
 
+ax.set_yticks([0, 0.05, 0.1, 0.15, 0.2, 0.25]) 
+ax.set_yticklabels(['0', '-0.05', '-0.1', '-0.15', '-0.2', '-0.25']) 
+
 plt.ylabel("$\Delta$VAF Anomaly (m SLE)")
 plt.xlabel('Years')
 plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
@@ -387,6 +390,9 @@ for i in idramp:
 ax = plt.gca()
 ax.set_xlim([0, 400])
 
+ax.set_yticks([0, 0.05, 0.1, 0.15]) 
+ax.set_yticklabels(['0', '-0.05', '-0.1', '-0.15']) 
+
 plt.ylabel("$\Delta$VAF Anomaly (m SLE)")
 plt.xlabel('Years')
 plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
@@ -412,7 +418,7 @@ for i in id:
 
     plot_data = icesheet_d[i]
 
-    plt.plot(plot_data.time - 1850, ((plot_data.smbGrounded)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.1)
+    plt.plot(plot_data.time - 1850, ((plot_data.smbGrounded)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.01)
 
     ma_y = smooth((plot_data.smbGrounded)/918e6, box_size)
     
@@ -467,7 +473,7 @@ for i in idanom:
     plot_data = plot_data.reset_index(drop=True)
     ctrl_data = ctrl_data.reset_index(drop=True)
 
-    plt.plot(plot_data.time - 1850, (((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918e6), label = '_none', lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count], alpha = 0.1)
+    plt.plot(plot_data.time - 1850, (((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918e6), label = '_none', lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count], alpha = 0.01)
 
     ma_y = smooth((((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918e6), box_size)
     
@@ -522,7 +528,7 @@ for i in idramp:
     plot_data = plot_data.reset_index(drop=True)
     ctrl_data = ctrl_data.reset_index(drop=True)
 
-    plt.plot(plot_data.time - 1850, (((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918e6), label = '_none', lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count], alpha = 0.1)
+    plt.plot(plot_data.time - 1850, (((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918e6), label = '_none', lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count], alpha = 0.01)
 
     ma_y = smooth((((plot_data.smbGrounded)-(ctrl_data.smbGrounded))/918e6), box_size)
     
@@ -562,7 +568,7 @@ for i in id:
 
     plot_data = icesheet_d[i]
 
-    plt.plot(plot_data.time - 1850, ((plot_data.fluxDivFileGrounded)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.1)
+    plt.plot(plot_data.time - 1850, ((plot_data.fluxDivFileGrounded)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.01)
 
     ma_y = smooth(((plot_data.fluxDivFileGrounded)/918e6), box_size)
     
@@ -618,7 +624,7 @@ for i in idanom:
     plot_data = plot_data.reset_index(drop=True)
     ctrl_data = ctrl_data.reset_index(drop=True)
 
-    plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), label = '_none', lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count], alpha = 0.1)
+    plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), label = '_none', lw=0.8, color = line_cols_anom[count], linestyle = line_stys_anom[count], alpha = 0.01)
 
     ma_y = smooth((((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), box_size)
 
@@ -673,7 +679,7 @@ for i in idramp:
     plot_data = plot_data.reset_index(drop=True)
     ctrl_data = ctrl_data.reset_index(drop=True)
 
-    plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), label = '_none', lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count], alpha = 0.1)
+    plt.plot(plot_data.time - 1850, (((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), label = '_none', lw=0.8, color = line_cols_ramp[count], linestyle = line_stys_ramp[count], alpha = 0.01)
 
     ma_y = smooth((((plot_data.fluxDivFileGrounded)-(ctrl_data.fluxDivFileGrounded))/918e6), box_size)
 

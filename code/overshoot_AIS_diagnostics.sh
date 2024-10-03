@@ -9,5 +9,6 @@
 #done
 
 directory="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/$1/icesheet/"
-echo "Running diagnostics_AIS.py on dir: $directory" 
-python diagnostics_AIS.py $directory
+echo "Running new_diagnostics_AIS.py on dir: $directory" 
+echo "Saving results in: $2"
+python new_diagnostics_AIS.py $directory $2
