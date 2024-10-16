@@ -70,7 +70,7 @@ for i in id:
     AIS_data['groundedVol'] = AIS_grounded_vol['value']
     AIS_data['floatingVol'] = AIS_floating_vol['value']
 
-    AIS_data["massSLE"] = AIS_data["volumeAbove"]*(918/(1028*3.625e14))
+    AIS_data["massSLE"] = AIS_data["VAF"]*(918/(1028*3.625e14))
 
     icesheet_d[i] = AIS_data
 
