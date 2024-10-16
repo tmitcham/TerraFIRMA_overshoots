@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as col
 import matplotlib.patches as pat
 
-from amrfile import io as amrio
+# from amrfile import io as amrio
 
 ####################################################################################
 
