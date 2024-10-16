@@ -45,32 +45,6 @@ def smooth(y, box_pts):
 
 ####################################################################################
 
-""" # calculate some model statistics for the different cases
-
-print("Calculating model statistics...")
-
-for i in id:
-
-    print(f"Working on {i}: {runs[i]}")
-
-    if i in {"cx209", "cw988", "cw989", "cw990"}:
-
-      ramp_up_VAF = icesheet_d[i].iloc[:,1:3] 
-
-    else:
-
-        plot_data = plot_data.iloc[124:]
-        plot_data.time = plot_data.time - 125
-
-    print(f"Max VAF: {plot_data.massSLE.max()}")
-    print(f"Min VAF: {plot_data.massSLE.min()}")
-    print(f"Max GL Discharge: {plot_data.GLDischarge.max()}")
-    print(f"Min GL Discharge: {plot_data.GLDischarge.min()}")
-    print(f"Max Grounded SMB: {plot_data.groundedSMB.max()}")
-    print(f"Min Grounded SMB: {plot_data.groundedSMB.min()}")
- """
-####################################################################################
-
 # Plot VAF vs Time graph
 
 initalmassSLE = icesheet_d["cx209"]["massSLE"].iloc[0]
@@ -91,17 +65,66 @@ for i in id:
         plot_data = plot_data.iloc[10:50]
         plot_data.time = plot_data.time - 11
 
+        if i == "cx209": 
+            
+            ramp_VAF = plot_data.iloc[:,1:3]
+            ramp_VAF.rename(columns={'VAF': 'cx209'}, inplace=True)
+
+        elif i == "cw988":
+
+            ramp_VAF["cw988"] = plot_data.iloc[:,2]
+
+        elif i == "cw989":
+
+            ramp_VAF["cw989"] = plot_data.iloc[:,2]
+
+        elif i == "cw990":
+
+            ramp_VAF["cw990"] = plot_data.iloc[:,2]
+
+
     else:
 
         plot_data = plot_data.iloc[124:]
         plot_data.time = plot_data.time - 125
 
-    if i == "cs568": 
+        if i == "cy623":
+            
+            hist_VAF = plot_data.iloc[:,1:3]
+            hist_VAF.rename(columns={'VAF': 'cy623'}, inplace=True)
+
+        if i == "da914": 
+            
+            hist_VAF["da914"] = plot_data.iloc[:,2]
+
+        elif i == "da916":
+
+            hist_VAF["da916"] = plot_data.iloc[:,2]  
+
+        elif i == "da917":
+
+            hist_VAF["da917"] = plot_data.iloc[:,2]
+
+
+    ramp_VAF["mean"] = ramp_VAF.mean(axis=1, numeric_only=True)
+    ramp_VAF["std"] = ramp_VAF.std(axis=1, numeric_only=True)
+
+    hist_VAF["mean"] = hist_VAF.mean(axis=1, numeric_only=True)
+    hist_VAF["std"] = hist_VAF.std(axis=1, numeric_only=True)
+
+
+   """  if i == "cs568": 
         plt.plot(plot_data.time - 1850, (plot_data.massSLE-initalmassSLEpi), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
     else:
         plt.plot(plot_data.time - 1850, (plot_data.massSLE-initalmassSLE), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
 
-    count = count + 1
+    count = count + 1 """
+
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["mean"]-initalmassSLE), label = "Overshoots", color = line_cols[1])
+plt.fill_between(ramp_VAF.time - 1850, (ramp_VAF["mean"]-initalmassSLE)-ramp_VAF["std"], (ramp_VAF["mean"]-initalmassSLE)+ramp_VAF["std"], color = line_cols[1], alpha = 0.2)
+
+plt.plot(hist_VAF.time - 1850, (hist_VAF["mean"]-initalmassSLE), label = "Historical", color = line_cols[5])
+plt.fill_between(hist_VAF.time - 1850, (hist_VAF["mean"]-initalmassSLE)-hist_VAF["std"], (hist_VAF["mean"]-initalmassSLE)+hist_VAF["std"], color = line_cols[5], alpha = 0.2)
 
 #plt.grid(linestyle=':')
 
@@ -117,7 +140,7 @@ plt.savefig('../figures/HistAISVAFvsTime.png', dpi = 600,  bbox_inches='tight')
 #plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
 
 ####################################################################################
-
+""" 
 # Plot GroundedSMB vs Time graph
 
 print("Starting AIS Grounded SMB vs Time plot...")
@@ -216,4 +239,4 @@ print("Finished and saving AIS Grounding Line Discharge vs Time plot...")
 plt.savefig('../figures/HistAISGLDischargevsTime.png', dpi = 600,  bbox_inches='tight')  
 #plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
 
-####################################################################################
+#################################################################################### """
