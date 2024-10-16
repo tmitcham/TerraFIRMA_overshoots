@@ -58,17 +58,21 @@ for i in id:
     AIS_floating_vol.reset_index(drop=True, inplace=True)
     AIS_VAF.reset_index(drop=True, inplace=True)
     
-    icesheet_d = AIS_VAF
-    icesheet_d = icesheet_d.rename(columns={'value':'VAF'})
+    AIS_data = AIS_VAF
+    AIS_data = AIS_data.rename(columns={'value':'VAF'})
 
-    icesheet_d.drop(['csvheader','maskNo','region', 'quantity','unit'], axis=1, inplace=True)
+    AIS_data.drop(['csvheader','maskNo','region', 'quantity','unit'], axis=1, inplace=True)
     
-    icesheet_d['groundedSMB'] = AIS_grounded_SMB['value']
-    icesheet_d['floatingSMB'] = AIS_floating_SMB['value']
-    icesheet_d['floatingBMB'] = AIS_floating_BMB['value']
-    icesheet_d['GLDischarge'] = AIS_GL_discharge['value']
-    icesheet_d['groundedVol'] = AIS_grounded_vol['value']
-    icesheet_d['floatingVol'] = AIS_floating_vol['value']
+    AIS_data['groundedSMB'] = AIS_grounded_SMB['value']
+    AIS_data['floatingSMB'] = AIS_floating_SMB['value']
+    AIS_data['floatingBMB'] = AIS_floating_BMB['value']
+    AIS_data['GLDischarge'] = AIS_GL_discharge['value']
+    AIS_data['groundedVol'] = AIS_grounded_vol['value']
+    AIS_data['floatingVol'] = AIS_floating_vol['value']
+
+    AIS_data["massSLE"] = AIS_data["volumeAbove"]*(918/(1028*3.625e14))
+
+    icesheet_d[i] = AIS_data
 
 ####################################################################################
 
