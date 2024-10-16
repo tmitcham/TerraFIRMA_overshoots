@@ -45,6 +45,32 @@ def smooth(y, box_pts):
 
 ####################################################################################
 
+""" # calculate some model statistics for the different cases
+
+print("Calculating model statistics...")
+
+for i in id:
+
+    print(f"Working on {i}: {runs[i]}")
+
+    if i in {"cx209", "cw988", "cw989", "cw990"}:
+
+      ramp_up_VAF = icesheet_d[i].iloc[:,1:3] 
+
+    else:
+
+        plot_data = plot_data.iloc[124:]
+        plot_data.time = plot_data.time - 125
+
+    print(f"Max VAF: {plot_data.massSLE.max()}")
+    print(f"Min VAF: {plot_data.massSLE.min()}")
+    print(f"Max GL Discharge: {plot_data.GLDischarge.max()}")
+    print(f"Min GL Discharge: {plot_data.GLDischarge.min()}")
+    print(f"Max Grounded SMB: {plot_data.groundedSMB.max()}")
+    print(f"Min Grounded SMB: {plot_data.groundedSMB.min()}")
+ """
+####################################################################################
+
 # Plot VAF vs Time graph
 
 initalmassSLE = icesheet_d["cx209"]["massSLE"].iloc[0]
@@ -98,7 +124,7 @@ print("Starting AIS Grounded SMB vs Time plot...")
 
 count = 0
 
-box_size = 11
+box_size = 5
 
 plt.figure(figsize=(4, 3))
 
@@ -116,7 +142,7 @@ for i in id:
         plot_data = plot_data.iloc[124:]
         plot_data.time = plot_data.time - 125
 
-    plt.plot(plot_data.time - 1850, ((plot_data.groundedSMB)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.01)
+    plt.plot(plot_data.time - 1850, ((plot_data.groundedSMB)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.1)
 
     ma_y = smooth((plot_data.groundedSMB)/918e6, box_size)
     
@@ -165,7 +191,7 @@ for i in id:
         plot_data = plot_data.iloc[124:]
         plot_data.time = plot_data.time - 125
 
-    plt.plot(plot_data.time - 1850, ((plot_data.GLDischarge)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.01)
+    plt.plot(plot_data.time - 1850, ((plot_data.GLDischarge)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.1)
 
     ma_y = smooth(((plot_data.GLDischarge)/918e6), box_size)
     
