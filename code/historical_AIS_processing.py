@@ -40,7 +40,7 @@ for i in id:
          AIS_stats.time = AIS_stats.apply(lambda x: int(x.filename[97:101]), axis=1)-100
     
     else:
-        AIS_stats.time = AIS_stats.apply(lambda x: int(x.file[97:101]), axis=1)
+        AIS_stats.time = AIS_stats.apply(lambda x: int(x.filename[97:101]), axis=1)
         
     AIS_grounded_SMB = AIS_stats[(AIS_stats['region'] == 'grounded') & (AIS_stats['quantity'] == 'SMB')]
     AIS_floating_SMB = AIS_stats[(AIS_stats['region'] == 'floating') & (AIS_stats['quantity'] == 'SMB')]
