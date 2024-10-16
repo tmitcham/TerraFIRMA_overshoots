@@ -62,11 +62,11 @@ for i in id:
 
     if i in {"cs568","cx209", "cw988", "cw989", "cw990"}:
 
-        plot_data = plot_data[10:50,:]
+        plot_data = plot_data.iloc[10:50]
 
     else:
 
-        plot_data = plot_data[125:165,:]
+        plot_data = plot_data.iloc[125:]
 
     if i == "cs568": 
         plt.plot(plot_data.time - 1850, (plot_data.massSLE-initalmassSLEpi), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
@@ -106,11 +106,11 @@ for i in id:
 
     if i in {"cs568","cx209", "cw988", "cw989", "cw990"}:
 
-        plot_data = plot_data[10:50,:]
+        plot_data = plot_data.iloc[10:50]
 
     else:
 
-        plot_data = plot_data[125:165,:]
+        plot_data = plot_data.iloc[125:]
 
     plt.plot(plot_data.time - 1850, ((plot_data.groundedSMB)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.01)
 
@@ -150,6 +150,14 @@ plt.figure(figsize=(4, 3))
 for i in id:
 
     plot_data = icesheet_d[i]
+
+    if i in {"cs568","cx209", "cw988", "cw989", "cw990"}:
+
+        plot_data = plot_data.iloc[10:50]
+
+    else:
+
+        plot_data = plot_data.iloc[125:]
 
     plt.plot(plot_data.time - 1850, ((plot_data.GLDischarge)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.01)
 
