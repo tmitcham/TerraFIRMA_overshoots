@@ -112,9 +112,9 @@ for i in id:
 
         plot_data = plot_data[125:165,:]
 
-    plt.plot(plot_data.time - 1850, ((plot_data.smbGrounded)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.01)
+    plt.plot(plot_data.time - 1850, ((plot_data.groundedSMB)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.01)
 
-    ma_y = smooth((plot_data.smbGrounded)/918e6, box_size)
+    ma_y = smooth((plot_data.groundedSMB)/918e6, box_size)
     
     ma_x = (plot_data.time - 1850).values
     ma_x = ma_x[int((box_size-1)/2):]
@@ -151,9 +151,9 @@ for i in id:
 
     plot_data = icesheet_d[i]
 
-    plt.plot(plot_data.time - 1850, ((plot_data.fluxDivFileGrounded)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.01)
+    plt.plot(plot_data.time - 1850, ((plot_data.GLDischarge)/918e6), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.01)
 
-    ma_y = smooth(((plot_data.fluxDivFileGrounded)/918e6), box_size)
+    ma_y = smooth(((plot_data.GLDischarge)/918e6), box_size)
     
     ma_x = (plot_data.time - 1850).values
     ma_x = ma_x[int((box_size-1)/2):]
