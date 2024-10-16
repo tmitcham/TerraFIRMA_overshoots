@@ -82,6 +82,10 @@ for i in id:
 
             ramp_VAF["cw990"] = plot_data.iloc[:,2]
 
+        else:
+
+            continue
+
 
     else:
 
@@ -106,11 +110,11 @@ for i in id:
             hist_VAF["da917"] = plot_data.iloc[:,2]
 
 
-    ramp_VAF["mean"] = ramp_VAF.mean(axis=1, numeric_only=True)
-    ramp_VAF["std"] = ramp_VAF.std(axis=1, numeric_only=True)
+ramp_VAF["mean"] = ramp_VAF.mean(axis=1, numeric_only=True)
+ramp_VAF["std"] = ramp_VAF.std(axis=1, numeric_only=True)
 
-    hist_VAF["mean"] = hist_VAF.mean(axis=1, numeric_only=True)
-    hist_VAF["std"] = hist_VAF.std(axis=1, numeric_only=True)
+hist_VAF["mean"] = hist_VAF.mean(axis=1, numeric_only=True)
+hist_VAF["std"] = hist_VAF.std(axis=1, numeric_only=True)
 
 
 """ if i == "cs568": 
