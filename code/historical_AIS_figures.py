@@ -126,12 +126,25 @@ hist_VAF["std"] = hist_VAF.iloc[:,1:].std(axis=1, numeric_only=True)
 
     count = count + 1 """
 
-plt.plot(ramp_VAF.time - 1850, (ramp_VAF["mean"]-initalmassSLE), label = "Overshoots", color = line_cols[1])
-plt.fill_between(ramp_VAF.time - 1850, (ramp_VAF["mean"]-initalmassSLE)-ramp_VAF["std"], (ramp_VAF["mean"]-initalmassSLE)+ramp_VAF["std"], color = line_cols[1], alpha = 0.2)
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["mean"]-ramp_VAF["mean"].iloc[0]), label = "Overshoots", color = line_cols[1])
+plt.fill_between(ramp_VAF.time - 1850, (ramp_VAF["mean"]-ramp_VAF["mean"].iloc[0])-ramp_VAF["std"], (ramp_VAF["mean"]-ramp_VAF["mean"].iloc[0])+ramp_VAF["std"], color = line_cols[1], alpha = 0.2)
+
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["cx209"]-ramp_VAF["mean"].iloc[0]), label = "_Overshoots", color = line_cols[1], alpha = 0.1)
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["cw988"]-ramp_VAF["mean"].iloc[0]), label = "_Overshoots", color = line_cols[1], alpha = 0.1)
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["cw989"]-ramp_VAF["mean"].iloc[0]), label = "_Overshoots", color = line_cols[1], alpha = 0.1)
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["cw990"]-ramp_VAF["mean"].iloc[0]), label = "_Overshoots", color = line_cols[1], alpha = 0.1)
 
 plt.plot(hist_VAF.time - 1850, (hist_VAF["mean"]-initalmassSLE), label = "Historical", color = line_cols[5])
-plt.fill_between(hist_VAF.time - 1850, (hist_VAF["mean"]-initalmassSLE)-hist_VAF["std"], (hist_VAF["mean"]-initalmassSLE)+hist_VAF["std"], color = line_cols[5], alpha = 0.2)
+plt.fill_between(hist_VAF.time - 1850, (hist_VAF["mean"]-hist_VAF["mean"].iloc[0])-hist_VAF["std"], (hist_VAF["mean"]-hist_VAF["mean"].iloc[0])+hist_VAF["std"], color = line_cols[5], alpha = 0.2)
 
+plt.plot(hist_VAF.time - 1850, (hist_VAF["cy623"]-hist_VAF["mean"].iloc[0]), label = "_Historical", color = line_cols[5], alpha = 0.1)
+plt.plot(hist_VAF.time - 1850, (hist_VAF["da914"]-hist_VAF["mean"].iloc[0]), label = "_Historical", color = line_cols[5], alpha = 0.1)
+plt.plot(hist_VAF.time - 1850, (hist_VAF["da916"]-hist_VAF["mean"].iloc[0]), label = "_Historical", color = line_cols[5], alpha = 0.1)
+plt.plot(hist_VAF.time - 1850, (hist_VAF["da917"]-hist_VAF["mean"].iloc[0]), label = "_Historical", color = line_cols[5], alpha = 0.1)
+
+plot_data = icesheet_d["cs568"]
+
+plt.plot(plot_data.time - 1850, (plot_data.massSLE-initalmassSLEpi), label = "Control", color = line_cols[0])
 #plt.grid(linestyle=':')
 
 ax = plt.gca()
