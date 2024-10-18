@@ -426,4 +426,129 @@ print("Finished and saving AIS Grounding Line Discharge vs Time plot...")
 plt.savefig('./Projects/figures/HistAISGLDischargevsTime.png', dpi = 600,  bbox_inches='tight')  
 #plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
 
+####################################################################################
+
+# Plot Ice Shelf BMB vs Time graph
+
+print("Starting AIS Ice Shelf BMB vs Time plot...")
+
+plt.figure(figsize=(4, 3))
+
+for i in id:
+
+    plot_data = icesheet_d[i]
+
+    if i in {"cs568","cx209", "cw988", "cw989", "cw990"}:
+
+        plot_data = plot_data.iloc[10:50]
+        plot_data.time = plot_data.time - 11
+
+        if i == "cx209": 
+            
+            ramp_VAF = plot_data.iloc[:,[1,5]]
+            ramp_VAF.rename(columns={'floatingBMB': 'cx209'}, inplace=True)
+
+        elif i == "cw988":
+
+            ramp_VAF["cw988"] = plot_data.iloc[:,5]
+
+        elif i == "cw989":
+
+            ramp_VAF["cw989"] = plot_data.iloc[:,5]
+
+        elif i == "cw990":
+
+            ramp_VAF["cw990"] = plot_data.iloc[:,5]
+
+        else:
+
+            continue
+
+
+    else:
+
+        plot_data = plot_data.iloc[124:]
+        plot_data.time = plot_data.time - 125
+
+        if i == "cy623":
+            
+            hist_VAF = plot_data.iloc[:,[1,5]]
+            hist_VAF.rename(columns={'floatingBMB': 'cy623'}, inplace=True)
+
+        if i == "da914": 
+            
+            hist_VAF["da914"] = plot_data.iloc[:,5]
+
+        elif i == "da916":
+
+            hist_VAF["da916"] = plot_data.iloc[:,5]  
+
+        elif i == "da917":
+
+            hist_VAF["da917"] = plot_data.iloc[:,5]
+            
+ramp_VAF.reset_index(inplace=True, drop=True)
+hist_VAF.reset_index(inplace=True, drop=True)
+
+ramp_VAF["mean"] = ramp_VAF.iloc[:,1:].mean(axis=1, numeric_only=True)
+ramp_VAF["std"] = ramp_VAF.iloc[:,1:].std(axis=1, numeric_only=True)
+
+hist_VAF["mean"] = hist_VAF.iloc[:,1:].mean(axis=1, numeric_only=True)
+hist_VAF["std"] = hist_VAF.iloc[:,1:].std(axis=1, numeric_only=True)
+"""
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["mean"]-ramp_VAF["mean"].iloc[0])*0.917/1e9, label = "Overshoots", color = line_cols[1])
+plt.fill_between(ramp_VAF.time - 1850, ((ramp_VAF["mean"]-ramp_VAF["mean"].iloc[0])-ramp_VAF["std"])*0.917/1e9, ((ramp_VAF["mean"]-ramp_VAF["mean"].iloc[0])+ramp_VAF["std"])*0.917/1e9, color = line_cols[1], alpha = 0.2)
+
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["cx209"]-ramp_VAF["mean"].iloc[0])*0.917/1e9, label = "_Overshoots", color = line_cols[1], alpha = 0.1)
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["cw988"]-ramp_VAF["mean"].iloc[0])*0.917/1e9, label = "_Overshoots", color = line_cols[1], alpha = 0.1)
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["cw989"]-ramp_VAF["mean"].iloc[0])*0.917/1e9, label = "_Overshoots", color = line_cols[1], alpha = 0.1)
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["cw990"]-ramp_VAF["mean"].iloc[0])*0.917/1e9, label = "_Overshoots", color = line_cols[1], alpha = 0.1)
+
+plt.plot(hist_VAF.time - 1850, (hist_VAF["mean"]-hist_VAF["mean"].iloc[0])*0.917/1e9, label = "Historical", color = line_cols[5])
+plt.fill_between(hist_VAF.time - 1850, ((hist_VAF["mean"]-hist_VAF["mean"].iloc[0])-hist_VAF["std"])*0.917/1e9, ((hist_VAF["mean"]-hist_VAF["mean"].iloc[0])+hist_VAF["std"])*0.917/1e9, color = line_cols[5], alpha = 0.2)
+
+plt.plot(hist_VAF.time - 1850, (hist_VAF["cy623"]-hist_VAF["mean"].iloc[0])*0.917/1e9, label = "_Historical", color = line_cols[5], alpha = 0.1)
+plt.plot(hist_VAF.time - 1850, (hist_VAF["da914"]-hist_VAF["mean"].iloc[0])*0.917/1e9, label = "_Historical", color = line_cols[5], alpha = 0.1)
+plt.plot(hist_VAF.time - 1850, (hist_VAF["da916"]-hist_VAF["mean"].iloc[0])*0.917/1e9, label = "_Historical", color = line_cols[5], alpha = 0.1)
+plt.plot(hist_VAF.time - 1850, (hist_VAF["da917"]-hist_VAF["mean"].iloc[0])*0.917/1e9, label = "_Historical", color = line_cols[5], alpha = 0.1)
+
+plot_data = icesheet_d["cs568"]
+plot_data = plot_data.iloc[10:50]
+plot_data.time = plot_data.time - 11
+
+plt.plot(plot_data.time - 1850, (plot_data.groundedSMB-plot_data.groundedSMB.iloc[0])*0.917/1e9, label = "Ctrl (cs568)", color = line_cols[0], linestyle = line_stys[0])
+"""
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["mean"])*0.917/1e9, label = "Overshoots", color = line_cols[1])
+plt.fill_between(ramp_VAF.time - 1850, ((ramp_VAF["mean"])-ramp_VAF["std"])*0.917/1e9, ((ramp_VAF["mean"])+ramp_VAF["std"])*0.917/1e9, color = line_cols[1], alpha = 0.2)
+
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["cx209"])*0.917/1e9, label = "_Overshoots", color = line_cols[1], alpha = 0.1)
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["cw988"])*0.917/1e9, label = "_Overshoots", color = line_cols[1], alpha = 0.1)
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["cw989"])*0.917/1e9, label = "_Overshoots", color = line_cols[1], alpha = 0.1)
+plt.plot(ramp_VAF.time - 1850, (ramp_VAF["cw990"])*0.917/1e9, label = "_Overshoots", color = line_cols[1], alpha = 0.1)
+
+plt.plot(hist_VAF.time - 1850, (hist_VAF["mean"])*0.917/1e9, label = "Historical", color = line_cols[5])
+plt.fill_between(hist_VAF.time - 1850, ((hist_VAF["mean"])-hist_VAF["std"])*0.917/1e9, ((hist_VAF["mean"])+hist_VAF["std"])*0.917/1e9, color = line_cols[5], alpha = 0.2)
+
+plt.plot(hist_VAF.time - 1850, (hist_VAF["cy623"])*0.917/1e9, label = "_Historical", color = line_cols[5], alpha = 0.1)
+plt.plot(hist_VAF.time - 1850, (hist_VAF["da914"])*0.917/1e9, label = "_Historical", color = line_cols[5], alpha = 0.1)
+plt.plot(hist_VAF.time - 1850, (hist_VAF["da916"])*0.917/1e9, label = "_Historical", color = line_cols[5], alpha = 0.1)
+plt.plot(hist_VAF.time - 1850, (hist_VAF["da917"])*0.917/1e9, label = "_Historical", color = line_cols[5], alpha = 0.1)
+
+plot_data = icesheet_d["cs568"]
+plot_data = plot_data.iloc[10:50]
+plot_data.time = plot_data.time - 11
+
+plt.plot(plot_data.time - 1850, (plot_data.floatingBMB)*0.917/1e9, label = "Ctrl (cs568)", color = line_cols[0], linestyle = line_stys[0])
+
+# plt.plot(rignot.time, rignot["Discharge"], label = 'Rignot et al. (2019)', color = line_cols[0])
+
+plt.ylabel("Ice shelf basal melt (Gt yr$^{-1}$)")
+plt.xlabel('Years')
+plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
+
+print("Finished and saving AIS Grounding Line Discharge vs Time plot...")
+
+plt.savefig('./Projects/figures/HistAISShelfBMBvsTime.png', dpi = 600,  bbox_inches='tight')  
+#plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
+
 #################################################################################### """
