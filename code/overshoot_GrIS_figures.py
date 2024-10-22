@@ -68,7 +68,7 @@ else:
     for i in id:
 
         print(f"Working on {i}: {runs[i]}")
-        atmos_dir = f"/home/users/tm17544/gws_terrafirma/overshoots/raw_data/{i}/atmos/"
+        atmos_dir = f"../raw_data/{i}/atmos/"
         atmos_files = sorted(os.listdir(atmos_dir))
         atmos_files_matched = fnmatch.filter(atmos_files, f"{i}*.pp")
 
@@ -127,7 +127,7 @@ else:
     for i in id:
 
         print(f"Working on {i}: {runs[i]}")
-        GrIS_stats = pd.read_csv(f"/gws/nopw/j04/terrafirma/tm17544/overshoots/processed_data/{i}_GrIS_stats.csv")
+        GrIS_stats = pd.read_csv(f"../processed_data/{i}_GrIS_stats.csv")
 
         if i == "cs568":    
             GrIS_stats.time = GrIS_stats.apply(lambda x: int(x.file[16:20]), axis=1)-100
