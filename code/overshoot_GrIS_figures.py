@@ -14,9 +14,9 @@ import matplotlib.patches as pat
 
 """from matplotlib.animation import FuncAnimation
 import matplotlib.animation as animation 
-from IPython import display """
+from IPython import display
 
-from amrfile import io as amrio
+from amrfile import io as amrio"""
 
 ####################################################################################
 
