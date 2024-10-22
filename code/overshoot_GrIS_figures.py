@@ -36,7 +36,7 @@ id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "d
 #            "stab 6C", "ramp-down -8 2C 50yr", "ramp-down -8 2C 200yr", "ramp-down -8 1.5C 50yr", "ramp-down -8 4C 50yr", "ramp-down -8 3C 50yr", "ramp-down -8 5C 50yr", "ramp-down -4 2C 50yr",
 #            "ramp-down -4 1.5C 50yr", "ramp-down -4 1.5C 200yr", "ramp-down -4 3C 200yr", "ramp-down -4 2C 200yr", "ramp-down -4 4C 200yr", "ramp-down -4 3C 30yr", "ramp-down -4 4C 50yr", "ramp-down -4 5C 50yr"]
 
-run_type = ["Ctrl","Ramp-Up", "1.5C", "2C", "3C", "4C", "5C", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr"]
+run_type = ["PI-Control","Ramp-Up", "1.5C Stab", "2C Stab", "3C Stab", "4C Stab", "5C Stab", "Ramp-Down 1.5C", "Ramp-Down 2C", "Ramp-Down 3C", "Ramp-Down 4C", "Ramp-Down 5C"]
 
 runs = dict(zip(id, run_type)) 
 
@@ -172,7 +172,7 @@ if count > 0:
     ice_save_file.close()
 
 ####################################################################################
-
+"""
 # function for smoothing time series for plotting
 
 def smooth(y, box_pts):
@@ -589,3 +589,4 @@ if plot_id == "cx209":
 #print("Finished and saving dh/dt animation")
 
 ####################################################################################
+"""

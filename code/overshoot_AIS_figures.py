@@ -200,10 +200,17 @@ def smooth(y, box_pts):
     y_smooth = np.convolve(y, box, mode='valid')
     return y_smooth
 
+def vol2sle(x):
+    
+    return (((x-26.27)*0.918e6)/(361.8e3)*-1)
+
+def sle2vol(x):
+    return ((((x*361.8e3)/0.918e6)+26.27)*-1)
+
 ####################################################################################
 
 id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130"] #, "cw988", "cw989"]
-run_type = ["Ctrl","Ramp-Up 1", "1.5C", "2C", "3C", "4C", "5C", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr"] #, "Ramp-Up 2", "Ramp-Up 3"]
+run_type = ["PI-Control","Ramp-Up", "1.5C Stab", "2C Stab", "3C Stab", "4C Stab", "5C Stab", "Ramp-Down 1.5C", "Ramp-Down 2C", "Ramp-Down 3C", "Ramp-Down 4C", "Ramp-Down 5C"] #, "Ramp-Up 2", "Ramp-Up 3"]
 runs = dict(zip(id, run_type)) 
 
 """
@@ -251,6 +258,44 @@ plt.savefig('../figures/GlobalTvsTime.png', dpi = 600, bbox_inches='tight')
 #plt.savefig('GlobalTvsTime.png', dpi = 600, bbox_inches='tight')
 
 """
+
+####################################################################################
+
+# Plot Volume vs Time graph
+
+print("Starting AIS Volume vs Time plot...")
+
+count = 0
+
+plt.figure(figsize=(4, 3))
+
+for i in id:
+
+    plot_data = icesheet_d[i]
+
+    plt.plot(plot_data.time - 1850, (plot_data.volumeAll)/1e15, label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+
+    count = count + 1
+
+#plt.grid(linestyle=':')
+
+ax = plt.gca()
+ax.set_xlim([0, 650])
+
+plt.ylabel("AIS volume (10$^{6}$ km$^{3}$)")
+plt.xlabel('Years')
+#plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
+plt.legend(loc = 'best', prop={'size': 5})
+
+ax = plt.gca()
+secax = ax.secondary_yaxis('right', functions=(vol2sle, sle2vol))
+secax.set_ylabel('Equivalent SLR (m)')
+
+print("Finished and saving AIS Volume vs Time plot...")
+
+plt.savefig('AISVolvsTime.png', dpi = 600,  bbox_inches='tight')  
+#plt.savefig('AISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
+
 
 ####################################################################################
 
