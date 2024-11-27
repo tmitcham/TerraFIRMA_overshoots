@@ -288,8 +288,14 @@ plt.xlabel('Years')
 plt.legend(loc = 'best', prop={'size': 5})
 
 ax = plt.gca()
-secax = ax.secondary_yaxis('right', functions=(vol2sle, sle2vol))
-secax.set_ylabel('Equivalent SLR (m)')
+#secax = ax.secondary_yaxis('right', functions=(vol2sle, sle2vol))
+#secax.set_ylabel('Equivalent SLR (m)')
+
+ax.text(0.98, 0.94, 'b)',
+        horizontalalignment='right',
+        verticalalignment='center',
+        transform=ax.transAxes,
+        size=8)
 
 print("Finished and saving AIS Volume vs Time plot...")
 

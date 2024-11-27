@@ -9,6 +9,8 @@
 #done
 
 directory="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/$1/icesheet/"
-echo "Running new_diagnostics_AIS.py on dir: $directory" 
+mask="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_bedmachine_imbie2_basins_4km.hdf5"
+echo "Running new_diagnostics_AIS.py on dir: $directory"
+echo "Using mask file: $mask" 
 echo "Saving results in: $2"
-python new_diagnostics_AIS.py $directory $2
+python new_diagnostics_AIS.py $directory $2 $mask

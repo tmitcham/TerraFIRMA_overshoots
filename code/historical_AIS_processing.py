@@ -46,6 +46,7 @@ for i in id:
     AIS_floating_SMB = AIS_stats[(AIS_stats['region'] == 'floating') & (AIS_stats['quantity'] == 'SMB')]
     AIS_floating_BMB = AIS_stats[(AIS_stats['region'] == 'floating') & (AIS_stats['quantity'] == 'BMB')]
     AIS_GL_discharge = AIS_stats[(AIS_stats['region'] == 'grounded') & (AIS_stats['quantity'] == 'discharge')]
+    AIS_GL_flux = AIS_stats[(AIS_stats['region'] == 'grounded') & (AIS_stats['quantity'] == 'flux')]
     AIS_grounded_vol = AIS_stats[(AIS_stats['region'] == 'grounded') & (AIS_stats['quantity'] == 'volume')]
     AIS_floating_vol = AIS_stats[(AIS_stats['region'] == 'floating') & (AIS_stats['quantity'] == 'volume')]
     AIS_VAF = AIS_stats[(AIS_stats['region'] == 'entire') & (AIS_stats['quantity'] == 'volumeAbove')]

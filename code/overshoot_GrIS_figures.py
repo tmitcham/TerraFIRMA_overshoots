@@ -103,7 +103,13 @@ if count > 0:
     atmos_save_file = open('../processed_data/atmos_data.pkl', 'wb') 
     pickle.dump(atmos_d, atmos_save_file) 
     atmos_save_file.close() 
+    
+# Convert mass to sea level equivalent for second axes
+def vol2sle(x):
+    return (((x-2.956)*0.918e6)/(361.8e3)*-1)
 
+def sle2vol(x):
+    return ((((x*361.8e3)/0.918e6)+2.956)*-1)
 ####################################################################################
 
 # Read ice sheet data
@@ -170,6 +176,50 @@ if count > 0:
     ice_save_file = open('../processed_data/icesheet_data_GrIS.pkl', 'wb') 
     pickle.dump(icesheet_d, ice_save_file) 
     ice_save_file.close()
+    
+
+####################################################################################
+
+# Plot Volume vs Time graph
+
+print("Starting GrIS Volume vs Time plot...")
+
+count = 0
+
+plt.figure(figsize=(4, 3))
+
+for i in id:
+
+    plot_data = icesheet_d[i]
+
+    plt.plot(plot_data.time - 1850, (plot_data.iceVolumeAll)/1e15, label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+
+    count = count + 1
+
+#plt.grid(linestyle=':')
+
+ax = plt.gca()
+ax.set_xlim([0, 650])
+
+plt.ylabel("GrIS volume (10$^{6}$ km$^{3}$)")
+plt.xlabel('Years')
+#plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
+plt.legend(loc = 'best', prop={'size': 5})
+
+ax = plt.gca()
+#secax = ax.secondary_yaxis('right', functions=(vol2sle, sle2vol))
+#secax.set_ylabel('Equivalent SLR (m)')
+
+ax.text(0.98, 0.94, 'a)',
+        horizontalalignment='right',
+        verticalalignment='center',
+        transform=ax.transAxes,
+        size=8)
+
+print("Finished and saving GrIS VAF vs Time plot...")
+
+plt.savefig('GrISVolvsTime.png', dpi = 600,  bbox_inches='tight')  
+#plt.savefig('GrISMassvsTime.png', dpi = 600,  bbox_inches='tight')   
 
 ####################################################################################
 """

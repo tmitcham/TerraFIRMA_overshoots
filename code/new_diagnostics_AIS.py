@@ -35,14 +35,15 @@ maskFile = ''
 if len(sys.argv) == 4 and sys.argv[3] != '0':
 
     masked = True
-    maskFile = sys.argv[3] + ' 1'
-    mask = maskFile.split('.2d.hdf5')[0]
+    maskFile = sys.argv[3]
 
 if masked:
 
-    print("Running new_diagnostics_AIS.py for directory: " + directory + " with mask: " + mask)
+    print("Running new_diagnostics_AIS.py for directory: " + directory + " with mask: " + maskFile)
 
-print("Running new_diagnostics_AIS.py for directory: " + directory)
+else:
+
+    print("Running new_diagnostics_AIS.py for directory: " + directory)
 
 count = 0
 
@@ -51,12 +52,24 @@ for infile in sorted(os.listdir(directory)):
     if infile.endswith("AIS.hdf5"):
 
         if count == 0:
+
+            if masked:
+
+                diagsCommand = filetoolsPath + filetoolDiags + ' plot_file=' + directory + infile + ' out_file=/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/processed_data/' + csv_file + ' ice_density=918.0 water_density=1028.0 h_min=1.0e-3 mask_file=' + maskFile + ' mask_no_start=0 mask_no_end=16'
         
-            diagsCommand = filetoolsPath + filetoolDiags + ' plot_file=' + directory + infile + ' out_file=/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/processed_data/' + csv_file + ' ice_density=918.0 water_density=1028.0 h_min=1.0e-3'
+            else:
+
+                diagsCommand = filetoolsPath + filetoolDiags + ' plot_file=' + directory + infile + ' out_file=/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/processed_data/' + csv_file + ' ice_density=918.0 water_density=1028.0 h_min=1.0e-3'
         
         else:
 
-            diagsCommand = filetoolsPath + filetoolDiags + ' plot_file=' + directory + infile + ' out_file=/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/processed_data/' + csv_file + ' -append ice_density=918.0 water_density=1028.0 h_min=1.0e-3'
+            if masked:
+                    
+                diagsCommand = filetoolsPath + filetoolDiags + ' plot_file=' + directory + infile + ' out_file=/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/processed_data/' + csv_file + ' -append ice_density=918.0 water_density=1028.0 h_min=1.0e-3 mask_file=' + maskFile + ' mask_no_start=0 mask_no_end=16'
+
+            else:
+                
+                diagsCommand = filetoolsPath + filetoolDiags + ' plot_file=' + directory + infile + ' out_file=/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/processed_data/' + csv_file + ' -append ice_density=918.0 water_density=1028.0 h_min=1.0e-3'
         
         count = count + 1
         
