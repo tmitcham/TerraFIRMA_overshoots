@@ -76,6 +76,8 @@ for i in id:
 
         AIS_data[j] = pd.concat([AIS_grounded_SMB[j], AIS_floating_SMB[j], AIS_floating_BMB[j], AIS_GL_discharge[j], AIS_grounded_vol[j], AIS_floating_vol[j], AIS_VAF[j]], axis=1)
 
+    count = count + 1
+    
     icesheet_d[i] = AIS_data
 
 ####################################################################################
