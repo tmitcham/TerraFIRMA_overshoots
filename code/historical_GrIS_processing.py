@@ -14,13 +14,64 @@ import sys
 ####################################################################################
 
 
-id = ["cs568", "cx209", "cw988", "cw989", "cw990", "cy623", "da914", "da916", "da917"]
+#id = ["cs568", "cx209", "cw988", "cw989", "cw990", "cy623", "da914", "da916", "da917"]
+id = ["cy623", "da914", "da916", "da917"]
 
-run_type = ["Ctrl", "Ramp-Up 1", "Ramp-Up 2", "Ramp-Up 3", "Ramp-Up 4", "Hist 1", "Hist 2", "Hist 3", "Hist 4"]
+#run_type = ["Ctrl", "Ramp-Up 1", "Ramp-Up 2", "Ramp-Up 3", "Ramp-Up 4", "Hist 1", "Hist 2", "Hist 3", "Hist 4"]
+run_type = ["Hist 1", "Hist 2", "Hist 3", "Hist 4"]
 
 runs = dict(zip(id, run_type)) 
 
 count = 0
+
+####################################################################################
+
+# Read atmosphere data
+
+atmos_d = {}
+
+print("Getting atmosphere data...")
+
+for i in id:
+
+    print(f"Working on {i}: {runs[i]}")
+
+    atmos_dir = f"/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/{i}/atmos/"
+    atmos_files = sorted(os.listdir(atmos_dir))
+    atmos_files_matched = fnmatch.filter(atmos_files, f"{i}*.pp")
+
+    count = 0
+    
+    atmos_df = np.ndarray(shape = (len(atmos_files_matched),2))
+
+    for j in atmos_files_matched:
+        
+        filename = f"{atmos_dir}/{j}"
+        f = cf.read(filename)
+        temp = f[0]
+        temp_global_avg = temp.collapse('area: mean', weights=True)
+
+        if i == "cs568":
+            atmos_df[count, 0] = int(j[9:13])-100
+        else:
+            atmos_df[count, 0] = int(j[9:13])
+            
+        atmos_df[count, 1] = temp_global_avg.data
+
+        count = count + 1
+        
+    atmos_d[i] = atmos_df
+
+####################################################################################
+
+# Save atmosphere data
+
+if count > 0:
+    print("Saving atmosphere data to file...")
+
+    atmos_save_file = open('../processed_data/historical_atmos_data.pkl', 'wb') 
+    pickle.dump(atmos_d, atmos_save_file) 
+    atmos_save_file.close() 
 
 ####################################################################################
 
