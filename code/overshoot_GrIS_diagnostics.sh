@@ -17,4 +17,4 @@ directory="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/$1/
 echo "Running new_diagnostics_GrIS.py on dir: $directory"
 #echo "Using mask file: $mask" 
 echo "Saving results in: $2"
-python new_diagnostics_AIS.py $directory $2
+python new_diagnostics_GrIS.py $directory $2
