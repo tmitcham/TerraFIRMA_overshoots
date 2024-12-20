@@ -8,6 +8,13 @@
 #python diagnostics_AIS.py $directory
 #done
 
+#directory="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/$1/icesheet/"
+#echo "Running diagnostics_GrIS.py on dir: $directory" 
+#python diagnostics_GrIS.py $directory
+
 directory="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/$1/icesheet/"
-echo "Running diagnostics_GrIS.py on dir: $directory" 
-python diagnostics_GrIS.py $directory
+#mask="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_bedmachine_imbie2_basins_4km.hdf5"
+echo "Running new_diagnostics_GrIS.py on dir: $directory"
+#echo "Using mask file: $mask" 
+echo "Saving results in: $2"
+python new_diagnostics_AIS.py $directory $2

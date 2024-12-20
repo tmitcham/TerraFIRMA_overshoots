@@ -588,7 +588,7 @@ for i in id:
 
     FRIS_data = plot_data[15].iloc[:,7]
 
-    plt.plot(plot_data[0].iloc[:,2] - 1850, ((FRIS_data)*(0.918/1e9), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.05)
+    plt.plot(plot_data[0].iloc[:,2] - 1850, (FRIS_data)*(0.918/1e9), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.05)
     
     ma_y = smooth((FRIS_data)/918e6, box_size)
     
