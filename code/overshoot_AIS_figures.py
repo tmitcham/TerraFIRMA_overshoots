@@ -210,15 +210,15 @@ def sle2vol(x):
 ####################################################################################
 
 id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130"] #, "cw988", "cw989"]
-run_type = ["PI-Control","Ramp-Up", "1.5C Stab", "2C Stab", "3C Stab", "4C Stab", "5C Stab", "Ramp-Down 1.5C", "Ramp-Down 2C", "Ramp-Down 3C", "Ramp-Down 4C", "Ramp-Down 5C"] #, "Ramp-Up 2", "Ramp-Up 3"]
+run_type = ["Ctrl","Ramp-Up", "1.5C Stab", "2C Stab", "3C Stab", "4C Stab", "5C Stab", "_Ramp-Down 1.5C", "_Ramp-Down 2C", "_Ramp-Down 3C", "_Ramp-Down 4C", "_Ramp-Down 5C"] #, "Ramp-Up 2", "Ramp-Up 3"]
 runs = dict(zip(id, run_type)) 
 
-"""
+
 # Plot global T vs Time graph
 
 print("Starting Global Temp vs Time plot...")
 
-initialT = atmos_d["cx209"][0,1]
+initialT = icesheet_d["cx209"].iloc[0,34]
 
 count = 0
 
@@ -228,14 +228,15 @@ plt.figure(figsize=(4, 3))
 
 for i in id:
 
-    plot_data = atmos_d[i]
+    plot_data = icesheet_d[i]
     
     #plt.plot(plot_data[:,0]-1851, plot_data[:,1]-initialT, label = runs[i], lw=0.8, linestyle=line_stys[count], color=line_cols[count])
-    plt.plot(plot_data[:,0]-1850, plot_data[:,1]-initialT, label = "_none", lw=0.8, linestyle="solid", color=line_cols[count], alpha=0.25)
+    plt.plot(plot_data["time"]-1850, plot_data["global_delta_T"]-initialT, label = "_none", lw=0.8, linestyle="solid", color=line_cols[count], alpha=0.25)
     
-    ma_y = smooth(plot_data[:,1], box_size)
+    ma_y = smooth(plot_data["global_delta_T"], box_size)
     
-    ma_x = plot_data[int((box_size-1)/2):,0]
+    ma_x = plot_data["time"]
+    ma_x = ma_x[int((box_size-1)/2):]
     ma_x = ma_x[:-int((box_size-1)/2)]
     
     plt.plot(ma_x-1850, ma_y-initialT, label = runs[i], lw=0.8, linestyle=line_stys[count], color=line_cols[count])
@@ -254,10 +255,8 @@ plt.legend(loc = 'center left', bbox_to_anchor=(1, 0.5))
 
 print("Finished and saving Global Temp vs Time plot...")
 
-plt.savefig('../figures/GlobalTvsTime.png', dpi = 600, bbox_inches='tight')
+plt.savefig('./GlobalTvsTime.png', dpi = 600, bbox_inches='tight')
 #plt.savefig('GlobalTvsTime.png', dpi = 600, bbox_inches='tight')
-
-"""
 
 ####################################################################################
 
