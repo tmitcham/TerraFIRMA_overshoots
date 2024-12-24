@@ -6,7 +6,9 @@
 
 # RUN_IDS=( cw988 cw989 )
 
-RUN_IDS=( cw990 cy623 da914 da916 da917 )
+# RUN_IDS=( cw990 cy623 da914 da916 da917 )
+
+RUN_IDS=( cx209 cs568 )
 
 for ID in "${RUN_IDS[@]}"; do
   if [ ! -d ../raw_data/${ID} ]; then
