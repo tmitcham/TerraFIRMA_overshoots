@@ -15,6 +15,6 @@ for ID in "${RUN_IDS[@]}"; do
     mkdir -p ../raw_data/${ID}/atmos
     mkdir -p ../raw_data/${ID}/icesheet
   fi
-  moo get -I :crum/u-${ID}/chy.file/*AIS.hdf5 ../raw_data/${ID}/icesheet/
-  moo select -I surfaceT.query :crum/u-${ID}/apz.pp ../raw_data/${ID}/atmos/
+  moo get -ig :crum/u-${ID}/chy.file/*AIS.hdf5 ../raw_data/${ID}/icesheet/
+  moo select -ig surfaceT.query :crum/u-${ID}/apz.pp ../raw_data/${ID}/atmos/
 done
