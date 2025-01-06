@@ -15,7 +15,7 @@ import glob
 
 if len(sys.argv) == 1:
 
-    print('No directory specified. Select one by running the command "python diagnostics_AIS.py [directory]"')
+    print('No directory specified. Select one by running the command "python new_diagnostics_AIS.py [directory]"')
     sys.exit()
 
 directory =  sys.argv[1]
