@@ -11,7 +11,7 @@ import sys
 
 ####################################################################################
 
-id=("Ctrl","Ramp-Up 1""cs568", "cx209", "cw988", "cw989", "cw990", "cy837", "cy838", "cz374", "cz375", "cz376", "cz377", "cz378", 
+id=("cs568", "cx209", "cw988", "cw989", "cw990", "cy837", "cy838", "cz374", "cz375", "cz376", "cz377", "cz378", 
     "cz834", "cz855", "cz859", "db587", "db723", "db731", "da087", "da266", "db597", "db733", "dc324", 
     "cz944", "di335", "da800", "da697", "da892", "db223", "df453", "de620", "dc251", "db956", 
     "dc051", "dc052", "dc248", "dc249", "dc565", "dd210", "dc032", "df028", "de621", "dc123", "dc130", 
@@ -29,7 +29,7 @@ print("Getting atmosphere data...")
 
 for i in id:
 
-    print(f"Working on {i}: {runs[i]}")
+    print(f"Working on {i}...")
 
     atmos_dir = f"/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/{i}/atmos/"
     atmos_files = sorted(os.listdir(atmos_dir))
