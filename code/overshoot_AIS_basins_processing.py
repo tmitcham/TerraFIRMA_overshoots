@@ -13,7 +13,7 @@ import sys
 
 id=("cs568", "cx209", "cw988", "cw989", "cw990", "cy837", "cy838", "cz374", "cz375", "cz376", "cz377", "cz378", 
     "cz834", "cz855", "cz859", "db587", "db723", "db731", "da087", "da266", "db597", "db733", "dc324", 
-    "cz944", "di335", "da800", "da697", "da892", "db223", "df453", "de620", "dc251", "db956", 
+    "cz944", "di335", "da800", "da697", "da892", "db223", "df453", "de620", "dc251", 
     "dc051", "dc052", "dc248", "dc249", "dc565", "dd210", "dc032", "df028", "de621", "dc123", "dc130", 
     "df025", "df027", "df021", "df023", "dh541", "dh859", "de943", "de962", "de963", "dk554", "dk555", "dk556")
 
@@ -95,14 +95,14 @@ for i in id:
 
     count = 0
 
-    for j in atmos_d["cx209"][:,0]:
+    for j in atmos_d[i][:,0]:
 
         year = int(j+1) # because BISICLES stores data for 01/01 of following year...
         print(f"Working on year: {year}")
         pos = np.where(AIS_stats.time==year)
 
         if np.size(pos) > 0:
-            AIS_stats["global_T"].mask(AIS_stats["time"]==year, atmos_d["cx209"][count,1], inplace=True)
+            AIS_stats["global_T"] = AIS_stats["global_T"].mask(AIS_stats["time"]==year, atmos_d[i][count,1])
         else:
             print(f"Year {year} not found in AIS data for {i}")
 
