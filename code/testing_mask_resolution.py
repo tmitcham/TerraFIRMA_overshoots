@@ -49,7 +49,7 @@ for res in resolutions:
 
             plot_data = icesheet_d[i]
             
-            initialVAF = icesheet_d["cx209"][basin].iloc[0,61]
+            initialVAF = icesheet_d["cx209"][basin].iloc[0,55]
                 
             plt.plot(plot_data[basin].iloc[:,2] - 1850, (plot_data[basin].iloc[:,55] - initialVAF)*(918*1000/(1028*3.625e14)), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
             #plt.plot(plot_data[basin].iloc[:,2] - 1850, (plot_data[basin].iloc[:,61] - initialVAF)*(918*1000/(1028*3.625e14)))    
