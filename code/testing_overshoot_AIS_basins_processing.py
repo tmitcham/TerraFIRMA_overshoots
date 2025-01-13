@@ -29,7 +29,7 @@ for i in id:
 
     AIS_stats = pd.read_csv(f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/testing_new_{i}_AIS_basins_diagnostics.csv")
     
-    AIS_stats.time = AIS_stats.apply(lambda x: int(x.filename[105:109]), axis=1)
+    AIS_stats.time = AIS_stats.apply(lambda x: int(x.filename[97:101]), axis=1)
 
     AIS_grounded_SMB = []
     AIS_floating_SMB = []
