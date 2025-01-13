@@ -1,6 +1,6 @@
 #!/bin/bash
 
-idlist=("cx209" "cy837" "cy838 "cz375" "cz376" "cz377") 
+idlist=("cx209" "cy837" "cy838" "cz375" "cz376" "cz377") 
 
 for id in "${idlist[@]}"
 do
