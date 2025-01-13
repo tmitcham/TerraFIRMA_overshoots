@@ -15,6 +15,8 @@ echo "Stdout and stderr saved in: $outfile \n"
 python new_diagnostics_AIS.py $directory $csvfile $mask > $outfile 2>&1 &
 done
 
+wait
+
 idlist=("cz374" "cz375" "cz376" "cz377" "cz378" "cz834" "cz855" "cz859" "db587" "db723") 
 
 for id in "${idlist[@]}"
