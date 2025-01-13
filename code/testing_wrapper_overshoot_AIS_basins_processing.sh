@@ -14,4 +14,3 @@ echo "Saving results in: $csvfile \n"
 echo "Stdout and stderr saved in: $outfile \n"
 python new_diagnostics_AIS.py $directory $csvfile $mask > $outfile 2>&1 &
 done
-
