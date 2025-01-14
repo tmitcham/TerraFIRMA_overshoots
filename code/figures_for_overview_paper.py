@@ -59,12 +59,11 @@ def mass2sle(x):
 def sle2mass(x):
     return x*(-1)*361.8
 
+plt.rcParams.update({'font.size': 7.5})
 
 ####################################################################################
 
 # Plot global T vs Time graph
-
-plt.rcParams.update({'font.size': 7.5})
 
 print("Starting Global Temp vs Time plot...")
 
@@ -379,3 +378,59 @@ secax.set_ylabel('Sea level contribution (mm)')
 print("Finished and saving AIS VAF vs Time plot...")
 
 plt.savefig('AISFloatingVolvsTime.png', dpi = 600,  bbox_inches='tight')
+
+####################################################################################
+
+# Plot SMB (grounded and floating) vs Time graph
+
+print("Starting AIS SMB vs Time plot...")
+
+count = 0
+
+box_size = 21
+
+plt.figure(figsize=(4, 3))
+
+fig, ax = plt.subplots(2, sharex='col', sharey='row')
+
+for i in id:
+
+    plot_data = icesheet_d[i][0]
+
+    AIS_data_gr = plot_data.iloc[:,7]
+    AIS_data_fl = plot_data.iloc[:,16]
+
+    ax[0].plot(plot_data.iloc[:,2] - 1850, ((AIS_data_gr)*(0.918/1e9)), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.1)
+    ax[1].plot(plot_data.iloc[:,2] - 1850, ((AIS_data_fl)*(0.918/1e9)), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.1)
+    
+    ma_y_gr = smooth((AIS_data_gr)*(0.918/1e9), box_size)
+    ma_y_fl = smooth((AIS_data_fl)*(0.918/1e9), box_size)
+    
+    ma_x = (plot_data.iloc[:,2] - 1850).values
+    ma_x = ma_x[int((box_size-1)/2):]
+    ma_x = ma_x[:-int((box_size-1)/2)]
+    
+    ax[0].plot(ma_x, ma_y_gr, label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+    ax[1].plot(ma_x, ma_y_fl, label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+    
+    count = count + 1
+
+ax[0].grid(linestyle='-', lw=0.2)
+ax[1].grid(linestyle=':', lw=0.2)
+
+ax[0].set_xlim([0, 750])
+ax[1].set_xlim([0, 750])
+
+ax[0].set_ylabel("Grounded SMB (Gt yr$^{-1}$)")
+ax[1].set_ylabel("Floating SMB (Gt yr$^{-1}$)")
+plt.xlabel('Years')
+plt.legend(loc = 'best', prop={'size': 5})
+
+print("Finished and saving AIS SMB vs Time plot...")
+
+plt.savefig('TestAISSMBvsTime.png', dpi = 600,  bbox_inches='tight')  
+
+
+####################################################################################
+
+# Plot SMB (grounded and floating) Anomaly vs Time graph
