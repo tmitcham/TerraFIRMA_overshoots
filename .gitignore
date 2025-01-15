@@ -17,3 +17,6 @@
 #Ignore pp and Licence files
 **/*.pp
 **/MetOffice*
+
+# Ignore mac files
+**/.DS_Store
