@@ -38,7 +38,7 @@ process_atmos_data = args.process_atmos_data
 process_icesheet_data = args.process_icesheet_data
 basin_mask = args.basin_mask
 
-# Example printout of the arguments
+# Printout of the arguments
 print("Running process_diagnostics_output.py with the following arguments:")
 print(f"Ice sheet: {icesheet}")
 print(f"Suite set: {suite_set}")
@@ -50,7 +50,6 @@ print(f"Basin mask: {basin_mask}")
 
 # Define id based on suite set
 if suite_set == "overshoots":
-
     id=["cs568", "cx209", "cw988", "cw989", "cw990", "cy837", "cy838", "cz374", "cz375", "cz376", "cz377", "cz378", 
         "cz834", "cz855", "cz859", "db587", "db723", "db731", "da087", "da266", "db597", "db733", "dc324", 
         "cz944", "di335", "da800", "da697", "da892", "db223", "df453", "de620", "dc251", "dc956",
@@ -58,7 +57,6 @@ if suite_set == "overshoots":
         "df025", "df027", "df021", "df023", "dh541", "dh859", "de943", "de962", "de963", "dk554", "dk555", "dk556"]
 
 elif suite_set == "historical_rampups":
-
     id = ["cs568", "cx209", "cw988", "cw989", "cw990", "cy623", "da914", "da916", "da917"]
 
 # Define ice sheet data filenames
@@ -81,6 +79,8 @@ if process_atmos_data:
         atmos_dir = f"/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/{i}/atmos/"
         atmos_files = sorted(os.listdir(atmos_dir))
         atmos_files_matched = fnmatch.filter(atmos_files, f"{i}*.pp")
+
+        count = 0
         
         atmos_df = np.ndarray(shape = (len(atmos_files_matched),2))
 
@@ -156,43 +156,54 @@ if process_icesheet_data:
         # Interpolate to fill NaN valures in global_delta_T
         IS_stats["global_T"].interpolate(method='linear', inplace=True)
 
-        AIS_grounded_SMB = []
-        AIS_floating_SMB = []
-        AIS_floating_BMB = []
-        AIS_GL_discharge = []
-        AIS_grounded_vol = []
-        AIS_floating_vol = []
-        AIS_VAF = []
+        grounded_SMB = []
+        floating_SMB = []
+        floating_BMB = []
+        GL_discharge = []
+        grounded_vol = []
+        floating_vol = []
+        VAF = []
         
         for j in range(17):
 
             if not basin_mask and j > 0:
                 break
+            
+            file_time_T = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'SMB')][['filename','time','global_T']]
+            grounded_SMB = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'SMB')][['value']]
+            floating_SMB = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'floating') & (IS_stats['quantity'] == 'SMB')][['value']]
+            floating_BMB = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'floating') & (IS_stats['quantity'] == 'BMB')][['value']]
+            GL_discharge = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'discharge')][['value']]
+            grounded_vol = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'volume')][['value']]
+            floating_vol = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'floating') & (IS_stats['quantity'] == 'volume')][['value']]
+            VAF = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'entire') & (IS_stats['quantity'] == 'volumeAbove')][['value']]
 
-            AIS_grounded_SMB.append(IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'SMB')])
-            AIS_floating_SMB.append(IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'floating') & (IS_stats['quantity'] == 'SMB')])
-            AIS_floating_BMB.append(IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'floating') & (IS_stats['quantity'] == 'BMB')])
-            AIS_GL_discharge.append(IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'discharge')])
-            AIS_grounded_vol.append(IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'volume')])
-            AIS_floating_vol.append(IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'floating') & (IS_stats['quantity'] == 'volume')])
-            AIS_VAF.append(IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'entire') & (IS_stats['quantity'] == 'volumeAbove')])
+            # Rename columns to include metadata
+            grounded_SMB.columns = ['grounded_SMB']
+            floating_SMB.columns = ['floating_SMB']
+            floating_BMB.columns = ['floating_BMB']
+            GL_discharge.columns = ['GL_discharge']
+            grounded_vol.columns = ['grounded_vol']
+            floating_vol.columns = ['floating_vol']
+            VAF.columns = ['VAF']
 
-            AIS_grounded_SMB[j].reset_index(drop=True, inplace=True)
-            AIS_floating_SMB[j].reset_index(drop=True, inplace=True)
-            AIS_floating_BMB[j].reset_index(drop=True, inplace=True)
-            AIS_GL_discharge[j].reset_index(drop=True, inplace=True)
-            AIS_grounded_vol[j].reset_index(drop=True, inplace=True)
-            AIS_floating_vol[j].reset_index(drop=True, inplace=True)
-            AIS_VAF[j].reset_index(drop=True, inplace=True)
-
-            IS_data[j] = pd.concat([AIS_grounded_SMB[j], AIS_floating_SMB[j], AIS_floating_BMB[j], AIS_GL_discharge[j], AIS_grounded_vol[j], AIS_floating_vol[j], AIS_VAF[j]], axis=1)
+            IS_data[j] = pd.concat([
+                file_time_T.reset_index(drop=True),
+                grounded_SMB.reset_index(drop=True),
+                floating_SMB.reset_index(drop=True),
+                floating_BMB.reset_index(drop=True),
+                GL_discharge.reset_index(drop=True),
+                grounded_vol.reset_index(drop=True),
+                floating_vol.reset_index(drop=True),
+                VAF.reset_index(drop=True)], axis=1)
+            
+            # Correct for a missing file ice sheet file in the dc051 suite (just linearly interpolate between neighbouring values)
+            if id == "dc051":
+                IS_data[j] = IS_data[j].reindex(IS_data[j].index.tolist() + [186.5])
+                IS_data[j] = IS_data[j].sort_index().reset_index(drop=True)
+                IS_data[j].iloc[:,1:] = IS_data[j].iloc[:,1:].interpolate(method='linear')
         
         icesheet_d[i] = IS_data
-
-    # Correct for a missing file in the dc051 suite (TODO: find a better way to do this)
-    icesheet_d["dc051"][0] = icesheet_d["dc051"][0].reindex(icesheet_d["dc051"][0].index.tolist() + [186.5])
-    icesheet_d["dc051"][0] = icesheet_d["dc051"][0].sort_index().reset_index(drop=True)
-    icesheet_d["dc051"][0].iloc[:,[2,8,61]] = icesheet_d["dc051"][0].iloc[:,[2,8,61]].interpolate(method='linear')
 
     # Save ice sheet data
     print("Saving ice sheet data to file...")
