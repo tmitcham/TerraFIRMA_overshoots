@@ -29,7 +29,6 @@ H_MIN = 1.0e-3
 ####################################################################################
 
 def parse_arguments():
-    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(description="Run BISICLES diagnostics on plot.*.hdf5 files.")
     parser.add_argument("--icesheet", choices=["AIS", "GrIS"], default="AIS", help='Select the icesheet: "AIS" for Antarctic Ice Sheet, "GrIS" for Greenland Ice Sheet.')
     parser.add_argument("--directory", help="Directory containing plot.*.hdf5 files")
@@ -40,13 +39,11 @@ def parse_arguments():
     return parser.parse_args()
 
 def validate_directory(directory):
-    """Validate that the provided directory exists."""
     if not os.path.isdir(directory):
         raise FileNotFoundError(f"Directory does not exist: {directory}")
     return os.path.abspath(directory)
 
 def construct_command(plot_file, csv_file, append=False, mask_file=None, mask_no_start=0, mask_no_end=16):
-    """Construct the diagnostics command."""
     cmd = f"{os.path.join(FILETOOLS_PATH, DIAGNOSTICS_EXEC)} plot_file={plot_file} out_file={os.path.join(OUTPUT_PATH, csv_file)}"
     if append:
         cmd += " -append"
@@ -75,6 +72,7 @@ if masked:
 # Process files
 count = 0
 for infile in sorted(os.listdir(directory)):
+<<<<<<< HEAD
     
     if icesheet == "AIS" and infile.endswith("AIS.hdf5"):
         plot_file = os.path.join(directory, infile)
@@ -92,6 +90,20 @@ for infile in sorted(os.listdir(directory)):
         print(f"Error while running diagnostics for {infile}: {e}")
         continue  # Skip to the next file
     count += 1
+=======
+    if (icesheet == "AIS") & infile.endswith("AIS.hdf5"):
+        plot_file = os.path.join(directory, infile)
+        append = count > 0
+        diags_command = construct_command(plot_file, csv_file, append=append, mask_file=mask_file, mask_no_start=mask_no_start, mask_no_end=mask_no_end)
+
+        print(f"Running diagnostics for file: {infile}")
+        try:
+            subprocess.check_output(diags_command, shell=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error while running diagnostics for {infile}: {e}")
+            continue  # Skip to the next file
+        count += 1
+>>>>>>> dac83738de82babb9ea5df57ebd88cba74efd482
 
 # Summary
 if count == 0:
