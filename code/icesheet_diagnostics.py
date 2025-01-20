@@ -1,20 +1,8 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Oct 03 10:48:31 2024
-Modified on Fri Jan 16 2025
-
-Run the BISICLES diagnostics tool for all plot.*.hdf5 files within a directory and export data to a csv file
-Run as: "python icesheet_diagnostics.py [directory] [csv_file] [mask]"
-
-@author: tom mitcham
-"""
-
 ####################################################################################
 
 import os
 import argparse
 import subprocess
-import sys
 
 ####################################################################################
 
@@ -71,9 +59,9 @@ if masked:
 
 # Process files
 count = 0
+
 for infile in sorted(os.listdir(directory)):
-<<<<<<< HEAD
-    
+
     if icesheet == "AIS" and infile.endswith("AIS.hdf5"):
         plot_file = os.path.join(directory, infile)
 
@@ -81,32 +69,17 @@ for infile in sorted(os.listdir(directory)):
         plot_file = os.path.join(directory, infile)
         
     append = count > 0
+    
     diags_command = construct_command(plot_file, csv_file, append=append, mask_file=mask_file)
 
     print(f"Running diagnostics for file: {infile}")
-    try:
-        subprocess.check_output(diags_command, shell=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error while running diagnostics for {infile}: {e}")
-        continue  # Skip to the next file
+    
+    subprocess.check_output(diags_command, shell=True)
+    
     count += 1
-=======
-    if (icesheet == "AIS") & infile.endswith("AIS.hdf5"):
-        plot_file = os.path.join(directory, infile)
-        append = count > 0
-        diags_command = construct_command(plot_file, csv_file, append=append, mask_file=mask_file, mask_no_start=mask_no_start, mask_no_end=mask_no_end)
-
-        print(f"Running diagnostics for file: {infile}")
-        try:
-            subprocess.check_output(diags_command, shell=True)
-        except subprocess.CalledProcessError as e:
-            print(f"Error while running diagnostics for {infile}: {e}")
-            continue  # Skip to the next file
-        count += 1
->>>>>>> dac83738de82babb9ea5df57ebd88cba74efd482
 
 # Summary
 if count == 0:
-    print("No plot.*.hdf5 files found in the directory.")
+    print("No BISICLES *.hdf5 files found in the directory.")
 else:
-    print(f"{count} plot.*.hdf5 files processed. Diagnostics written to {csv_file}.")
+    print(f"{count} *.hdf5 files processed. Diagnostics written to {csv_file}.")

@@ -11,34 +11,20 @@ import argparse
 
 ####################################################################################
 
-# Options for the script from command line arguments
+ICE_DENSITY = 918.0 # As defined in BISICLES input files
+OCEAN_DENSITY = 1028.0
+OCEAN_AREA = 3.625e14 # Gregory et al. 2019 (https://doi.org/10.1007/s10712-019-09525-z)
 
-# Set up the argument parser
-parser = argparse.ArgumentParser(description="Process TerraFIRMA diagnostics with various configurations.")
+####################################################################################
 
-# Add command-line arguments
-parser.add_argument("--icesheet", choices=["AIS", "GrIS"], default="AIS",
-                    help='Select the icesheet: "AIS" for Antarctic Ice Sheet, "GrIS" for Greenland Ice Sheet.')
-parser.add_argument("--suite_set", choices=["overshoots", "historical_rampups"], default="overshoots",
-                    help='Select the suite set: "overshoots" or "historical_rampups".')
-parser.add_argument("--process_atmos_data", type=bool, default=True,
-                    help="Process atmospheric data (True/False).")
-parser.add_argument("--process_icesheet_data", type=bool, default=True,
-                    help="Process icesheet data (True/False).")
-parser.add_argument("--basin_mask", type=bool, default=False,
-                    help="Apply basin mask (True/False).")
+# Options for the script
+icesheet = "AIS" # Options: "AIS" or "GrIS"
+suite_set = "overshoots" # Options: "overshoots", "historical_rampups"
+process_atmos_data = True # Options: True, False
+process_icesheet_data = True # Options: True, False
+basin_mask = False # Options: True, False
 
-# Parse the arguments
-args = parser.parse_args()
-
-# Access the arguments
-icesheet = args.icesheet
-suite_set = args.suite_set
-process_atmos_data = args.process_atmos_data
-process_icesheet_data = args.process_icesheet_data
-basin_mask = args.basin_mask
-
-# Printout of the arguments
+# Printout of the options chosen
 print("Running process_diagnostics_output.py with the following arguments:")
 print(f"Ice sheet: {icesheet}")
 print(f"Suite set: {suite_set}")
@@ -60,8 +46,8 @@ elif suite_set == "historical_rampups":
     id = ["cs568", "cx209", "cw988", "cw989", "cw990", "cy623", "da914", "da916", "da917"]
 
 # Define ice sheet data filenames
-IS_filename_prefix = "/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/new_"
-IS_filename_suffix = f"_{icesheet}_{'basins_' if basin_mask else ''}diagnostics.csv"
+IS_filename_prefix = "/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/"
+IS_filename_suffix = f"_{icesheet}_diagnostics_{'masked_' if basin_mask else ''}.csv"
 
 ####################################################################################
 
@@ -177,6 +163,7 @@ if process_icesheet_data:
             grounded_vol = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'volume')][['value']]
             floating_vol = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'floating') & (IS_stats['quantity'] == 'volume')][['value']]
             VAF = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'entire') & (IS_stats['quantity'] == 'volumeAbove')][['value']]
+            SLE = (VAF/OCEAN_AREA)*(ICE_DENSITY/OCEAN_DENSITY) # Following simplest calculation from Goelzer et al. 2020 (https://doi.org/10.5194/tc-14-833-2020)
 
             # Rename columns to include metadata
             grounded_SMB.columns = ['grounded_SMB']
@@ -186,6 +173,7 @@ if process_icesheet_data:
             grounded_vol.columns = ['grounded_vol']
             floating_vol.columns = ['floating_vol']
             VAF.columns = ['VAF']
+            SLE.columns = ['SLE']
 
             IS_data[j] = pd.concat([
                 file_time_T.reset_index(drop=True),
@@ -195,7 +183,9 @@ if process_icesheet_data:
                 GL_discharge.reset_index(drop=True),
                 grounded_vol.reset_index(drop=True),
                 floating_vol.reset_index(drop=True),
-                VAF.reset_index(drop=True)], axis=1)
+                VAF.reset_index(drop=True),
+                SLE.reset_index(drop=True)],
+                axis=1)
             
             # Correct for a missing file ice sheet file in the dc051 suite (just linearly interpolate between neighbouring values)
             if id == "dc051":
