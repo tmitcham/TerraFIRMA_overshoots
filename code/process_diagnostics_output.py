@@ -13,7 +13,7 @@ import argparse
 
 ICE_DENSITY = 918.0 # As defined in BISICLES input files
 OCEAN_DENSITY = 1028.0
-OCEAN_AREA = 3.625e14 # Gregory et al. 2019 (https://doi.org/10.1007/s10712-019-09525-z)
+OCEAN_AREA = 3.625e14 # as in Gregory et al. 2019 (https://doi.org/10.1007/s10712-019-09525-z)
 
 ####################################################################################
 
@@ -198,6 +198,6 @@ if process_icesheet_data:
     # Save ice sheet data
     print("Saving ice sheet data to file...")
 
-    with open(f"../processed_data/icesheet_data_{suite_set}_{'basins' if basin_mask else ''}.pkl", 'wb') as icesheet_save_file:
+    with open(f"../processed_data/{icesheet}_data_{suite_set}_{'masked' if basin_mask else ''}.pkl", 'wb') as icesheet_save_file:
         pickle.dump(icesheet_d, icesheet_save_file)
 

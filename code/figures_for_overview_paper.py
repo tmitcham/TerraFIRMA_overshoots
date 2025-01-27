@@ -65,14 +65,6 @@ def smooth(y, box_pts):
     y_smooth = np.convolve(y, box, mode='valid')
     return y_smooth
 
-# Convert volume to sea level equivalent for second axes
-def vol2sle(x):
-    
-    return (((x-26.27)*0.918e6)/(361.8e3)*-1)
-
-def sle2vol(x):
-    return ((((x*361.8e3)/0.918e6)+26.27)*-1)
-
 # Convert VAF to sea level equivalent for second axes
 def mass2sle(x):
     return x*(-1)/361.8
