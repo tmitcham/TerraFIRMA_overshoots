@@ -7,7 +7,7 @@ import os
 import fnmatch
 import numpy as np
 import pickle
-import argparse
+import xarray as xr
 
 ####################################################################################
 
@@ -22,7 +22,10 @@ icesheet = "AIS" # Options: "AIS" or "GrIS"
 suite_set = "overshoots" # Options: "overshoots", "historical_rampups"
 process_atmos_data = True # Options: True, False
 process_icesheet_data = True # Options: True, False
+data_to_netcdf = False # Options: True, False
 basin_mask = False # Options: True, False
+basins_for_netcdf = [8,15] # Options: any from 0-16 - 8 (Ross), 15 (Filchner-Ronne)
+netcdf_filename = "overshoots_Ross_FRIS_VAF_timeseries.nc"
 
 # Printout of the options chosen
 print("Running process_diagnostics_output.py with the following arguments:")
@@ -38,9 +41,9 @@ print(f"Basin mask: {basin_mask}")
 if suite_set == "overshoots":
     id=["cs568", "cx209", "cw988", "cw989", "cw990", "cy837", "cy838", "cz374", "cz375", "cz376", "cz377", "cz378", 
         "cz834", "cz855", "cz859", "db587", "db723", "db731", "da087", "da266", "db597", "db733", "dc324", 
-        "cz944", "di335", "da800", "da697", "da892", "db223", "df453", "de620", "dc251", "dc956",
+        "cz944", "di335", "da800", "da697", "da892", "db223", "df453", "de620", "dc251",
         "dc051", "dc052", "dc248", "dc249", "dc565", "dd210", "dc032", "df028", "de621", "dc123", "dc130", 
-        "df025", "df027", "df021", "df023", "dh541", "dh859", "de943", "de962", "de963", "dk554", "dk555", "dk556"]
+        "df025", "df027", "df021", "df023", "dh541", "dh859", "de943", "de962", "de963", "dk554", "dk555"]
 
 elif suite_set == "historical_rampups":
     id = ["cs568", "cx209", "cw988", "cw989", "cw990", "cy623", "da914", "da916", "da917"]
@@ -139,7 +142,7 @@ if process_icesheet_data:
 
                 print(f"Year {year} not found in AIS data for {i}")
 
-        # Interpolate to fill NaN valures in global_delta_T
+        # Interpolate to fill NaN values in global_delta_T
         IS_stats["global_T"].interpolate(method='linear', inplace=True)
 
         grounded_SMB = []
@@ -201,3 +204,50 @@ if process_icesheet_data:
     with open(f"../processed_data/{icesheet}_data_{suite_set}_{'masked' if basin_mask else ''}.pkl", 'wb') as icesheet_save_file:
         pickle.dump(icesheet_d, icesheet_save_file)
 
+####################################################################################
+
+# Access VAF data from the Ross and the Filchner-Ronne basins 
+# and convert to an xarray dataset and save in NetCDF format
+
+if data_to_netcdf:
+
+    print("Saving selected data to netCDF...")
+
+    for i in id:
+
+        IS_data = icesheet_d[i]
+
+        time = IS_data[0].iloc[:,2]
+
+        vaf_ds = xr.Dataset(coords={'time': time})
+
+        vaf_ds.attrs = {
+            "title": "Ross and Filchner-Ronne VAF timeseries",
+            "description": f"Ice volume above flotation timeseries for the basins that feed into the Ross and Filchner-Ronne ice shelves in Antarctica. Data from the TerraFIRMA overshoots simulation with suite id u-{i}",
+            "creator": "Tom Mitcham",
+            "institution": "CPOM, University of Bristol",
+            "comment": "This is just a provisional .nc file for testing in Kailtin's plotting workflow. Processing of the ice sheet data is continuing and this file will be updated before finalising plots and analysis."
+        }
+
+        for j in basins_for_netcdf:
+
+            #vaf = IS_data[j].VAF
+            vaf = xr.DataArray(IS_data[j].iloc[:,55], dims='time', coords={'time': time})
+
+            data_label = "ross_vaf" if j == 8 else "filchner_ronne_vaf"
+            data_desc = "Ross" if j == 8 else "Filchner-Ronne"
+
+            vaf_ds[data_label] = vaf
+
+            vaf_ds[data_label].attrs = {
+                "long_name": f"Ice volume above flotation in the {data_desc} basin",
+                "units": "m$^{3}"
+            }
+    
+        #vaf_ds.to_netcdf(f"../processed_data/{netcdf_filename}")
+        vaf_ds.to_netcdf(f"./vaf_{i}_timeseries.nc")
+
+        print(f"NetCDF file saved for {i}")
+
+####################################################################################
+    
