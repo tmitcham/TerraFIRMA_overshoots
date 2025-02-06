@@ -10,6 +10,7 @@ masked="False" # Options: True, False
 maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_bedmachine_imbie2_basins_4km.hdf5"
 mask_no_start="0"
 mask_no_end="16"
+jobs_per_batch=10
 
 ###############################################################################
 
@@ -20,7 +21,7 @@ if [[ "$suite_set" == "overshoots" ]]; then
         "db597" "db733" "dc324" "cz944" "di335" "da800" "da697" "da892" "db223" "df453"
         "de620" "dc251" "dc956" "dc051" "dc052" "dc248" "dc249" "dc565" "dd210" "dc032"
         "df028" "de621" "dc123" "dc130" "df025" "df027" "df021" "df023" "dh541" "dh859"
-        "de943" "de962" "de963" "dk554" "dk555" "dk556"
+        "dg093" "dg094" "dg095" "de943" "de962" "de963" "dk554" "dk555" "dk556"
     )
 
 elif [[ "$suite_set" == "overview" ]]; then
@@ -36,16 +37,16 @@ elif [[ "$suite_set" == "historical_rampups" ]]; then
 
 else
     echo "Invalid suite_set: $suite_set"
-    echo "Usage: bash run_icesheet_diagnostics.sh <suite_set>"
     echo "Valid options: overshoots, overview, historical_rampups"
     exit 1
 fi
 
 # Print the selected IDs
 echo "Selected suite set: $suite_set"
-echo "Run IDs: ${idlist[*]}"
 
 ###############################################################################
+
+counter=0
 
 for id in "${idlist[@]}"; do
     
@@ -74,6 +75,14 @@ for id in "${idlist[@]}"; do
 
         python icesheet_diagnostics.py --icesheet "$icesheet" --directory "$directory" --csv_file "$csvfile" > "$outfile" 2>&1 &
 
+    fi
+
+    ((counter++))
+
+    # If the batch limit is reached, wait for all processes to complete
+    if (( counter >= batch_size )); then
+        wait  # Ensures the current batch completes before continuing
+        counter=0  # Reset counter for the next batch
     fi
     
 done
