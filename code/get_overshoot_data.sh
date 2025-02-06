@@ -24,10 +24,10 @@ RUN_IDS=(
   db597 db733 dc324 di335 da800 da697 da892 db223 df453 
   de620 dc251 dc051 dc052 dc248 dc249 dc565 dd210
   df028 de621 dc123 dc130 df025 df027 df021 df023 dh541 dh859 
-  de943 de962 de963 dm357 dm358 dm359
+  dg093 dg094 dg095 de943 de962 de963 dm357 dm358 dm359
 )
 '
-ICESHEETS="AIS" # Options: AIS, GrIS, or Both
+ICESHEETS="Both" # Options: AIS, GrIS, or Both
 ATMOS="Yes" # Options: Yes or No
 
 ###############################################################################
@@ -183,7 +183,7 @@ wait
 ###############################################################################
 
 RUN_IDS=( 
-  de943 de962 de963 dm357 dm358 dm359
+  dg093 dg094 dg095 de943 de962 de963 dm357 dm358 dm359
 )
 
 for ID in "${RUN_IDS[@]}"; do
