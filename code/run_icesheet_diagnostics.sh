@@ -22,6 +22,7 @@ if [[ "$suite_set" == "overshoots" ]]; then
         "de620" "dc251" "dc956" "dc051" "dc052" "dc248" "dc249" "dc565" "dd210" "dc032"
         "df028" "de621" "dc123" "dc130" "df025" "df027" "df021" "df023" "dh541" "dh859"
         "dg093" "dg094" "dg095" "de943" "de962" "de963" "dm357" "dm358" "dm359"
+    )
 
 elif [[ "$suite_set" == "overview" ]]; then
     idlist=(
