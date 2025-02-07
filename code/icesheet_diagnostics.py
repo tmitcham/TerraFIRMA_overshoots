@@ -70,7 +70,7 @@ for infile in sorted(os.listdir(directory)):
         
     append = count > 0
     
-    diags_command = construct_command(plot_file, csv_file, append=append, mask_file=mask_file)
+    diags_command = construct_command(plot_file, csv_file, append=append, mask_file=mask_file, mask_no_start=mask_no_start, mask_no_end=mask_no_end)
 
     print(f"Running diagnostics for file: {infile}")
     

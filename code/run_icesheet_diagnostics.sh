@@ -6,7 +6,7 @@
 
 suite_set="overshoots" # Options: overshoots, overview, historical_rampups
 icesheet="AIS" # Options: AIS, GrIS
-masked="False" # Options: True, False
+masked="True" # Options: True, False
 maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_bedmachine_imbie2_basins_4km.hdf5"
 mask_no_start="0"
 mask_no_end="16"
@@ -21,8 +21,7 @@ if [[ "$suite_set" == "overshoots" ]]; then
         "db597" "db733" "dc324" "cz944" "di335" "da800" "da697" "da892" "db223" "df453"
         "de620" "dc251" "dc956" "dc051" "dc052" "dc248" "dc249" "dc565" "dd210" "dc032"
         "df028" "de621" "dc123" "dc130" "df025" "df027" "df021" "df023" "dh541" "dh859"
-        "dg093" "dg094" "dg095" "de943" "de962" "de963" "dk554" "dk555" "dk556"
-    )
+        "dg093" "dg094" "dg095" "de943" "de962" "de963" "dm357" "dm358" "dm359"
 
 elif [[ "$suite_set" == "overview" ]]; then
     idlist=(
@@ -80,7 +79,7 @@ for id in "${idlist[@]}"; do
     ((counter++))
 
     # If the batch limit is reached, wait for all processes to complete
-    if (( counter >= batch_size )); then
+    if (( counter >= jobs_per_batch )); then
         wait  # Ensures the current batch completes before continuing
         counter=0  # Reset counter for the next batch
     fi
