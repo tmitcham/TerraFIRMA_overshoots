@@ -67,6 +67,9 @@ for infile in sorted(os.listdir(directory)):
 
     elif icesheet == "GrIS" and infile.endswith("GrIS.hdf5"):
         plot_file = os.path.join(directory, infile)
+
+    else:
+        continue
         
     append = count > 0
     

@@ -52,16 +52,16 @@ for id in "${idlist[@]}"; do
     
     directory="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/${id}/icesheet/"
 
-    echo "Running icesheet_diagnostics.py on dir: ${directory}, for icesheet: ${icesheet} \n"
+    echo "Running icesheet_diagnostics.py on dir: ${directory}, for icesheet: ${icesheet}"
     
     if [[ "$masked" == "True" ]]; then
 
         csvfile="${id}_${icesheet}_diagnostics_masked.csv"
         outfile="${id}_${icesheet}_diagnostics_masked.out"
 
-        echo "Using mask file: ${mask} \n" 
-        echo "Saving results in: ${csvfile} \n"
-        echo "Stdout and stderr saved in: ${outfile} \n"
+        echo "Using mask file: ${maskfile}" 
+        echo "Saving results in: ${csvfile}"
+        echo "Stdout and stderr saved in: ${outfile}"
 
         python icesheet_diagnostics.py --icesheet "$icesheet" --directory "$directory" --csv_file "$csvfile" --mask "$maskfile" --mask_no_start "$mask_no_start" --mask_no_end "$mask_no_end" > "$outfile" 2>&1 &
 
@@ -70,8 +70,8 @@ for id in "${idlist[@]}"; do
         csvfile="${id}_${icesheet}_diagnostics.csv"
         outfile="${id}_${icesheet}_diagnostics.out"
 
-        echo "Saving results in: ${csvfile} \n"
-        echo "Stdout and stderr saved in: ${outfile} \n"
+        echo "Saving results in: ${csvfile}"
+        echo "Stdout and stderr saved in: ${outfile}"
 
         python icesheet_diagnostics.py --icesheet "$icesheet" --directory "$directory" --csv_file "$csvfile" > "$outfile" 2>&1 &
 
