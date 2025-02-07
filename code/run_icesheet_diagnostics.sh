@@ -54,7 +54,7 @@ for id in "${idlist[@]}"; do
 
     echo "Running icesheet_diagnostics.py on dir: ${directory}, for icesheet: ${icesheet} \n"
     
-    if [[ "$masked" == "True"]]; then
+    if [[ "$masked" == "True" ]]; then
 
         csvfile="${id}_${icesheet}_diagnostics_masked.csv"
         outfile="${id}_${icesheet}_diagnostics_masked.out"
