@@ -54,7 +54,7 @@ elif suite_set == "historical_rampups":
 
 # Define ice sheet data filenames
 IS_filename_prefix = "/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/"
-IS_filename_suffix = f"_{icesheet}_diagnostics_{'masked_' if basin_mask else ''}.csv"
+IS_filename_suffix = f"_{icesheet}_diagnostics_{'masked' if basin_mask else ''}.csv"
 
 ####################################################################################
 
