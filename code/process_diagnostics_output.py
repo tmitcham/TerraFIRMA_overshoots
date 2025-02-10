@@ -272,7 +272,7 @@ if data_to_netcdf:
                 "units": "m"
             }
     
-        vaf_ds.to_netcdf(f"./vaf_{i}_timeseries.nc")
+        vaf_ds.to_netcdf(f"../processed_data/netcdf_files/vaf_{i}_timeseries.nc")
 
         print(f"NetCDF file saved for {i}")
 
