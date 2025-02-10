@@ -29,7 +29,6 @@ process_icesheet_data = True # Options: True, False
 data_to_netcdf = True # Options: True, False
 basin_mask = True # Options: True, False
 basins_for_netcdf = [8,15] # Options: any from 0-16 - 0 (whole AIS), 8 (Ross), 15 (Filchner-Ronne)
-netcdf_filename = "overshoots_Ross_FRIS_VAF_timeseries.nc"
 
 # Printout of the options chosen
 print("Running process_diagnostics_output.py with the following arguments:")
@@ -167,7 +166,11 @@ if process_icesheet_data:
             if not basin_mask and j > 0:
                 break
             
-            file_time_T = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'SMB')][['filename','time','global_T']]
+            if process_atmos_data:
+                file_time_T = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'SMB')][['filename','time','global_T']]
+            else:
+                file_time_T = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'SMB')][['filename','time']]
+            
             grounded_SMB = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'SMB')][['value']]
             floating_SMB = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'floating') & (IS_stats['quantity'] == 'SMB')][['value']]
             floating_BMB = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'floating') & (IS_stats['quantity'] == 'BMB')][['value']]

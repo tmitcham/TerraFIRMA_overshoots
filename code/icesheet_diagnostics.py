@@ -57,6 +57,14 @@ print(f"Running icesheet diagnostics in directory: {directory}")
 if masked:
     print(f"Using mask file: {mask_file}")
 
+# Check to see if thee is already a csv file for the ice sheet, suite, mask comnination
+csv_exists = os.path.exists(os.path.join(OUTPUT_PATH, csv_file))
+
+# If there is then only process the files that have not been processed yet and append to the csv file
+
+# If there is not then process all the files
+
+
 # Process files
 count = 0
 
