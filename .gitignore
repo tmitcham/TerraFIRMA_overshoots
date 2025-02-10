@@ -1,18 +1,13 @@
-# Ignore HDF5 files
+# Ignore data files
 **/*.h5
 **/*.hdf5
-
-# Ignore PNG files
-**/*.png
-
-# Ignore GIF files
-**/*.gif
-
-# Ignore CSV files
 **/*.csv
-
-# Ignore PKL files
 **/*.pkl
+**/*.nc
+
+# Ignore image files
+**/*.png
+**/*.gif
 
 #Ignore pp and Licence files
 **/*.pp
