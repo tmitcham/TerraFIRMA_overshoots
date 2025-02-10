@@ -244,8 +244,8 @@ if data_to_netcdf:
 
         for j in basins_for_netcdf:
 
-            vaf = xr.DataArray(IS_data[j].iloc[:,55], dims='time', coords={'time': time})
-            sle = xr.DataArray(IS_data[j].iloc[:,56], dims='time', coords={'time': time})
+            vaf = xr.DataArray(IS_data[j].VAF, dims='time', coords={'time': time})
+            sle = xr.DataArray(IS_data[j].SLE, dims='time', coords={'time': time})
 
             data_label_vaf = "ross_vaf" if j == 8 else "filchner_ronne_vaf"
             data_label_sle = "ross_sle" if j == 8 else "filchner_ronne_sle"
