@@ -25,7 +25,7 @@ def vaf_to_sle(vaf):
 icesheet = "AIS" # Options: "AIS" or "GrIS"
 suite_set = "overshoots" # Options: "overshoots", "historical_rampups"
 process_atmos_data = False # Options: True, False
-process_icesheet_data = False # Options: True, False
+process_icesheet_data = True # Options: True, False
 data_to_netcdf = True # Options: True, False
 basin_mask = True # Options: True, False
 basins_for_netcdf = [8,15] # Options: any from 0-16 - 0 (whole AIS), 8 (Ross), 15 (Filchner-Ronne)
@@ -239,9 +239,6 @@ if data_to_netcdf:
 
         time = IS_data[0].time
 
-        if i == "de962":
-            time = time[0:307]
-
         vaf_ds = xr.Dataset(coords={'time': time})
 
         vaf_ds.attrs = {
@@ -254,15 +251,8 @@ if data_to_netcdf:
 
         for j in basins_for_netcdf:
 
-            if i == "de962":
-
-                vaf = xr.DataArray(IS_data[j].VAF[0:307], dims='time', coords={'time': time})
-                sle = xr.DataArray(IS_data[j].SLE[0:307], dims='time', coords={'time': time})
-
-            else:
-                
-                vaf = xr.DataArray(IS_data[j].VAF, dims='time', coords={'time': time})
-                sle = xr.DataArray(IS_data[j].SLE, dims='time', coords={'time': time})
+            vaf = xr.DataArray(IS_data[j].VAF, dims='time', coords={'time': time})
+            sle = xr.DataArray(IS_data[j].SLE, dims='time', coords={'time': time})
 
             data_label_vaf = "ross_vaf" if j == 8 else "filchner_ronne_vaf"
             data_label_sle = "ross_sle" if j == 8 else "filchner_ronne_sle"
