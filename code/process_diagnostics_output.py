@@ -25,7 +25,7 @@ def vaf_to_sle(vaf):
 icesheet = "AIS" # Options: "AIS" or "GrIS"
 suite_set = "overshoots" # Options: "overshoots", "historical_rampups"
 process_atmos_data = False # Options: True, False
-process_icesheet_data = True # Options: True, False
+process_icesheet_data = False # Options: True, False
 data_to_netcdf = True # Options: True, False
 basin_mask = True # Options: True, False
 basins_for_netcdf = [8,15] # Options: any from 0-16 - 0 (whole AIS), 8 (Ross), 15 (Filchner-Ronne)
@@ -37,6 +37,7 @@ print(f"Suite set: {suite_set}")
 print(f"Process atmospheric data: {process_atmos_data}")
 print(f"Process ice sheet data: {process_icesheet_data}")
 print(f"Basin mask: {basin_mask}")
+print(f"Save to NetCDF: {data_to_netcdf}")
 
 ####################################################################################
 
@@ -224,6 +225,12 @@ if process_icesheet_data:
 
 if data_to_netcdf:
 
+    if not process_icesheet_data:
+        
+        # Read ice sheet data
+        with open(f"../processed_data/{icesheet}_data_{suite_set}_{'masked' if basin_mask else ''}.pkl", 'rb') as file:
+            icesheet_d = pickle.load(file)
+
     print("Saving selected data to netCDF...")
 
     for i in id:
@@ -231,6 +238,9 @@ if data_to_netcdf:
         IS_data = icesheet_d[i]
 
         time = IS_data[0].time
+
+        if i == "de962":
+            time = time[0:307]
 
         vaf_ds = xr.Dataset(coords={'time': time})
 
@@ -244,8 +254,15 @@ if data_to_netcdf:
 
         for j in basins_for_netcdf:
 
-            vaf = xr.DataArray(IS_data[j].VAF, dims='time', coords={'time': time})
-            sle = xr.DataArray(IS_data[j].SLE, dims='time', coords={'time': time})
+            if i == "de962":
+
+                vaf = xr.DataArray(IS_data[j].VAF[0:307], dims='time', coords={'time': time})
+                sle = xr.DataArray(IS_data[j].SLE[0:307], dims='time', coords={'time': time})
+
+            else:
+                
+                vaf = xr.DataArray(IS_data[j].VAF, dims='time', coords={'time': time})
+                sle = xr.DataArray(IS_data[j].SLE, dims='time', coords={'time': time})
 
             data_label_vaf = "ross_vaf" if j == 8 else "filchner_ronne_vaf"
             data_label_sle = "ross_sle" if j == 8 else "filchner_ronne_sle"
