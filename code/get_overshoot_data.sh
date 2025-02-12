@@ -44,15 +44,15 @@ for ID in "${RUN_IDS[@]}"; do
   fi
 
   if [ "$ICESHEETS" == "AIS" ]; then
-    moo get -ig :crum/u-${ID}/chy.file/*AIS.hdf5 ../raw_data/${ID}/icesheet/
+    moo get -Ig :crum/u-${ID}/chy.file/*AIS.hdf5 ../raw_data/${ID}/icesheet/
   elif [ "$ICESHEETS" == "GrIS" ]; then
-    moo get -ig :crum/u-${ID}/chy.file/*GrIS.hdf5 ../raw_data/${ID}/icesheet/
+    moo get -Ig :crum/u-${ID}/chy.file/*GrIS.hdf5 ../raw_data/${ID}/icesheet/
   elif [ "$ICESHEETS" == "Both" ]; then
-    moo get -ig :crum/u-${ID}/chy.file/*IS.hdf5 ../raw_data/${ID}/icesheet/
+    moo get -Ig :crum/u-${ID}/chy.file/*IS.hdf5 ../raw_data/${ID}/icesheet/
   fi
 
   if [ "$ATMOS" == "Yes" ]; then
-    moo select -i surfaceT.query :crum/u-${ID}/apz.pp ../raw_data/${ID}/atmos/
+    moo select -I surfaceT.query :crum/u-${ID}/apz.pp ../raw_data/${ID}/atmos/
   fi
 
   ((counter++))
