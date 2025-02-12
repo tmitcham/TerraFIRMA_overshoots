@@ -27,7 +27,7 @@ RUN_IDS=(
   dg093 dg094 dg095 de943 de962 de963 dm357 dm358 dm359
 )
 
-ICESHEETS="AIS" # Options: AIS, GrIS, or Both
+ICESHEETS="Both" # Options: AIS, GrIS, or Both
 ATMOS="Yes" # Options: Yes or No
 JOBS_PER_BATCH=10
 
