@@ -102,14 +102,6 @@ if process_atmos_data:
     with open(f"../processed_data/atmos_data_{suite_set}.pkl", 'wb') as atmos_save_file:
         pickle.dump(atmos_d, atmos_save_file)
 
-"""
-else:
-
-    # Read atmosphere data
-    with open("../processed_data/atmos_data_{suite_set}.pkl", 'rb') as file:
-        atmos_d = pickle.load(file)
-"""
-
 ####################################################################################
 
 # 'Process and save' (or don't) the ice sheet data produced from diagnsotics filetool
@@ -133,26 +125,6 @@ if process_icesheet_data:
         else:
             IS_stats.time = IS_stats.apply(lambda x: int(x.filename[97:101]), axis=1)
 
-        """    
-        IS_stats["global_T"] = np.nan
-
-        for j in atmos_d[i][:,0]:
-
-            year = int(j+1) # because BISICLES stores data for 01/01 of following year...
-            
-            pos = np.where(IS_stats.time==year)
-
-            if np.size(pos) > 0:
-
-                IS_stats["global_T"] = IS_stats["global_T"].mask(IS_stats["time"]==year, atmos_d[i][count,1])
-
-            else:
-
-                print(f"Year {year} not found in AIS data for {i}")
-
-        # Interpolate to fill NaN values in global_delta_T
-        IS_stats["global_T"].interpolate(method='linear', inplace=True)
-        """
         grounded_SMB = []
         floating_SMB = []
         floating_BMB = []
@@ -166,11 +138,8 @@ if process_icesheet_data:
 
             if not basin_mask and j > 0:
                 break
-            
-            if process_atmos_data:
-                file_time_T = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'SMB')][['filename','time','global_T']]
-            else:
-                file_time_T = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'SMB')][['filename','time']]
+
+            file_time_T = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'SMB')][['filename','time']]
             
             grounded_SMB = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'grounded') & (IS_stats['quantity'] == 'SMB')][['value']]
             floating_SMB = IS_stats[(IS_stats['maskNo'] == j) & (IS_stats['region'] == 'floating') & (IS_stats['quantity'] == 'SMB')][['value']]
@@ -201,6 +170,8 @@ if process_icesheet_data:
                 VAF.reset_index(drop=True),
                 SLE.reset_index(drop=True)],
                 axis=1)
+
+            IS_data = IS_data[j].sort_values(by='time').reset_index(drop=True)
             
             """
             # Correct for a missing file ice sheet file in the dc051 suite (just linearly interpolate between neighbouring values)

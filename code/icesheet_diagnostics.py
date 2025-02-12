@@ -3,6 +3,7 @@
 import os
 import argparse
 import subprocess
+import pandas as pd
 
 ####################################################################################
 
@@ -57,40 +58,59 @@ print(f"Running icesheet diagnostics in directory: {directory}")
 if masked:
     print(f"Using mask file: {mask_file}")
 
-# Check to see if thee is already a csv file for the ice sheet, suite, mask comnination
+# Check to see if there is already a csv file for this ice sheet, suite, mask combnination
 csv_exists = os.path.exists(os.path.join(OUTPUT_PATH, csv_file))
 
-# If there is then only process the files that have not been processed yet and append to the csv file
-
-# If there is not then process all the files
-
-
-# Process files
-count = 0
-
-for infile in sorted(os.listdir(directory)):
-
-    if icesheet == "AIS" and infile.endswith("AIS.hdf5"):
-        plot_file = os.path.join(directory, infile)
-
-    elif icesheet == "GrIS" and infile.endswith("GrIS.hdf5"):
-        plot_file = os.path.join(directory, infile)
-
-    else:
-        continue
-        
-    append = count > 0
-    
-    diags_command = construct_command(plot_file, csv_file, append=append, mask_file=mask_file, mask_no_start=mask_no_start, mask_no_end=mask_no_end)
-
-    print(f"Running diagnostics for file: {infile}")
-    
-    subprocess.check_output(diags_command, shell=True)
-    
-    count += 1
-
-# Summary
-if count == 0:
-    print("No BISICLES *.hdf5 files found in the directory.")
+# If there is, then only process the files that have not yet been processed, and append to the csv file
+if csv_exists:
+    csv_data = pd.read_csv(os.path.join(OUTPUT_PATH, csv_file))
+    processed_files = csv_data["filename"].values.tolist()
 else:
-    print(f"{count} *.hdf5 files processed. Diagnostics written to {csv_file}.")
+    processed_files = []
+
+all_files = sorted(os.listdir(directory))
+
+all_files_abs = [os.path.join(directory, file) for file in all_files]
+
+# Remove files that have already been processed
+if len(processed_files) > 0:
+    print(f"{len(processed_files)} files have already been processed. Removing from list of files to process.")
+    for file in processed_files:
+        all_files_abs.remove(file)
+
+# If all files have been processed then exit
+if len(all_files) == 0:
+    print("All relevant hdf5 files have already been processed. Exiting now.")
+
+else:
+    print(f"Processing {len(all_files)} files.")
+
+    # Process files
+    count = 0
+
+    for infile in all_files:
+
+        if icesheet == "AIS" and infile.endswith("AIS.hdf5"):
+            plot_file = infile
+
+        elif icesheet == "GrIS" and infile.endswith("GrIS.hdf5"):
+            plot_file = infile
+
+        else:
+            continue
+            
+        append = csv_exists or count > 0
+        
+        diags_command = construct_command(plot_file, csv_file, append=append, mask_file=mask_file, mask_no_start=mask_no_start, mask_no_end=mask_no_end)
+
+        print(f"Running diagnostics for file: {infile}")
+        
+        subprocess.check_output(diags_command, shell=True)
+        
+        count += 1
+
+    # Summary
+    if count == 0:
+        print("No BISICLES *.hdf5 files found in the directory.")
+    else:
+        print(f"{count} *.hdf5 files processed. Diagnostics written to {csv_file}.")
