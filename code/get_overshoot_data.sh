@@ -64,3 +64,7 @@ for ID in "${RUN_IDS[@]}"; do
   fi
   
 done
+
+wait  # Ensures the final batch completes before continuing
+
+echo "Data download completed."
