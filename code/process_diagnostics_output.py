@@ -172,14 +172,6 @@ if process_icesheet_data:
                 axis=1)
 
             IS_data = IS_data[j].sort_values(by='time').reset_index(drop=True)
-            
-            """
-            # Correct for a missing file ice sheet file in the dc051 suite (just linearly interpolate between neighbouring values)
-            if id == "dc051":
-                IS_data[j] = IS_data[j].reindex(IS_data[j].index.tolist() + [186.5])
-                IS_data[j] = IS_data[j].sort_index().reset_index(drop=True)
-                IS_data[j].iloc[:,1:] = IS_data[j].iloc[:,1:].interpolate(method='linear')
-            """
 
         icesheet_d[i] = IS_data
 

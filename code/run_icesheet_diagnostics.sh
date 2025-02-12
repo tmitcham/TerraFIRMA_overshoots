@@ -27,7 +27,7 @@ if [[ "$suite_set" == "overshoots" ]]; then
 elif [[ "$suite_set" == "overview" ]]; then
     idlist=(
         "cs568" "cx209" "cy837" "cy838" "cz375" "cz376" "cz377" "dc052" "dc051" "df028"
-        "dc123" "dc130" "da697" "cz944" "df453" "da892" "dc251"
+        "dc123" "dc130" "da697" "di335" "df453" "da892" "dc251"
     )
 
 elif [[ "$suite_set" == "historical_rampups" ]]; then

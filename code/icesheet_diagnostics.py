@@ -65,6 +65,7 @@ csv_exists = os.path.exists(os.path.join(OUTPUT_PATH, csv_file))
 if csv_exists:
     csv_data = pd.read_csv(os.path.join(OUTPUT_PATH, csv_file))
     processed_files = csv_data["filename"].values.tolist()
+    processed_files = list(dict.fromkeys(processed_files)) # Remove duplicates
 else:
     processed_files = []
 
@@ -79,16 +80,16 @@ if len(processed_files) > 0:
         all_files_abs.remove(file)
 
 # If all files have been processed then exit
-if len(all_files) == 0:
+if len(all_files_abs) == 0:
     print("All relevant hdf5 files have already been processed. Exiting now.")
 
 else:
-    print(f"Processing {len(all_files)} files.")
+    print(f"Processing {len(all_files_abs)} files.")
 
     # Process files
     count = 0
 
-    for infile in all_files:
+    for infile in all_files_abs:
 
         if icesheet == "AIS" and infile.endswith("AIS.hdf5"):
             plot_file = infile
@@ -111,6 +112,6 @@ else:
 
     # Summary
     if count == 0:
-        print("No BISICLES *.hdf5 files found in the directory.")
+        print("No BISICLES *.hdf5 files found needing processing in the directory.")
     else:
         print(f"{count} *.hdf5 files processed. Diagnostics written to {csv_file}.")
