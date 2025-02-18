@@ -41,10 +41,10 @@ print(f"Save to NetCDF: {data_to_netcdf}")
 
 ####################################################################################
 
-# Define id based on suite set (temporarily removed db731 for Greenland)
+# Define id based on suite set
 if suite_set == "overshoots":
     id=["cs568", "cx209", "cw988", "cw989", "cw990", "cy837", "cy838", "cz374", "cz375", "cz376", 
-        "cz377", "cz378", "cz834", "cz855", "cz859", "db587", "db723", "da087", "da266", 
+        "cz377", "cz378", "cz834", "cz855", "cz859", "db587", "db723", "db731", "da087", "da266", 
         "db597", "db733", "dc324", "di335", "da800", "da697", "da892", "db223", "df453", 
         "de620", "dc251", "dc051", "dc052", "dc248", "dc249", "dc565", "dd210", 
         "df028", "de621", "dc123", "dc130", "df025", "df027", "df021", "df023", "dh541", "dh859", 
@@ -117,7 +117,13 @@ if process_icesheet_data:
 
         print(f"Working on {i}...")
 
-        IS_stats = pd.read_csv(f"{IS_filename_prefix}{i}{IS_filename_suffix}")
+        file_to_read = f"{IS_filename_prefix}{i}{IS_filename_suffix}"
+
+        if not os.path.exists(file_to_read):
+            print(f"File {file_to_read} does not exist. Skipping...")
+            continue
+        
+        IS_stats = pd.read_csv(file_to_read)
 
         if i == "cs568":    
             IS_stats.time = IS_stats.apply(lambda x: int(x.filename[97:101]), axis=1)-100
