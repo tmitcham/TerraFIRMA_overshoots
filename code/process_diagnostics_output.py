@@ -22,12 +22,12 @@ def vaf_to_sle(vaf):
 ####################################################################################
 
 # Options for the script
-icesheet = "AIS" # Options: "AIS" or "GrIS"
+icesheet = "GrIS" # Options: "AIS" or "GrIS"
 suite_set = "overshoots" # Options: "overshoots", "historical_rampups"
 process_atmos_data = False # Options: True, False
 process_icesheet_data = True # Options: True, False
-data_to_netcdf = True # Options: True, False
-basin_mask = True # Options: True, False
+data_to_netcdf = False # Options: True, False
+basin_mask = False # Options: True, False
 basins_for_netcdf = [8,15] # Options: any from 0-16 - 0 (whole AIS), 8 (Ross), 15 (Filchner-Ronne)
 
 # Printout of the options chosen
@@ -55,7 +55,7 @@ elif suite_set == "historical_rampups":
 
 # Define ice sheet data filenames
 IS_filename_prefix = "/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/"
-IS_filename_suffix = f"_{icesheet}_diagnostics_{'masked' if basin_mask else ''}.csv"
+IS_filename_suffix = f"_{icesheet}_diagnostics{'_masked' if basin_mask else ''}.csv"
 
 ####################################################################################
 
@@ -178,7 +178,7 @@ if process_icesheet_data:
     # Save ice sheet data
     print("Saving ice sheet data to file...")
 
-    with open(f"../processed_data/{icesheet}_data_{suite_set}_{'masked' if basin_mask else ''}.pkl", 'wb') as icesheet_save_file:
+    with open(f"../processed_data/{icesheet}_data_{suite_set}{'_masked' if basin_mask else ''}.pkl", 'wb') as icesheet_save_file:
         pickle.dump(icesheet_d, icesheet_save_file)
 
 ####################################################################################
