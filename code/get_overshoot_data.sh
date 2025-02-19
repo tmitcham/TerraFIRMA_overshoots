@@ -55,16 +55,6 @@ for ID in "${RUN_IDS[@]}"; do
     moo select -I surfaceT.query :crum/u-${ID}/apz.pp ../raw_data/${ID}/atmos/
   fi
 
-  ((counter++))
-
-  # If the batch limit is reached, wait for all processes to complete
-  if (( counter >= JOBS_PER_BATCH )); then
-    wait  # Ensures the current batch completes before continuing
-    counter=0  # Reset counter for the next batch
-  fi
-  
 done
-
-wait  # Ensures the final batch completes before continuing
 
 echo "Data download completed."
