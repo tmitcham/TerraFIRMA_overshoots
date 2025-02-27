@@ -22,20 +22,20 @@ run_type = ["ZE-0","Up8", "_Up8", "_Up8", "_Up8", "ZE-1.5", "ZE-2", "ZE-3", "ZE-
             
 runs = dict(zip(id, run_type)) 
 
-'''
+
 line_cols = ['#000000','#C30F0E','#C30F0E','#C30F0E','#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#964b00',
              '#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0', '#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0',
              '#168039','#168039','#168039','#0003C7','#FA5B0F','#FFE11A','#FFE11A','#FFE11A','#9C27B0',
              '#168039','#0003C7','#0003C7','#FFE11A','#168039','#FA5B0F','#FFE11A','#FFE11A','#FA5B0F','#9C27B0',
              '#168039','#168039','#FFE11A','#FFE11A','#FA5B0F','#FA5B0F','#964b00','#964b00','#964b00']
-'''
 
+'''
 line_cols = ['Blue','Black','Black','Black','Black','Lawngreen','Goldenrod','Red','Sienna','Pink','Indigo',
              'Lawngreen','Goldenrod','Red','Sienna','Pink', 'Lawngreen','Goldenrod','Red','Sienna','Pink',
              'Goldenrod','Goldenrod','Goldenrod','Lawngreen','Sienna','Red','Red','Red','Pink',
              'Goldenrod','Lawngreen','Lawngreen','Red','Goldenrod','Sienna','Red','Red','Sienna','Pink',
              'Goldenrod','Goldenrod','Red','Red','Sienna','Sienna','Indigo','Indigo','Indigo']
-
+'''
 line_stys = ["solid","solid","solid","solid","solid","solid","solid","solid","solid","solid","solid",
              "solid","solid","solid","solid","solid","solid","solid","solid","solid","solid",
              "dotted","dotted","dotted","dotted","dotted","dotted","dotted","dotted","dotted",

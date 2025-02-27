@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 ####################################################################################
-
+'''
 id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130", "da697", "cz944", "df453", "da892", "dc251"]
 idanom = ["cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130", "da697", "cz944", "df453", "da892", "dc251"]
 
@@ -38,6 +38,41 @@ elif suite_set == "overshoot_overview_paper":
 
     id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130", 
           "da697", "cz944", "df453", "da892", "dc251"]
+'''
+
+id=["cs568", "cx209", "cw988", "cw989", "cw990", "cy837", "cy838", "cz375", "cz376", "cz377", "cz378",
+    "cz834", "cz855", "db587", "db723", "db731", "da087", "da266", "db597", "db733", "dc324",
+    "cz944", "di335", "da800", "da697", "da892", "db223", "df453", "de620", "dc251",
+    "dc051", "dc052", "dc248", "dc249", "dc565", "dd210", "df028", "de621", "dc123", "dc130",
+    "df025", "df027", "df021", "df023", "dh541", "dh859", "de943", "de962", "de963"]
+
+run_type = ["ZE-0","Up8", "_Up8", "_Up8", "_Up8", "ZE-1.5", "ZE-2", "ZE-3", "ZE-4", "ZE-5", "ZE-6",
+            "_ZE-1.5", "_ZE-2", "_ZE-3", "_ZE-4", "_ZE-5", "_ZE-1.5", "_ZE-2", "_ZE-3", "_ZE-4", "_ZE-5",
+            "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X",
+            "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X",
+            "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X"]
+            
+runs = dict(zip(id, run_type)) 
+
+
+line_cols = ['#000000','#C30F0E','#C30F0E','#C30F0E','#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#964b00',
+             '#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0', '#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0',
+             '#168039','#168039','#168039','#0003C7','#FA5B0F','#FFE11A','#FFE11A','#FFE11A','#9C27B0',
+             '#168039','#0003C7','#0003C7','#FFE11A','#168039','#FA5B0F','#FFE11A','#FFE11A','#FA5B0F','#9C27B0',
+             '#168039','#168039','#FFE11A','#FFE11A','#FA5B0F','#FA5B0F','#964b00','#964b00','#964b00']
+
+'''
+line_cols = ['Blue','Black','Black','Black','Black','Lawngreen','Goldenrod','Red','Sienna','Pink','Indigo',
+             'Lawngreen','Goldenrod','Red','Sienna','Pink', 'Lawngreen','Goldenrod','Red','Sienna','Pink',
+             'Goldenrod','Goldenrod','Goldenrod','Lawngreen','Sienna','Red','Red','Red','Pink',
+             'Goldenrod','Lawngreen','Lawngreen','Red','Goldenrod','Sienna','Red','Red','Sienna','Pink',
+             'Goldenrod','Goldenrod','Red','Red','Sienna','Sienna','Indigo','Indigo','Indigo']
+'''
+line_stys = ["solid","solid","solid","solid","solid","solid","solid","solid","solid","solid","solid",
+             "solid","solid","solid","solid","solid","solid","solid","solid","solid","solid",
+             "dotted","dotted","dotted","dotted","dotted","dotted","dotted","dotted","dotted",
+             "dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed",
+             "dashdot","dashdot","dashdot","dashdot","dashdot","dashdot","dotted","dashed","dashdot"]
 
 ####################################################################################
 

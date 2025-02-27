@@ -4,7 +4,7 @@
 
 ###############################################################################
 
-suite_set="overshoots" # Options: overshoots, overview, historical_rampups
+suite_set="overshoots" # Options: overshoots, overview, historical_rampups, individual
 icesheet="GrIS" # Options: AIS, GrIS
 masked="False" # Options: True, False
 maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_bedmachine_imbie2_basins_4km.hdf5"
@@ -35,9 +35,14 @@ elif [[ "$suite_set" == "historical_rampups" ]]; then
         "cs568" "cx209" "cw988" "cw989" "cw990" "cy623" "da914" "da916" "da917"
     )
 
+elif [[ "$suite_set" == "individual" ]]; then
+    idlist=(
+        "cw988"
+    )
+
 else
     echo "Invalid suite_set: $suite_set"
-    echo "Valid options: overshoots, overview, historical_rampups"
+    echo "Valid options: overshoots, overview, historical_rampups, or individual"
     exit 1
 fi
 
