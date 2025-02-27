@@ -5,8 +5,8 @@
 ###############################################################################
 
 suite_set="individual" # Options: overshoots, overview, historical_rampups, individual
-icesheet="GrIS" # Options: AIS, GrIS
-masked="False" # Options: True, False
+icesheet="AIS" # Options: AIS, GrIS
+masked="True" # Options: True, False
 maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_bedmachine_imbie2_basins_4km.hdf5"
 mask_no_start="0"
 mask_no_end="16"
