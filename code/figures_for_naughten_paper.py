@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 id=["cs568", "cx209", "cw988", "cw989", "cw990", "cy837", "cy838", "cz375", "cz376", "cz377", "cz378",
     "cz834", "cz855", "db587", "db723", "db731", "da087", "da266", "db597", "db733", "dc324",
-    "cz944", "di335", "da800", "da697", "da892", "db223", "df453", "de620", "dc251",
+    "di335", "da800", "da697", "da892", "db223", "df453", "de620", "dc251",
     "dc051", "dc052", "dc248", "dc249", "dc565", "dd210", "df028", "de621", "dc123", "dc130",
     "df025", "df027", "df021", "df023", "dh541", "dh859", "de943", "de962", "de963","dg093", "dg094", "dg095"]
 
@@ -25,20 +25,20 @@ runs = dict(zip(id, run_type))
 
 line_cols = ['#000000','#C30F0E','#C30F0E','#C30F0E','#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#964b00',
              '#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0', '#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0',
-             '#168039','#168039','#168039','#0003C7','#FA5B0F','#FFE11A','#FFE11A','#FFE11A','#9C27B0',
+             '#168039','#168039','#0003C7','#FA5B0F','#FFE11A','#FFE11A','#FFE11A','#9C27B0',
              '#168039','#0003C7','#0003C7','#FFE11A','#168039','#FA5B0F','#FFE11A','#FFE11A','#FA5B0F','#9C27B0',
              '#168039','#168039','#FFE11A','#FFE11A','#FA5B0F','#FA5B0F','#964b00','#964b00','#964b00','#9C27B0','#9C27B0','#9C27B0']
 
 '''
 line_cols = ['Blue','Black','Black','Black','Black','Lawngreen','Goldenrod','Red','Sienna','Pink','Indigo',
              'Lawngreen','Goldenrod','Red','Sienna','Pink', 'Lawngreen','Goldenrod','Red','Sienna','Pink',
-             'Goldenrod','Goldenrod','Goldenrod','Lawngreen','Sienna','Red','Red','Red','Pink',
+             'Goldenrod','Goldenrod','Lawngreen','Sienna','Red','Red','Red','Pink',
              'Goldenrod','Lawngreen','Lawngreen','Red','Goldenrod','Sienna','Red','Red','Sienna','Pink',
              'Goldenrod','Goldenrod','Red','Red','Sienna','Sienna','Indigo','Indigo','Indigo','Pink','Pink','Pink']
 '''
 line_stys = ["solid","solid","solid","solid","solid","solid","solid","solid","solid","solid","solid",
              "solid","solid","solid","solid","solid","solid","solid","solid","solid","solid",
-             "dotted","dotted","dotted","dotted","dotted","dotted","dotted","dotted","dotted",
+             "dotted","dotted","dotted","dotted","dotted","dotted","dotted","dotted",
              "dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed",
              "dashdot","dashdot","dashdot","dashdot","dashdot","dashdot","dotted","dashed","dashdot","dotted","dashed","dashdot"]
 
@@ -101,10 +101,8 @@ for basin in basins:
 
     ax = plt.gca()
     
-    plt.ylabel("Mass change (Gt)")
+    plt.ylabel("Mass above flotation change (Gt)")
     plt.xlabel('Years')
-    
-    plt.grid(linestyle='-', lw=0.1)
     
     if basin == 8:
 
