@@ -177,7 +177,7 @@ if process_icesheet_data:
                 SLE.reset_index(drop=True)],
                 axis=1)
 
-            IS_data = IS_data[j].sort_values(by='time').reset_index(drop=True)
+            IS_data[j] = IS_data[j].sort_values(by='time').reset_index(drop=True)
 
         icesheet_d[i] = IS_data
 
