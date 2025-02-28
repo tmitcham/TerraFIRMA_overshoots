@@ -26,7 +26,7 @@ print(f"Reading data from {plot_id}...")
 level = 0 # the level of refinement on which to load the data (0 = coarsest mesh level)
 order = 0 # type of interpolation to perform (0 = piecewise constant, 1 = linear; both are conservative)
 
-directory = f"/home/users/tm17544/gws_terrafirma/overshoots/raw_data/{plot_id}/icesheet/"
+directory = f"/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/{plot_id}/icesheet/"
 
 files = fnmatch.filter(sorted(os.listdir(directory)), "*GrIS.hdf5")
 num_of_h5 = len(fnmatch.filter(os.listdir(directory), "*GrIS.hdf5"))
