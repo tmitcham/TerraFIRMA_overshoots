@@ -72,13 +72,13 @@ if num_of_h5 > 1:
 # Plot total thickness change during ramp-up (map)
 print("Starting total thickness change map...")
 
-thklim = col.Normalize(-250,250) # limits for thickness change colormap
+thklim = col.Normalize(-500,500) # limits for thickness change colormap
 
 fig = plt.figure()
 
 ax = plt.gca()
-ax.set_ylim(0.85e6,5.35e6)
-ax.set_xlim(0.3e6,5.85e6)
+#ax.set_ylim(0.85e6,5.35e6)
+#ax.set_xlim(0.3e6,5.85e6)
 ax.set_aspect('equal', adjustable='box')
 
 H[H==0] = np.NaN
