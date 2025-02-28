@@ -72,7 +72,7 @@ if num_of_h5 > 1:
 # Plot total thickness change during ramp-up (map)
 print("Starting total thickness change map...")
 
-thklim = col.Normalize(-500,500) # limits for thickness change colormap
+thklim = col.Normalize(-1000,1000) # limits for thickness change colormap
 
 fig = plt.figure()
 
@@ -89,10 +89,10 @@ GL = H-Haf
 #color and contour plot
 fig = plt.pcolormesh(x,y,H[:,:,1]-H[:,:,0],norm=thklim,cmap='coolwarm_r',shading = 'auto')
 plt.colorbar(extend="min",shrink=0.9,label="$\Delta H$ (m)")
-fig = plt.contour(x,y,GL[:,:,1],[0.1],norm=thklim,colors='black',linewidths=0.6)
-fig = plt.contour(x,y,GL[:,:,0],[0.1],norm=thklim,colors='grey',linewidths=0.6)
+fig = plt.contour(x,y,GL[:,:,1],[0.1],colors='black',linewidths=0.6)
+fig = plt.contour(x,y,GL[:,:,0],[0.1],colors='grey',linewidths=0.6)
 
-plt.title(f"Total $\Delta H$ {plot_id}")
+plt.title(f"Total $\Delta H$ in ZE-6 (730 years)")
 plt.tick_params(
     axis='both',
     bottom=False,
