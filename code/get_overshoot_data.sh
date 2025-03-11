@@ -29,7 +29,6 @@ RUN_IDS=(
 
 ICESHEETS="Both" # Options: AIS, GrIS, or Both
 ATMOS="Yes" # Options: Yes or No
-JOBS_PER_BATCH=10
 
 ###############################################################################
 
