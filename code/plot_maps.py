@@ -136,8 +136,8 @@ plt.clf()
 fig = plt.figure()
 ax = plt.gca()
 
-# May need to set limits on colourscale for clear plots
-spdlim = col.Normalize(0,5000)
+# Change limits on colourscale for clear plots
+spdlim = col.Normalize(0,1000)
 
 ax = plt.gca()
 
