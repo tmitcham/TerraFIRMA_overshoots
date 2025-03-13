@@ -54,12 +54,12 @@ if not animation:
 
     lo, hi = amrio.queryDomainCorners(ISFile, level)
 
-    x, y, H = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)[2]
-    dHdt = amrio.readBox2D(ISFile, level, lo, hi, "dThickness/dt", order)[2]
-    B = amrio.readBox2D(ISFile, level, lo, hi, "Z_base", order)[2]
-    Speed = amrio.readBox2D(ISFile, level, lo, hi, "Vel_magnitidue", order)[2]
-    xVel = amrio.readBox2D(ISFile, level, lo, hi, "xVel", order)[2]
-    yVel = amrio.readBox2D(ISFile, level, lo, hi, "yVel", order)[2]
+    x,y,H = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)#[2]
+    dHdt = amrio.readBox2D(ISFile, level, lo, hi, "dThickness/dt", order)#[2]
+    B = amrio.readBox2D(ISFile, level, lo, hi, "Z_base", order)#[2]
+    Speed = amrio.readBox2D(ISFile, level, lo, hi, "Vel_magnitidue", order)#[2]
+    xVel = amrio.readBox2D(ISFile, level, lo, hi, "xVel", order)#[2]
+    yVel = amrio.readBox2D(ISFile, level, lo, hi, "yVel", order)#[2]
 
     amrio.free(ISFile)
 
