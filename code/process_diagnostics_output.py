@@ -22,12 +22,12 @@ def vaf_to_sle(vaf):
 ####################################################################################
 
 # Options for the script
-icesheet = "AIS" # Options: "AIS" or "GrIS"
+icesheet = "GrIS" # Options: "AIS" or "GrIS"
 suite_set = "overshoots" # Options: "overshoots", "historical_rampups"
 process_atmos_data = False # Options: True, False
 process_icesheet_data = True # Options: True, False
-data_to_netcdf = True # Options: True, False
-basin_mask = True # Options: True, False
+data_to_netcdf = False # Options: True, False
+basin_mask = False # Options: True, False
 basins_for_netcdf = [8,15] # Options: any from 0-16 - 0 (whole AIS), 8 (Ross), 15 (Filchner-Ronne)
 
 # Printout of the options chosen

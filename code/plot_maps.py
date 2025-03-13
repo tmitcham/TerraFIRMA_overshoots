@@ -1,12 +1,10 @@
 ####################################################################################
+
 # Imports
-import cf
-import cfplot as cfp
-import pandas as pd
+
 import os
 import fnmatch
 import numpy as np
-import pickle
 
 import matplotlib.pyplot as plt
 import matplotlib.colors as col
@@ -20,94 +18,112 @@ from amrfile import io as amrio
 
 ####################################################################################
 
-# Read data from the ramp-up cx209 for mapping
+# Options
 
-plot_id = "cx209"
-
-print(f"Reading data from {plot_id}...")
-
-# Options for loading BISICLES plot files
+suite_id = "cx209"
+icesheet = "AIS" # the icesheet to plot (GrIS or AIS)
 level = 0 # the level of refinement on which to load the data (0 = coarsest mesh level)
 order = 0 # type of interpolation to perform (0 = piecewise constant, 1 = linear; both are conservative)
+animation = False # whether to load multiple files for animation (True) or just one file for a single map (False)
+year_to_plot = 'initial' # the single year to plot if not an animation (initial, final, or an actual year e.g. 1905)
 
-directory = f"/home/users/tm17544/gws_terrafirma/overshoots/raw_data/{plot_id}/icesheet/"
+####################################################################################
 
-files = fnmatch.filter(sorted(os.listdir(directory)), "*GrIS.hdf5")
-num_of_h5 = len(fnmatch.filter(os.listdir(directory), "*GrIS.hdf5"))
+# Read the data required for plotting
 
-if num_of_h5 > 1:
+print(f"Reading data from {suite_id}...")
+
+directory = f"/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/{suite_id}/icesheet/"
+files = fnmatch.filter(sorted(os.listdir(directory)), f"*{icesheet}*.hdf5")
+num_of_h5 = len(files)
+
+if not animation:
+
+    if year_to_plot == 'initial':
+        infile = files[0]
+
+    elif year_to_plot == 'final':
+        infile = files[num_of_h5-1]
+
+    else:
+        infile = f"bisicles_{suite_id}c_{year_to_plot}0101_plot-{icesheet}.hdf5"
+
+    print(f"Loading data from {infile}")
+
+    ISFile = amrio.load(directory + infile)
+
+    lo, hi = amrio.queryDomainCorners(ISFile, level)
+
+    x, y, H = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)[2]
+    dHdt = amrio.readBox2D(ISFile, level, lo, hi, "dThickness/dt", order)[2]
+    B = amrio.readBox2D(ISFile, level, lo, hi, "Z_base", order)[2]
+    Speed = amrio.readBox2D(ISFile, level, lo, hi, "Vel_magnitidue", order)[2]
+    xVel = amrio.readBox2D(ISFile, level, lo, hi, "xVel", order)[2]
+    yVel = amrio.readBox2D(ISFile, level, lo, hi, "yVel", order)[2]
+
+    amrio.free(ISFile)
+
+elif animation:
 
     print(f"Found {num_of_h5} files")
 
-    #infile = files[0]
-    infile = f"/home/users/tm17544/gws_terrafirma/overshoots/raw_data/cx209/icesheet/bisicles_cx209c_18510101_plot-GrIS.hdf5"
+    for i in range(num_of_h5):
 
-    print(f"Loading data from {infile}")
+        print(f"Loading data from {files[i]}")
 
-    #GrISFile = amrio.load(directory + infile)
-    GrISFile = amrio.load(infile)
-    lo, hi = amrio.queryDomainCorners(GrISFile, level)
+        ISFile = amrio.load(directory + files[i])
+        
+        lo, hi = amrio.queryDomainCorners(ISFile, level)
 
-    x, y = amrio.readBox2D(GrISFile, level, lo, hi, "thickness", order)[:2]
+        x, y = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)[:2]
 
-    var_shape = (y.size, x.size, 2)
+        var_shape = (y.size, x.size, num_of_h5)
 
-    H = np.ndarray(shape=var_shape)
-    dHdt = np.ndarray(shape=var_shape)
-    B = np.ndarray(shape=var_shape)
-    xVel = np.ndarray(shape=var_shape)
-    yVel = np.ndarray(shape=var_shape)
+        H = np.ndarray(shape=var_shape)
+        dHdt = np.ndarray(shape=var_shape)
+        B = np.ndarray(shape=var_shape)
+        Speed = np.ndarray(shape=var_shape)
+        xVel = np.ndarray(shape=var_shape)
+        yVel = np.ndarray(shape=var_shape)
 
-    H[:,:,0] = amrio.readBox2D(GrISFile, level, lo, hi, "thickness", order)[2]
-    dHdt[:,:,0] = amrio.readBox2D(GrISFile, level, lo, hi, "dThickness/dt", order)[2]
-    B[:,:,0] = amrio.readBox2D(GrISFile, level, lo, hi, "Z_base", order)[2]
-    xVel[:,:,0] = amrio.readBox2D(GrISFile, level, lo, hi, "xVel", order)[2]
-    yVel[:,:,0] = amrio.readBox2D(GrISFile, level, lo, hi, "yVel", order)[2]
-
-    amrio.free(GrISFile)
-
-    infile = files[num_of_h5-1]
-
-    print(f"Loading data from {infile}")
-
-    GrISFile = amrio.load(directory + infile)
-
-    H[:,:,1] = amrio.readBox2D(GrISFile, level, lo, hi, "thickness", order)[2]
-    dHdt[:,:,1] = amrio.readBox2D(GrISFile, level, lo, hi, "dThickness/dt", order)[2]
-    B[:,:,1] = amrio.readBox2D(GrISFile, level, lo, hi, "Z_base", order)[2]
-    xVel[:,:,1] = amrio.readBox2D(GrISFile, level, lo, hi, "xVel", order)[2]
-    yVel[:,:,1] = amrio.readBox2D(GrISFile, level, lo, hi, "yVel", order)[2]
-
-    amrio.free(GrISFile)
+        H[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)[2]
+        dHdt[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "dThickness/dt", order)[2]
+        B[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "Z_base", order)[2]
+        Speed[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "Vel_magnitidue", order)[2]
+        xVel[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "xVel", order)[2]
+        yVel[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "yVel", order)[2]
+        
+        amrio.free(ISFile)
     
 
 ####################################################################################
 
-# Plot total thickness change during ramp-up (map)
-print("Starting total thickness change map...")
+# PLot ice thickness and ice speed maps for a single year
 
-thklim = col.Normalize(-250,250) # limits for thickness change colormap
+print("Starting initial thickness and velocity maps...")
+
+# Plot ice thickness map
 
 fig = plt.figure()
-
 ax = plt.gca()
-ax.set_ylim(0.85e6,5.35e6)
-ax.set_xlim(0.3e6,5.85e6)
+
+if icesheet == "GrIS":
+    ax.set_ylim(0.85e6,5.35e6)
+    ax.set_xlim(0.3e6,5.85e6)
+
 ax.set_aspect('equal', adjustable='box')
 
 H[H==0] = np.NaN
 
+# Calculate the height above flotation to plot the grounding line
 Haf = (-1*B)*(1028/918)
 GL = H-Haf
-dHdt[np.isnan(H)] = np.NaN
 
-#color and contour plot
-fig = plt.pcolormesh(x,y,H[:,:,1]-H[:,:,0],norm=thklim,cmap='coolwarm_r',shading = 'auto')
-plt.colorbar(extend="min",shrink=0.9,label="$\Delta H$ (m)")
-fig = plt.contour(x,y,GL[:,:,1],[0.1],norm=thklim,colors='black',linewidths=0.6)
-fig = plt.contour(x,y,GL[:,:,0],[0.1],norm=thklim,colors='grey',linewidths=0.6)
+# Colour and contour plot
+fig = plt.pcolormesh(x,y,H,cmap = 'YlGn', shading = 'auto')
+plt.colorbar(shrink=0.9,label="Ice thickness (m)")
+fig = plt.contour(x,y,GL,[0.1],colors='black',linewidths=0.6)
 
-plt.title(f"Total $\Delta H$ (xx years) {plot_id}")
 plt.tick_params(
     axis='both',
     bottom=False,
@@ -115,84 +131,46 @@ plt.tick_params(
     labelbottom=False,
     labelleft=False)
 
-print("Finished and saving total thickness change map...")
+plt.savefig(f"../figures/{suite_id}_{icesheet}_{year_to_plot}_thickness.png",dpi=600,bbox_inches='tight')
+plt.clf()
 
-plt.savefig(f"../figures/GrIS-{plot_id}-totalH-change.png",dpi=600,bbox_inches='tight')
+# Plot ice speed map
+
+fig = plt.figure()
+ax = plt.gca()
+
+# May need to set limits on colourscale for clear plots
+spdlim = col.Normalize(0,5000)
+
+ax = plt.gca()
+
+if icesheet == "GrIS":
+    ax.set_ylim(0.85e6,5.35e6)
+    ax.set_xlim(0.3e6,5.85e6)
+
+ax.set_aspect('equal', adjustable='box')
+
+Speed[Speed==0] = np.NaN
+
+#color and contour plot
+fig = plt.pcolormesh(x,y,Speed,norm=spdlim,cmap='Greys',shading = 'auto')
+fig = plt.colorbar(extend="max",shrink=0.9,label="Ice flow speed (m/yr)")
+fig = plt.contour(x,y,GL,[0.1],colors='black',linewidths=0.6)
+
+fig = plt.tick_params(
+    axis='both',
+    bottom=False,
+    left=False,
+    labelbottom=False,
+    labelleft=False)
+
+plt.savefig(f"../figures/{suite_id}_{icesheet}_{year_to_plot}_speed.png",dpi=600,bbox_inches='tight')
 
 plt.clf()
 
-####################################################################################
+print("Finished and saved initial thickness and velocity maps...")
 
-# Plot initial ice thickness and velocity if "cx209"
-
-if plot_id == "cx209":
-
-    print("Starting initial thickness and velocity maps...")
-
-    fig = plt.figure()
-
-    ax = plt.gca()
-    ax.set_ylim(0.85e6,5.35e6)
-    ax.set_xlim(0.3e6,5.85e6)
-    ax.set_aspect('equal', adjustable='box')
-
-    H[H==0] = np.NaN
-
-    Haf = (-1*B)*(1028/918)
-    GL = H-Haf
-
-    #color and contour plot
-    fig = plt.pcolormesh(x,y,H[:,:,0],cmap = 'YlGn', shading = 'auto')
-    plt.colorbar(shrink=0.9,label="Ice thickness (m)")
-    fig = plt.contour(x,y,GL[:,:,0],[0.1],colors='black',linewidths=0.6)
-
-    plt.tick_params(
-        axis='both',
-        bottom=False,
-        left=False,
-        labelbottom=False,
-        labelleft=False)
-
-    plt.savefig(f"../figures/GrIS-initial-thickness.png",dpi=600,bbox_inches='tight')
-
-    plt.clf()
-
-
-    fig = plt.figure()
-
-    spdlim = col.Normalize(0,1000)
-
-    ax = plt.gca()
-    ax.set_ylim(0.85e6,5.35e6)
-    ax.set_xlim(0.3e6,5.85e6)
-    ax.set_aspect('equal', adjustable='box')
-
-    xVel[xVel==0] = np.NaN
-    yVel[yVel==0] = np.NaN
-
-    speed = np.sqrt(xVel**2 + yVel**2)
-
-    Haf = (-1*B)*(1028/918)
-    GL = H-Haf
-
-    #color and contour plot
-    fig = plt.pcolormesh(x,y,speed[:,:,0],norm=spdlim,cmap='Greys',shading = 'auto')
-    fig = plt.colorbar(extend="max",shrink=0.9,label="Ice speed (m/yr)")
-    fig = plt.contour(x,y,GL[:,:,0],[0.1],colors='black',linewidths=0.6)
-
-    fig = plt.tick_params(
-        axis='both',
-        bottom=False,
-        left=False,
-        labelbottom=False,
-        labelleft=False)
-
-    plt.savefig(f"../figures/GrIS-initial-speed.png",dpi=600,bbox_inches='tight')
-
-    plt.clf()
-
-    print("Finished and saving initial thickness and velocity maps...")
-
+''' Need to work on this still...
 ####################################################################################
 
 # Make animation of dh/dt during the ramp-up (map)
@@ -244,4 +222,5 @@ plt.close()
 
 print("Finished and saving dh/dt animation")
 
-####################################################################################
+####################################################################################'
+'''
