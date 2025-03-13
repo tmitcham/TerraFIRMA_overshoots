@@ -179,7 +179,7 @@ if process_icesheet_data:
             
             # Remove the 1925 data point for cw988 as the file is corrupted and the data is not valid
             if i == "cw988":
-                IS_data[j].loc[IS_data[j]['time'] == 1925, IS_data[j]['VAF','SLE']] = np.nan
+                IS_data[j].loc[IS_data[j]['time'] == 1925, ['VAF','SLE']] = np.nan
 
             IS_data[j] = IS_data[j].sort_values(by='time').reset_index(drop=True)
 
