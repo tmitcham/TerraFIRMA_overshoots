@@ -57,7 +57,6 @@ if not animation:
     x,y,H = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)#[2]
     dHdt = amrio.readBox2D(ISFile, level, lo, hi, "dThickness/dt", order)#[2]
     B = amrio.readBox2D(ISFile, level, lo, hi, "Z_base", order)#[2]
-    Speed = amrio.readBox2D(ISFile, level, lo, hi, "Vel_magnitude", order)#[2]
     xVel = amrio.readBox2D(ISFile, level, lo, hi, "xVel", order)#[2]
     yVel = amrio.readBox2D(ISFile, level, lo, hi, "yVel", order)#[2]
 
@@ -82,14 +81,12 @@ elif animation:
         H = np.ndarray(shape=var_shape)
         dHdt = np.ndarray(shape=var_shape)
         B = np.ndarray(shape=var_shape)
-        Speed = np.ndarray(shape=var_shape)
         xVel = np.ndarray(shape=var_shape)
         yVel = np.ndarray(shape=var_shape)
 
         H[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)[2]
         dHdt[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "dThickness/dt", order)[2]
         B[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "Z_base", order)[2]
-        Speed[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "Vel_magnitude", order)[2]
         xVel[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "xVel", order)[2]
         yVel[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "yVel", order)[2]
         
@@ -150,7 +147,10 @@ if icesheet == "GrIS":
 
 ax.set_aspect('equal', adjustable='box')
 
-Speed[Speed==0] = np.NaN
+xVel[xVel==0] = np.NaN
+yVel[yVel==0] = np.NaN
+
+Speed = np.sqrt(xVel**2 + yVel**2)
 
 #color and contour plot
 fig = plt.pcolormesh(x,y,Speed,norm=spdlim,cmap='Greys',shading = 'auto')
