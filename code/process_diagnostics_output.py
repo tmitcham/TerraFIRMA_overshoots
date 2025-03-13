@@ -26,7 +26,7 @@ icesheet = "AIS" # Options: "AIS" or "GrIS"
 suite_set = "overshoots" # Options: "overshoots", "historical_rampups"
 process_atmos_data = False # Options: True, False
 process_icesheet_data = True # Options: True, False
-data_to_netcdf = False # Options: True, False
+data_to_netcdf = True # Options: True, False
 basin_mask = True # Options: True, False
 basins_for_netcdf = [8,15] # Options: any from 0-16 - 0 (whole AIS), 8 (Ross), 15 (Filchner-Ronne)
 
@@ -176,6 +176,10 @@ if process_icesheet_data:
                 VAF.reset_index(drop=True),
                 SLE.reset_index(drop=True)],
                 axis=1)
+            
+            # Remove the 1925 data point for cw988 as the file is corrupted and the data is not valid
+            if i == "cw988":
+                IS_data[j].loc[IS_data[j]['time'] == 1925] = np.nan
 
             IS_data[j] = IS_data[j].sort_values(by='time').reset_index(drop=True)
 
