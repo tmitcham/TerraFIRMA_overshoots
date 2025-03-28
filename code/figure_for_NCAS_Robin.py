@@ -26,7 +26,7 @@ line_cols = [ZE_0_col, Up8_col, ZE_2_col, ZE_4_col, ZE_2_col, ZE_4_col]
 line_stys = [ZE_0_sty, Up_and_ZE_sty, Up_and_ZE_sty, Up_and_ZE_sty, Dn_sty, Dn_sty]
 
 # Load data
-with open("/gws/nopw/tm17544/gws_terrafirma/TerraFIRMA_overshoots/processed_data/AIS_data_overshoots_masked.pkl", 'rb') as file:
+with open("/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/AIS_data_overshoots_masked.pkl", 'rb') as file:
     icesheet_d = pickle.load(file)
 
 # Plot data
