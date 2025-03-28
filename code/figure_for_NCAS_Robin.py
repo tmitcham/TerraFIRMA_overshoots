@@ -6,10 +6,12 @@ import pickle
 import matplotlib.pyplot as plt
 
 # Plotting options
+basin = 0 # 0 = whole AIS, 8 = Ross, 10 = ASE, 15 = Filchner-Ronne
 plot_fontsize = 8
 legend_fontsize = 6
 plot_linewidth = 1.2
 plot_save_filepath = '/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/figures/'
+plot_save_filename = f"SLC_vs_Time_basin_{basin}.png"
 ZE_0_col = '#000000'
 ZE_0_sty = 'dotted'
 Up8_col = '#66c2a5'
@@ -33,17 +35,17 @@ with open("/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data
 plt.rcParams.update({'font.size': plot_fontsize})
 plt.figure(figsize=(4, 3))
 
-initialSLE = icesheet_d["cx209"][0]["SLE"][0]
-initialSLEpi = icesheet_d["cs568"][0]["SLE"][0]
+initialSLE = icesheet_d["cx209"][basin]["SLE"][0]
+initialSLEpi = icesheet_d["cs568"][basin]["SLE"][0]
 
 count = 0
 
-ctrl_data = icesheet_d["cs568"][0]
+ctrl_data = icesheet_d["cs568"][basin]
 pi_SLE = ctrl_data["SLE"]
 
 for i in id:
 
-    plot_data = icesheet_d[i][0]
+    plot_data = icesheet_d[i][basin]
 
     SLE_data = plot_data["SLE"]
     time_series = plot_data["time"]
@@ -66,4 +68,4 @@ ax.set_xlabel('Years')
 ax.set_xlim([0, 775])
 
 # Save figure
-plt.savefig(f"{plot_save_filepath}/AIS_SLC_vs_Time.png", dpi = 600, bbox_inches='tight')
+plt.savefig(f"{plot_save_filepath}/{plot_save_filename}", dpi = 600, bbox_inches='tight')
