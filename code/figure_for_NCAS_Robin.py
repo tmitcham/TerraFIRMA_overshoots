@@ -61,7 +61,7 @@ for i in id:
 plt.legend(loc = 'best', prop={'size': legend_fontsize})
 
 ax = plt.gca()
-ax.set_ylabel("Sea level contribiution (m)")
+ax.set_ylabel("Sea level contribution (m)")
 ax.set_xlabel('Years')
 ax.set_xlim([0, 775])
 
