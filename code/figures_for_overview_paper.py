@@ -9,24 +9,24 @@ import pandas as pd
 
 # Options
 icesheet = "AIS" # AIS or GrIS
-plot_fontsize = 7.5
+plot_fontsize = 8
 
 ####################################################################################
 
-id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130", "da697", "di335", "df453", "da892", "dc251"]
-idanom = ["cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130", "da697", "di335", "df453", "da892", "dc251"]
+id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130"]#, "da697", "di335", "df453", "da892", "dc251"]
+idanom = ["cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028", "dc123", "dc130"]#, "da697", "di335", "df453", "da892", "dc251"]
 
-run_type = ["ZE-0","Up8", "ZE-1.5", "ZE-2", "ZE-3", "ZE-4", "ZE-5", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr", "_ramp-down -8 1.5C 50yr", "_ramp-down -8 2C 50yr", "_ramp-down -8 3C 50yr", "_ramp-down -8 4C 50yr", "_ramp-down -8 5C 50yr"]
-run_type_anom = ["Up8", "ZE-1.5", "ZE-2", "ZE-3", "ZE-4", "ZE-5", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr", "_ramp-down -8 1.5C 50yr", "_ramp-down -8 2C 50yr", "_ramp-down -8 3C 50yr", "_ramp-down -8 4C 50yr", "_ramp-down -8 5C 50yr"]
+run_type = ["ZE-0","Up8", "ZE-1.5", "ZE-2", "ZE-3", "ZE-4", "ZE-5", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr"]#, "_ramp-down -8 1.5C 50yr", "_ramp-down -8 2C 50yr", "_ramp-down -8 3C 50yr", "_ramp-down -8 4C 50yr", "_ramp-down -8 5C 50yr"]
+run_type_anom = ["Up8", "ZE-1.5", "ZE-2", "ZE-3", "ZE-4", "ZE-5", "_ramp-down -4 1.5C 50yr", "_ramp-down -4 2C 50yr", "_ramp-down -4 3C 50yr", "_ramp-down -4 4C 50yr", "_ramp-down -4 5C 50yr"]#, "_ramp-down -8 1.5C 50yr", "_ramp-down -8 2C 50yr", "_ramp-down -8 3C 50yr", "_ramp-down -8 4C 50yr", "_ramp-down -8 5C 50yr"]
 
 runs = dict(zip(id, run_type)) 
 runs_anom = dict(zip(idanom, run_type_anom))
 
-line_cols = ['#000000','#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0', '#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0']
-line_stys = ["dotted","solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed"]
+line_cols = ['#000000','#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0']#, '#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0']
+line_stys = ["dotted","solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed"]#,"dashed","dashed","dashed","dashed","dashed"]
 
-line_cols_anom = ['#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0']
-line_stys_anom = ["solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed"]
+line_cols_anom = ['#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0']#,'#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0']
+line_stys_anom = ["solid","solid","solid","solid","solid","solid","dashed","dashed","dashed","dashed","dashed"]#,"dashed","dashed","dashed","dashed","dashed"]
 
 ####################################################################################
 
@@ -134,7 +134,7 @@ labels.append('Dn8-X')
 labels.append('Dn4-X')
 labels.append('Dn2-X')
 
-ax.legend(handles, labels, loc = 'best', prop={'size': 5})
+ax.legend(handles, labels, loc = 'best', prop={'size': 8})
 
 print("Finished and saving Global Temp vs Time plot...")
 
@@ -143,7 +143,7 @@ plt.savefig('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIR
 ####################################################################################
 
 # Setup the overall figure and size
-fig, ax = plt.subplots(2, 2, figsize=(7.48, 6), sharex='col')
+fig, ax = plt.subplots(4, 1, figsize=(4.72, 6.69))
 
 ####################################################################################
 
@@ -167,28 +167,27 @@ for i in id:
 
     if i == "cs568":
         
-        ax[1,0].plot(time_series - 1850, (VAF_data - initialVAFpi)*(0.918/1e9), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+        ax[1].plot(time_series - 1850, (VAF_data - initialVAFpi)*(0.918/1e9), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
 
     else:
         
-        ax[1,0].plot(time_series - 1850, (VAF_data - initialVAF)*(0.918/1e9), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+        ax[1].plot(time_series - 1850, (VAF_data - initialVAF)*(0.918/1e9), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
 
     count = count + 1
 
 #ax[1,0].set_yticks([0, -20000, -40000, -60000, -80000, -100000]) 
 #ax[1,0].set_yticklabels(['0', '-20,000', '-40,000', '-60,000', '-80,000', '-100,000']) 
 
-ax[1,0].set_ylabel("Mass above flotation change (Gt)")
-ax[1,0].set_xlabel('Years')
-ax[1,0].legend(loc = 'best', prop={'size': 5})
+ax[1].set_ylabel("Mass above\nflotation change (Gt)")
+ax[1].set_xlabel('Years')
 
 # Add a second y-axis for sea level equivalent
-secax = ax[1,0].secondary_yaxis('right', functions=(mass2sle, sle2mass)) 
-secax.set_ylabel('Sea level contribution (m)')
+secax = ax[1].secondary_yaxis('right', functions=(mass2sle, sle2mass)) 
+secax.set_ylabel('Sea level contribution (mm)')
 
-ax[1,0].set_xlim([0, 775])
+ax[1].set_xlim([0, 775])
 
-ax[1,0].annotate('c)', xy=(0, 0), xycoords='axes fraction', xytext=(+1.0, +0.5), textcoords='offset fontsize', ha='center', fontsize=9)
+ax[1].annotate('b)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
 
 
 ####################################################################################
@@ -207,8 +206,8 @@ for i in id:
     
     plot_data = SMB[i]
 
-    ax[0,1].plot(plot_data["GSAT"] - initialT, ((plot_data["grounded_SMB"])*(0.918/1e9)), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.10)
-    ax[1,1].plot(plot_data["GSAT"] - initialT, ((plot_data["floating_SMB"])*(0.918/1e9)), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.10)
+    ax[2].plot(plot_data["GSAT"] - initialT, ((plot_data["grounded_SMB"])*(0.918/1e9)), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.10)
+    ax[3].plot(plot_data["GSAT"] - initialT, ((plot_data["floating_SMB"])*(0.918/1e9)), label = '_none', lw=0.8, color = line_cols[count], linestyle = line_stys[count], alpha = 0.10)
     
     ma_y_gr = smooth((plot_data["grounded_SMB"])*(0.918/1e9), box_size)
     ma_y_fl = smooth((plot_data["floating_SMB"])*(0.918/1e9), box_size)
@@ -217,20 +216,19 @@ for i in id:
     ma_x = ma_x[int((box_size-1)/2):]
     ma_x = ma_x[:-int((box_size-1)/2)]
     
-    ax[0,1].plot(ma_x, ma_y_gr, label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
-    ax[1,1].plot(ma_x, ma_y_fl, label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+    ax[2].plot(ma_x, ma_y_gr, label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+    ax[3].plot(ma_x, ma_y_fl, label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
     
     count = count + 1
 
-#ax[0].set_xlim([0, 750])
-#ax[1].set_xlim([0, 750])
+ax[2].set_ylabel("Grounded SMB (Gt yr$^{-1}$)")
+ax[3].set_ylabel("Floating SMB (Gt yr$^{-1}$)")
+ax[2].set_xlabel('$\Delta$GSAT (K)')
+ax[3].set_xlabel('$\Delta$GSAT (K)')
 
-ax[0,1].set_ylabel("Grounded SMB (Gt yr$^{-1}$)")
-ax[1,1].set_ylabel("Floating SMB (Gt yr$^{-1}$)")
-ax[1,1].set_xlabel('GSAT')
 
-ax[0,1].annotate('b)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
-ax[1,1].annotate('d)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
+ax[2].annotate('c)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
+ax[3].annotate('d)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
 
 print("Finished and saving AIS SMB vs Time plot...")
 
@@ -254,25 +252,33 @@ for i in id:
 
     if i == "cs568":
         
-        ax[0,0].plot(time_series - 1850, (AIS_data_vol - initialVolpi)*(0.918/1e9), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+        ax[0].plot(time_series - 1850, (AIS_data_vol - initialVolpi)*(0.918/1e9), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
 
     else:
         
-        ax[0,0].plot(time_series - 1850, (AIS_data_vol - initialVol)*(0.918/1e9), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+        ax[0].plot(time_series - 1850, (AIS_data_vol - initialVol)*(0.918/1e9), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
     
     count = count + 1
 
 #ax[0,0].set_yticks([0, -20000, -40000, -60000, -80000, -100000]) 
 #ax[0,0].set_yticklabels(['0', '-20,000', '-40,000', '-60,000', '-80,000', '-100,000'])
 
-ax[0,0].set_ylabel("Mass change (Gt)")
+ax[0].set_ylabel("Mass change (Gt)")
+ax[0].set_xlabel('Years')
 
-ax[0,0].annotate('a)', xy=(0, 0), xycoords='axes fraction', xytext=(+1.0, +0.5), textcoords='offset fontsize', ha='center', fontsize=9)
+ax[0].legend(handles, labels, loc = 'best', prop={'size': 8})
+handles, labels = ax[0].get_legend_handles_labels()
+handles.append(plt.Line2D([0], [0], color='black', lw=0.8, linestyle='dashed'))
+labels.append('Dn4-X')
+ax[0].legend(handles, labels, loc = 'lower left', prop={'size': 5})
+
+
+ax[0].annotate('a)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
 
 print("Finished and saving AIS SMB vs Time plot...")
 
 plt.tight_layout()
 
-plt.savefig('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/AISVafVolvsTime.png', dpi = 600,  bbox_inches='tight')  
+plt.savefig('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/AISVafVolSmb.pdf', dpi = 600,  bbox_inches='tight')  
 
 ####################################################################################
