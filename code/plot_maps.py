@@ -19,13 +19,14 @@ from amrfile import io as amrio
 ####################################################################################
 
 # Options
-
 suite_id = "cx209"
 icesheet = "AIS" # the icesheet to plot (GrIS or AIS)
 level = 0 # the level of refinement on which to load the data (0 = coarsest mesh level)
 order = 0 # type of interpolation to perform (0 = piecewise constant, 1 = linear; both are conservative)
-animation = False # whether to load multiple files for animation (True) or just one file for a single map (False)
-year_to_plot = 'initial' # the single year to plot if not an animation (initial, final, or an actual year e.g. 1905)
+type = "single" # "single" for a single year, "difference" for a difference plot, "animation" for an animation
+single_year_to_plot = 'initial' # the single year to plot if not an animation (initial, final, or an actual year e.g. 1905)
+diff_anim_range_to_plot = ['initial', 'final'] # the range to plot for a difference plot or animation (initial, final, or actual years e.g. 1905)
+variable = "thickness" # the variable to plot (thickness, dHdt, velocity)
 
 ####################################################################################
 
@@ -37,16 +38,16 @@ directory = f"/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/
 files = fnmatch.filter(sorted(os.listdir(directory)), f"*{icesheet}*.hdf5")
 num_of_h5 = len(files)
 
-if not animation:
+if type == "single":
 
-    if year_to_plot == 'initial':
+    if single_year_to_plot == 'initial':
         infile = files[0]
 
-    elif year_to_plot == 'final':
+    elif single_year_to_plot == 'final':
         infile = files[num_of_h5-1]
 
     else:
-        infile = f"bisicles_{suite_id}c_{year_to_plot}0101_plot-{icesheet}.hdf5"
+        infile = f"bisicles_{suite_id}c_{single_year_to_plot}0101_plot-{icesheet}.hdf5"
 
     print(f"Loading data from {infile}")
 
@@ -62,7 +63,57 @@ if not animation:
 
     amrio.free(ISFile)
 
-elif animation:
+elif type == "difference":
+
+    if diff_anim_range_to_plot[0] == 'initial':
+        infile = files[0]
+
+    else:
+        infile = f"bisicles_{suite_id}c_{diff_anim_range_to_plot[0]}0101_plot-{icesheet}.hdf5"
+
+    print(f"Loading data from {infile}")
+
+    ISFile = amrio.load(directory + infile)
+
+    lo, hi = amrio.queryDomainCorners(ISFile, level)
+
+    x, y = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)[:2]
+
+    var_shape = (y.size, x.size, 2)
+
+    H = np.ndarray(shape=var_shape)
+    dHdt = np.ndarray(shape=var_shape)
+    B = np.ndarray(shape=var_shape)
+    xVel = np.ndarray(shape=var_shape)
+    yVel = np.ndarray(shape=var_shape)
+
+    H[:,:,0] = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)[2]
+    dHdt[:,:,0] = amrio.readBox2D(ISFile, level, lo, hi, "dThickness/dt", order)[2]
+    B[:,:,0] = amrio.readBox2D(ISFile, level, lo, hi, "Z_base", order)[2]
+    xVel[:,:,0] = amrio.readBox2D(ISFile, level, lo, hi, "xVel", order)[2]
+    yVel[:,:,0] = amrio.readBox2D(ISFile, level, lo, hi, "yVel", order)[2]
+
+    amrio.free(ISFile)
+
+    if diff_anim_range_to_plot[1] == 'final':
+        infile = files[num_of_h5-1]
+
+    else:
+        infile = f"bisicles_{suite_id}c_{diff_anim_range_to_plot[1]}0101_plot-{icesheet}.hdf5"
+
+    print(f"Loading data from {infile}")
+
+    ISFile = amrio.load(directory + infile)
+
+    H[:,:,1] = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)[2]
+    dHdt[:,:,1] = amrio.readBox2D(ISFile, level, lo, hi, "dThickness/dt", order)[2]
+    B[:,:,1] = amrio.readBox2D(ISFile, level, lo, hi, "Z_base", order)[2]
+    xVel[:,:,1] = amrio.readBox2D(ISFile, level, lo, hi, "xVel", order)[2]
+    yVel[:,:,1] = amrio.readBox2D(ISFile, level, lo, hi, "yVel", order)[2]
+
+    amrio.free(ISFile)
+
+elif type == "animation":
 
     print(f"Found {num_of_h5} files")
 
@@ -71,18 +122,18 @@ elif animation:
         print(f"Loading data from {files[i]}")
 
         ISFile = amrio.load(directory + files[i])
-        
-        lo, hi = amrio.queryDomainCorners(ISFile, level)
 
-        x, y = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)[:2]
+        if i == 0:
+            lo, hi = amrio.queryDomainCorners(ISFile, level)
+            x, y = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)[:2]
 
-        var_shape = (y.size, x.size, num_of_h5)
+            var_shape = (y.size, x.size, num_of_h5)
 
-        H = np.ndarray(shape=var_shape)
-        dHdt = np.ndarray(shape=var_shape)
-        B = np.ndarray(shape=var_shape)
-        xVel = np.ndarray(shape=var_shape)
-        yVel = np.ndarray(shape=var_shape)
+            H = np.ndarray(shape=var_shape)
+            dHdt = np.ndarray(shape=var_shape)
+            B = np.ndarray(shape=var_shape)
+            xVel = np.ndarray(shape=var_shape)
+            yVel = np.ndarray(shape=var_shape)
 
         H[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "thickness", order)[2]
         dHdt[:,:,i] = amrio.readBox2D(ISFile, level, lo, hi, "dThickness/dt", order)[2]
@@ -128,7 +179,7 @@ plt.tick_params(
     labelbottom=False,
     labelleft=False)
 
-plt.savefig(f"../figures/{suite_id}_{icesheet}_{year_to_plot}_thickness.png",dpi=600,bbox_inches='tight')
+plt.savefig(f"../figures/{suite_id}_{icesheet}_{single_year_to_plot}_thickness.png",dpi=600,bbox_inches='tight')
 plt.clf()
 
 # Plot ice speed map
@@ -164,7 +215,7 @@ fig = plt.tick_params(
     labelbottom=False,
     labelleft=False)
 
-plt.savefig(f"../figures/{suite_id}_{icesheet}_{year_to_plot}_speed.png",dpi=600,bbox_inches='tight')
+plt.savefig(f"../figures/{suite_id}_{icesheet}_{single_year_to_plot}_speed.png",dpi=600,bbox_inches='tight')
 
 plt.clf()
 
