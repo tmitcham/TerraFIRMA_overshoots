@@ -35,7 +35,7 @@ line_stys = ["solid","solid","solid","solid","solid","solid","solid","solid","so
              "dashdot","dashdot","dashdot","dashdot","dashdot","dashdot","dotted","dashed","dashdot","dotted","dashed","dashdot","dotted","dashed","dashdot"]
 
 
-basins = [8, 10, 15] # 8 = Ross, 10 = ASE, 15 = Filchner-Ronne
+basins = [0, 8, 10, 15] # 8 = Ross, 10 = ASE, 15 = Filchner-Ronne
 
 # Plot settings
 plt.rcParams.update({'font.size': 6})
@@ -95,6 +95,12 @@ for basin in basins:
     plt.ylabel("Mass above flotation change (Gt)")
     plt.xlabel('Years')
     
+    if basin == 0:
+        
+        plt.title("Antarctic Ice Sheet")
+        
+        plot_file_id = "AIS"
+    
     if basin == 8:
 
         plt.title("Ross Basin")
@@ -127,7 +133,7 @@ for basin in basins:
     secax = ax.secondary_yaxis('right', functions=(mass2sle, sle2mass)) 
     secax.set_ylabel('Sea level contribution (mm)')
 
-    ax.set_xlim([0, 775])
+    ax.set_xlim([0, 800])
 
     print(f"Finished and saving VAF vs Time plot for basin {basin}...")
 
