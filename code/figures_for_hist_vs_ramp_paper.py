@@ -584,9 +584,9 @@ ax[0].plot(hist_SMB.time, (hist_SMB["mean"])*0.917/1e9, label = "esm-hist", colo
 ax[0].fill_between(hist_SMB.time, (hist_SMB["min"])*0.917/1e9, (hist_SMB["max"])*0.917/1e9, color = 'blue', alpha = 0.2, lw=0)
 
 # Add the Noel data
-ax[0].plot(noel.Year, noel["ANT"], label = 'Noel et al. (2023)', color = 'Black', lw=0.8, linestyle = '-')
+ax[0].plot(noel.Year, noel["ANT"], label = "Noel '23", color = 'Black', lw=0.8, linestyle = '-')
 
-ax[0].plot(mottram.Year, mottram["SMB"], label = 'Mottram et al. (2021)', color = 'Black', lw=0.8, linestyle='--')
+ax[0].plot(mottram.Year, mottram["SMB"], label = "Mottram '21", color = 'Black', lw=0.8, linestyle='--')
 ax[0].fill_between(mottram.Year, mottram["Min"], mottram["Max"],color = 'black', alpha = 0.1, lw=0)
 
 ax[1].plot(ramp_flBMB.time, (ramp_flBMB["mean"])*0.917/1e9, label = "esm-up2p0", color = 'red', lw=0.8)
@@ -610,7 +610,7 @@ plt.xlabel('Years')
 
 handles, labels = ax[0].get_legend_handles_labels()
 handles.append(plt.Line2D([0], [0], color='black', lw=0.8, linestyle='dashdot'))
-labels.append('Davison et al. (2023)')
+labels.append("Davison '23")
 
 ax[1].legend(handles, labels, loc = 'best', prop={'size': 5})
 
