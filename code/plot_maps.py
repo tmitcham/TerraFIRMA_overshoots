@@ -23,7 +23,7 @@ suite_id = "cz378" # the suite ID to plot
 icesheet = "AIS" # the icesheet to plot (GrIS or AIS)
 level = 0 # the level of refinement on which to load the data (0 = coarsest mesh level)
 order = 0 # type of interpolation to perform (0 = piecewise constant, 1 = linear; both are conservative)
-type = "difference" # "single" for a single year, "difference" for a difference plot, "animation" for an animation
+type = "single" # "single" for a single year, "difference" for a difference plot, "animation" for an animation
 single_year_to_plot = 'final' # the single year to plot if not an animation (initial, final, or an actual year e.g. 1905)
 diff_anim_range_to_plot = ['initial', 'final'] # the range to plot for a difference plot or animation (initial, final, or actual years e.g. 1905)
 variable = "thickness" # the variable to plot (thickness, dHdt, velocity)
@@ -150,42 +150,76 @@ elif type == "animation":
 
 # PLot ice thickness maps for "difference"
 
-print("Starting thickness difference map...")
+if type == "single":
 
-thklim = col.Normalize(-250,250)
+    print("Starting thickness map...")
 
-# Plot ice thickness map
+    # Plot ice thickness map
 
-fig = plt.figure()
-ax = plt.gca()
+    fig = plt.figure()
+    ax = plt.gca()
 
-if icesheet == "GrIS":
-    ax.set_ylim(0.85e6,5.35e6)
-    ax.set_xlim(0.3e6,5.85e6)
+    ax.set_aspect('equal', adjustable='box')
 
-ax.set_aspect('equal', adjustable='box')
+    H[H==0] = np.NaN
 
-H[H==0] = np.NaN
+    # Calculate the height above flotation to plot the grounding line
+    Haf = (-1*B)*(1028/918)
+    GL = H-Haf
 
-# Calculate the height above flotation to plot the grounding line
-Haf = (-1*B)*(1028/918)
-GL = H-Haf
+    # Colour and contour plot
+    fig = plt.pcolormesh(x,y,H,shading = 'auto')
+    plt.colorbar(shrink=0.9,label="$\Delta$ Ice Thickness (m)")
+    fig = plt.contour(x,y,GL,[0.1],colors='black',linewidths=0.6)
 
-# Colour and contour plot
-fig = plt.pcolormesh(x,y,H[:,:,1]-H[:,:,0],norm=thklim,cmap='coolwarm_r',shading = 'auto')
-plt.colorbar(shrink=0.9,label="$\Delta$ Ice Thickness (m)")
-fig = plt.contour(x,y,GL[:,:,0],[0.1],colors='grey',linewidths=0.6)
-fig = plt.contour(x,y,GL[:,:,1],[0.1],colors='black',linewidths=0.6)
+    plt.tick_params(
+        axis='both',
+        bottom=False,
+        left=False,
+        labelbottom=False,
+        labelleft=False)
 
-plt.tick_params(
-    axis='both',
-    bottom=False,
-    left=False,
-    labelbottom=False,
-    labelleft=False)
+    plt.savefig(f"../figures/{suite_id}_{icesheet}_{single_year_to_plot}_thickness.png",dpi=600,bbox_inches='tight')
+    plt.clf()
 
-plt.savefig(f"../figures/{suite_id}_{icesheet}_total_thickness_change.png",dpi=600,bbox_inches='tight')
-plt.clf()
+elif type == "difference":
+
+    print("Starting thickness difference map...")
+
+    if icesheet == "GrIS":
+        thklim = col.Normalize(-1000,1000)
+
+    else:
+        thklim = col.Normalize(-250,250)
+
+    # Plot ice thickness map
+
+    fig = plt.figure()
+    ax = plt.gca()
+
+    ax.set_aspect('equal', adjustable='box')
+
+    H[H==0] = np.NaN
+
+    # Calculate the height above flotation to plot the grounding line
+    Haf = (-1*B)*(1028/918)
+    GL = H-Haf
+
+    # Colour and contour plot
+    fig = plt.pcolormesh(x,y,H[:,:,1]-H[:,:,0],norm=thklim,cmap='coolwarm_r',shading = 'auto')
+    plt.colorbar(shrink=0.9,label="$\Delta$ Ice Thickness (m)")
+    fig = plt.contour(x,y,GL[:,:,0],[0.1],colors='grey',linewidths=0.6)
+    fig = plt.contour(x,y,GL[:,:,1],[0.1],colors='black',linewidths=0.6)
+
+    plt.tick_params(
+        axis='both',
+        bottom=False,
+        left=False,
+        labelbottom=False,
+        labelleft=False)
+
+    plt.savefig(f"../figures/{suite_id}_{icesheet}_total_thickness_change.png",dpi=600,bbox_inches='tight')
+    plt.clf()
 
 """
 # Plot ice speed map
