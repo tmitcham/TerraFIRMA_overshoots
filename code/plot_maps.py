@@ -66,7 +66,7 @@ if type == "single":
 elif type == "difference":
 
     if diff_anim_range_to_plot[0] == 'initial':
-        infile = files[0]
+        infile = f"/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/cx209/icesheet/bisicles_cx209c_18510101_plot-{icesheet}.hdf5"
 
     else:
         infile = f"bisicles_{suite_id}c_{diff_anim_range_to_plot[0]}0101_plot-{icesheet}.hdf5"
