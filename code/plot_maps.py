@@ -170,7 +170,7 @@ if type == "single":
 
     # Colour and contour plot
     fig = plt.pcolormesh(x,y,H,norm=colors.LogNorm(vmin=1., vmax=H.max()),shading = 'auto')
-    plt.colorbar(shrink=0.9,label="$\Delta$ Ice Thickness (m)")
+    fig.colorbar(shrink=0.9,label="Ice Thickness (m)")
     fig = plt.contour(x,y,GL,[0.1],colors='black',linewidths=0.6)
 
     plt.tick_params(
