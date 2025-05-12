@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as col
 import matplotlib.patches as pat
+import matplotlib.colors as colors
 
 from matplotlib.animation import FuncAnimation
 import matplotlib.animation as animation 
@@ -20,7 +21,7 @@ from amrfile import io as amrio
 
 # Options
 suite_id = "cz378" # the suite ID to plot
-icesheet = "AIS" # the icesheet to plot (GrIS or AIS)
+icesheet = "GrIS" # the icesheet to plot (GrIS or AIS)
 level = 0 # the level of refinement on which to load the data (0 = coarsest mesh level)
 order = 0 # type of interpolation to perform (0 = piecewise constant, 1 = linear; both are conservative)
 type = "single" # "single" for a single year, "difference" for a difference plot, "animation" for an animation
@@ -168,7 +169,7 @@ if type == "single":
     GL = H-Haf
 
     # Colour and contour plot
-    fig = plt.pcolormesh(x,y,H,shading = 'auto')
+    fig = plt.pcolormesh(x,y,H,norm=colors.LogNorm(vmin=H.min(), vmax=H.max()),shading = 'auto')
     plt.colorbar(shrink=0.9,label="$\Delta$ Ice Thickness (m)")
     fig = plt.contour(x,y,GL,[0.1],colors='black',linewidths=0.6)
 
