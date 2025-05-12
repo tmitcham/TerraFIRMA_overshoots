@@ -97,6 +97,7 @@ elif type == "difference":
     amrio.free(ISFile)
 
     if diff_anim_range_to_plot[1] == 'final':
+        directory = f"/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/raw_data/{suite_id}/icesheet/"
         infile = files[num_of_h5-1]
 
     else:
