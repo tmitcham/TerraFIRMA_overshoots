@@ -19,12 +19,12 @@ from amrfile import io as amrio
 ####################################################################################
 
 # Options
-suite_id = "cx209"
+suite_id = "cz378" # the suite ID to plot
 icesheet = "AIS" # the icesheet to plot (GrIS or AIS)
 level = 0 # the level of refinement on which to load the data (0 = coarsest mesh level)
 order = 0 # type of interpolation to perform (0 = piecewise constant, 1 = linear; both are conservative)
-type = "single" # "single" for a single year, "difference" for a difference plot, "animation" for an animation
-single_year_to_plot = 'initial' # the single year to plot if not an animation (initial, final, or an actual year e.g. 1905)
+type = "difference" # "single" for a single year, "difference" for a difference plot, "animation" for an animation
+single_year_to_plot = 'final' # the single year to plot if not an animation (initial, final, or an actual year e.g. 1905)
 diff_anim_range_to_plot = ['initial', 'final'] # the range to plot for a difference plot or animation (initial, final, or actual years e.g. 1905)
 variable = "thickness" # the variable to plot (thickness, dHdt, velocity)
 
@@ -146,9 +146,11 @@ elif type == "animation":
 
 ####################################################################################
 
-# PLot ice thickness and ice speed maps for a single year
+# PLot ice thickness maps for "difference"
 
-print("Starting initial thickness and velocity maps...")
+print("Starting thickness difference map...")
+
+thklim = col.Normalize(-250,250)
 
 # Plot ice thickness map
 
@@ -168,9 +170,10 @@ Haf = (-1*B)*(1028/918)
 GL = H-Haf
 
 # Colour and contour plot
-fig = plt.pcolormesh(x,y,H,cmap = 'YlGn', shading = 'auto')
-plt.colorbar(shrink=0.9,label="Ice thickness (m)")
-fig = plt.contour(x,y,GL,[0.1],colors='black',linewidths=0.6)
+fig = plt.pcolormesh(x,y,H[:,:,1]-H[:,:,0],norm=thklim,cmap='coolwarm_r',shading = 'auto')
+plt.colorbar(shrink=0.9,label="$\Delta$ Ice Thickness (m)")
+fig = plt.contour(x,y,GL[:,:,0],[0.1],colors='grey',linewidths=0.6)
+fig = plt.contour(x,y,GL[:,:,1],[0.1],colors='black',linewidths=0.6)
 
 plt.tick_params(
     axis='both',
@@ -179,9 +182,10 @@ plt.tick_params(
     labelbottom=False,
     labelleft=False)
 
-plt.savefig(f"../figures/{suite_id}_{icesheet}_{single_year_to_plot}_thickness.png",dpi=600,bbox_inches='tight')
+plt.savefig(f"../figures/{suite_id}_{icesheet}_total_thickness_change.png",dpi=600,bbox_inches='tight')
 plt.clf()
 
+"""
 # Plot ice speed map
 
 fig = plt.figure()
@@ -220,6 +224,7 @@ plt.savefig(f"../figures/{suite_id}_{icesheet}_{single_year_to_plot}_speed.png",
 plt.clf()
 
 print("Finished and saved initial thickness and velocity maps...")
+"""
 
 ''' Need to work on this still...
 ####################################################################################
