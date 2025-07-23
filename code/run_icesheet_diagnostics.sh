@@ -5,12 +5,14 @@
 ###############################################################################
 
 suite_set="overshoots" # Options: overshoots, overview, historical_rampups, individual
-icesheet="AIS" # Options: AIS, GrIS
+icesheet="GrIS" # Options: AIS, GrIS
 masked="True" # Options: True, False
-maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_bedmachine_imbie2_basins_4km.hdf5"
+#maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_bedmachine_imbie2_basins_4km.hdf5"
+maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/sectorMask-1.2km.2d.hdf5"
 mask_no_start="0"
-mask_no_end="16"
-jobs_per_batch=10
+#mask_no_end="16"
+mask_no_end="6"
+jobs_per_batch=5
 
 ###############################################################################
 
