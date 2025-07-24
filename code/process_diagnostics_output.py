@@ -24,10 +24,10 @@ def vaf_to_sle(vaf):
 # Options for the script
 icesheet = "GrIS" # Options: "AIS" or "GrIS"
 suite_set = "overshoots" # Options: "overshoots", "historical_rampups"
-process_atmos_data = False # Options: True, False
+process_atmos_data = True # Options: True, False
 process_icesheet_data = True # Options: True, False
 data_to_netcdf = False # Options: True, False
-basin_mask = False # Options: True, False
+basin_mask = True # Options: True, False
 basins_for_netcdf = [8,15] # Options: any from 0-16 - 0 (whole AIS), 8 (Ross), 10, (ASE), 15 (Filchner-Ronne)
 
 # Printout of the options chosen
@@ -48,7 +48,8 @@ if suite_set == "overshoots":
         "db597", "db733", "dc324", "di335", "da800", "da697", "da892", "db223", "df453", 
         "de620", "dc251", "dc051", "dc052", "dc248", "dc249", "dc565", "dd210", 
         "df028", "de621", "dc123", "dc130", "df025", "df027", "df021", "df023", "dh541", "dh859", 
-        "dg093", "dg094", "dg095", "de943", "de962", "de963", "dm357", "dm358", "dm359"]
+        "dg093", "dg094", "dg095", "de943", "de962", "de963", "dm357", "dm358", "dm359",
+        "dc163", "dm929", "dm930", "dn822"]
 
 elif suite_set == "historical_rampups":
     id = ["cs568", "cx209", "cw988", "cw989", "cw990", "cy623", "da914", "da916", "da917"]
@@ -140,7 +141,7 @@ if process_icesheet_data:
         VAF = []
         SLE = []
         
-        for j in range(17):
+        for j in range(7):
 
             if not basin_mask and j > 0:
                 break
