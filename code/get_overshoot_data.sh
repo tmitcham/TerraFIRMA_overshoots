@@ -28,8 +28,8 @@ RUN_IDS=(
   dc163 dm929 dm930 dn822 do135 do136
 )
 
-ICESHEETS="AIS" # Options: AIS, GrIS, or Both
-ATMOS="No" # Options: Yes or No
+ICESHEETS="Both" # Options: AIS, GrIS, or Both
+ATMOS="Yes" # Options: Yes or No
 
 ###############################################################################
 
