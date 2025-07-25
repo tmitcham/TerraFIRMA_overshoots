@@ -84,7 +84,7 @@ if len(all_files_abs) == 0:
     print("All relevant hdf5 files have already been processed. Exiting now.")
 
 else:
-    print(f"No. of files left to process is approx: {len(all_files_abs)/2}")
+    print(f"No. of files left to process is approx: {(len(all_files_abs) - len(processed_files))/2}")
 
     # Process files
     count = 0
