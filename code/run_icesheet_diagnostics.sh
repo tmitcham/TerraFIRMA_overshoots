@@ -5,13 +5,13 @@
 ###############################################################################
 
 suite_set="overshoots" # Options: overshoots, overview, historical_rampups, individual
-icesheet="GrIS" # Options: AIS, GrIS
+icesheet="AIS" # Options: AIS, GrIS
 masked="True" # Options: True, False
-#maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_bedmachine_imbie2_basins_4km.hdf5"
-maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/sectorMask-1.2km.2d.hdf5"
+maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_bedmachine_imbie2_basins_4km.hdf5"
+#maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/sectorMask-1.2km.2d.hdf5"
 mask_no_start="0"
-#mask_no_end="16"
-mask_no_end="6"
+mask_no_end="16"
+#mask_no_end="6"
 jobs_per_batch=5
 
 ###############################################################################
@@ -24,7 +24,7 @@ if [[ "$suite_set" == "overshoots" ]]; then
         "de620" "dc251" "dc051" "dc052" "dc248" "dc249" "dc565" "dd210"
         "df028" "de621" "dc123" "dc130" "df025" "df027" "df021" "df023" "dh541" "dh859"
         "dg093" "dg094" "dg095" "de943" "de962" "de963" "dm357" "dm358" "dm359"
-        "dc163" "dm929" "dm930" "dn822"
+        "dc163" "dm929" "dm930" "dn822" "do135" "do136"
     )
 
 elif [[ "$suite_set" == "overview" ]]; then

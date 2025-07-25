@@ -49,7 +49,7 @@ if suite_set == "overshoots":
         "de620", "dc251", "dc051", "dc052", "dc248", "dc249", "dc565", "dd210", 
         "df028", "de621", "dc123", "dc130", "df025", "df027", "df021", "df023", "dh541", "dh859", 
         "dg093", "dg094", "dg095", "de943", "de962", "de963", "dm357", "dm358", "dm359",
-        "dc163", "dm929", "dm930", "dn822"]
+        "dc163", "dm929", "dm930", "dn822", "do135", "do136"]
 
 elif suite_set == "historical_rampups":
     id = ["cs568", "cx209", "cw988", "cw989", "cw990", "cy623", "da914", "da916", "da917"]

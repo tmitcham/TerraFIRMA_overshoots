@@ -70,7 +70,7 @@ else:
     processed_files = []
 
 all_files = sorted(os.listdir(directory))
-
+all_files = [file for file in all_files if not file.startswith("Met")]
 all_files_abs = [os.path.join(directory, file) for file in all_files]
 
 # Remove files that have already been processed
@@ -84,7 +84,7 @@ if len(all_files_abs) == 0:
     print("All relevant hdf5 files have already been processed. Exiting now.")
 
 else:
-    print(f"Processing {len(all_files_abs)} files.")
+    print(f"No. of files left to process is approx: {len(all_files_abs)/2}")
 
     # Process files
     count = 0
