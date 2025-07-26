@@ -22,11 +22,11 @@ def vaf_to_sle(vaf):
 ####################################################################################
 
 # Options for the script
-icesheet = "GrIS" # Options: "AIS" or "GrIS"
+icesheet = "AIS" # Options: "AIS" or "GrIS"
 suite_set = "overshoots" # Options: "overshoots", "historical_rampups"
 process_atmos_data = True # Options: True, False
 process_icesheet_data = True # Options: True, False
-data_to_netcdf = False # Options: True, False
+data_to_netcdf = True # Options: True, False
 basin_mask = True # Options: True, False
 basins_for_netcdf = [8,15] # Options: any from 0-16 - 0 (whole AIS), 8 (Ross), 10, (ASE), 15 (Filchner-Ronne)
 
@@ -140,8 +140,9 @@ if process_icesheet_data:
         floating_vol = []
         VAF = []
         SLE = []
-        
-        for j in range(7):
+
+        # set range to 7 for the GrIS and 17 for the AIS
+        for j in range(17):
 
             if not basin_mask and j > 0:
                 break
