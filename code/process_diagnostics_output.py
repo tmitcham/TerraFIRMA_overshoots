@@ -357,7 +357,7 @@ elif suite_set == "overview" and data_to_netcdf:
             "units": "K"
         }
 
-        AIS_ds.to_netcdf(f"../processed_data/netcdf_files_for_Robin/AIS_and_GSAT_data_{i}_timeseries.nc")
+        AIS_ds.to_netcdf(f"../processed_data/netcdf_files_for_robin/AIS_and_GSAT_data_{i}_timeseries.nc")
 
         print(f"NetCDF file saved for {i}")
 
