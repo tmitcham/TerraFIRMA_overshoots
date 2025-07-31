@@ -28,9 +28,13 @@
 #  dc163 dm929 dm930 dn822 do135 do136
 #)
 
+#RUN_IDS=(
+#  cs568 cx209 cy837 cy838 cz375 cz376 cz377 dc052 dc051 df028
+#  dc123 dc130
+#)
+
 RUN_IDS=(
-  cs568 cx209 cy837 cy838 cz375 cz376 cz377 dc052 dc051 df028
-  dc123 dc130
+  cz375
 )
 
 ICESHEETS="AIS" # Options: AIS, GrIS, or Both

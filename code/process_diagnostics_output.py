@@ -99,13 +99,25 @@ if process_atmos_data:
 
             count = count + 1
 
-        #if suite_set == "overview": # clip some of the data to agreed timeseries lengths
+        if suite_set == "overview": # clip some of the data to agreed timeseries lengths
 
-        #    if i == "cy837":
-        #        atmos_df = atmos_df[atmos_df[:, 0] <= 2418]
+            if i == "cy837":
+                atmos_df = atmos_df[atmos_df[:, 0] <= 2418]
 
-        #   elif i == "cy838":
-        #        atmos_df = atmos_df[atmos_df[:, 0] <= 2443]
+            elif i == "cy838":
+                atmos_df = atmos_df[atmos_df[:, 0] <= 2443]
+
+            elif i == "cz376":
+                atmos_df = atmos_df[atmos_df[:, 0] <= 2543]
+
+            elif i == "cz377":
+                atmos_df = atmos_df[atmos_df[:, 0] <= 2581]
+
+            elif i == "dc052":
+                atmos_df = atmos_df[atmos_df[:, 0] <= 2199]
+
+            elif i == "dc051":
+                atmos_df = atmos_df[atmos_df[:, 0] <= 2298]
 
         atmos_d[i] = atmos_df
 
@@ -201,6 +213,26 @@ if process_icesheet_data:
                 IS_data[j].loc[IS_data[j]['time'] == 1925, ['grounded_SMB','floating_SMB','floating_BMB','GL_discharge','grounded_vol','floating_vol','VAF','SLE']] = np.nan
 
             IS_data[j] = IS_data[j].sort_values(by='time').reset_index(drop=True)
+
+            if suite_set == "overview": # clip some of the data to agreed timeseries lengths
+
+                if i == "cy837":
+                    IS_data[j] = IS_data[j][IS_data[j]['time'] <= 2418]
+
+                elif i == "cy838":
+                    IS_data[j] = IS_data[j][IS_data[j]['time'] <= 2443]
+
+                elif i == "cz376":
+                    IS_data[j] = IS_data[j][IS_data[j]['time'] <= 2543]
+
+                elif i == "cz377":
+                    IS_data[j] = IS_data[j][IS_data[j]['time'] <= 2581]
+
+                elif i == "dc052":
+                    IS_data[j] = IS_data[j][IS_data[j]['time'] <= 2199]
+
+                elif i == "dc051":
+                    IS_data[j] = IS_data[j][IS_data[j]['time'] <= 2298]
 
         icesheet_d[i] = IS_data
 
