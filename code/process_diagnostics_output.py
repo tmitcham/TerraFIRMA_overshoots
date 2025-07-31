@@ -98,7 +98,15 @@ if process_atmos_data:
             atmos_df[count, 1] = temp_global_avg.data
 
             count = count + 1
-            
+
+        #if suite_set == "overview": # clip some of the data to agreed timeseries lengths
+
+        #    if i == "cy837":
+        #        atmos_df = atmos_df[atmos_df[:, 0] <= 2418]
+
+        #   elif i == "cy838":
+        #        atmos_df = atmos_df[atmos_df[:, 0] <= 2443]
+
         atmos_d[i] = atmos_df
 
     # Save atmosphere data
@@ -218,6 +226,10 @@ if suite_set == "overshoots" and data_to_netcdf:
     print("Saving selected data to netCDF...")
 
     for i in id:
+
+        if i == "cz375":
+            print(f"Skipping {i} as it does not have the required data.")
+            continue
 
         IS_data = icesheet_d[i]
 
