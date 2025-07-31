@@ -281,7 +281,7 @@ elif suite_set == "overview" and data_to_netcdf:
         IS_data = icesheet_d[i]
         AT_data = atmos_d[i]
 
-        time = IS_data.time
+        time = IS_data[0].time
 
         AIS_ds = xr.Dataset(coords={'time': time})
 
@@ -292,14 +292,14 @@ elif suite_set == "overview" and data_to_netcdf:
             "institution": "CPOM, University of Bristol"
         }
 
-        vol_tot = xr.DataArray(IS_data.grounded_vol + IS_data.floating_vol, dims='time', coords={'time': time})
-        vol_gr = xr.DataArray(IS_data.grounded_vol, dims='time', coords={'time': time})
-        vol_fl = xr.DataArray(IS_data.floating_vol, dims='time', coords={'time': time})
-        vaf = xr.DataArray(IS_data.VAF, dims='time', coords={'time': time})
-        sle = xr.DataArray(IS_data.SLE, dims='time', coords={'time': time})
-        smb_tot = xr.DataArray(IS_data.grounded_SMB + IS_data.floating_SMB, dims='time', coords={'time': time})
-        smb_gr = xr.DataArray(IS_data.grounded_SMB, dims='time', coords={'time': time})
-        smb_fl = xr.DataArray(IS_data.floating_SMB, dims='time', coords={'time': time})
+        vol_tot = xr.DataArray(IS_data[0].grounded_vol + IS_data[0].floating_vol, dims='time', coords={'time': time})
+        vol_gr = xr.DataArray(IS_data[0].grounded_vol, dims='time', coords={'time': time})
+        vol_fl = xr.DataArray(IS_data[0].floating_vol, dims='time', coords={'time': time})
+        vaf = xr.DataArray(IS_data[0].VAF, dims='time', coords={'time': time})
+        sle = xr.DataArray(IS_data[0].SLE, dims='time', coords={'time': time})
+        smb_tot = xr.DataArray(IS_data[0].grounded_SMB + IS_data[0].floating_SMB, dims='time', coords={'time': time})
+        smb_gr = xr.DataArray(IS_data[0].grounded_SMB, dims='time', coords={'time': time})
+        smb_fl = xr.DataArray(IS_data[0].floating_SMB, dims='time', coords={'time': time})
         gsat = xr.DataArray(AT_data[1:, 1], dims='time', coords={'time': time})
 
         AIS_ds['total_vol'] = vol_tot
