@@ -23,11 +23,11 @@ def vaf_to_sle(vaf):
 
 # Options for the script
 icesheet = "AIS" # Options: "AIS" or "GrIS"
-suite_set = "overshoots" # Options: "overshoots", "historical_rampups"
+suite_set = "overview" # Options: "overshoots", "overview","historical_rampups"
 process_atmos_data = True # Options: True, False
 process_icesheet_data = True # Options: True, False
 data_to_netcdf = True # Options: True, False
-basin_mask = True # Options: True, False
+basin_mask = False # Options: True, False
 basins_for_netcdf = [8,15] # Options: any from 0-16 - 0 (whole AIS), 8 (Ross), 10, (ASE), 15 (Filchner-Ronne)
 
 # Printout of the options chosen
@@ -50,6 +50,10 @@ if suite_set == "overshoots":
         "df028", "de621", "dc123", "dc130", "df025", "df027", "df021", "df023", "dh541", "dh859", 
         "dg093", "dg094", "dg095", "de943", "de962", "de963", "dm357", "dm358", "dm359",
         "dc163", "dm929", "dm930", "dn822", "do135", "do136"]
+    
+elif suite_set == "overview":
+    id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028",
+          "dc123", "dc130"]
 
 elif suite_set == "historical_rampups":
     id = ["cs568", "cx209", "cw988", "cw989", "cw990", "cy623", "da914", "da916", "da917"]
@@ -142,7 +146,12 @@ if process_icesheet_data:
         SLE = []
 
         # set range to 7 for the GrIS and 17 for the AIS
-        for j in range(17):
+        if icesheet == "GrIS":
+            range_limit = 7
+        elif icesheet == "AIS":
+            range_limit = 17
+
+        for j in range(range_limit):
 
             if not basin_mask and j > 0:
                 break
@@ -198,7 +207,7 @@ if process_icesheet_data:
 # Access VAF data from the Ross and the Filchner-Ronne basins 
 # and convert to an xarray dataset and save in NetCDF format
 
-if data_to_netcdf:
+if suite_set == "overshoots" and data_to_netcdf:
 
     if not process_icesheet_data:
         
@@ -248,6 +257,107 @@ if data_to_netcdf:
             }
     
         vaf_ds.to_netcdf(f"../processed_data/netcdf_files/vaf_{i}_timeseries.nc")
+
+        print(f"NetCDF file saved for {i}")
+
+elif suite_set == "overview" and data_to_netcdf:
+
+    if not process_icesheet_data:
+        
+        # Read ice sheet data
+        with open(f"../processed_data/{icesheet}_data_{suite_set}_{'masked' if basin_mask else ''}.pkl", 'rb') as file:
+            icesheet_d = pickle.load(file)
+
+    if not process_atmos_data:
+        
+        # Read atmosphere data
+        with open(f"../processed_data/atmos_data_{suite_set}.pkl", 'rb') as file:
+            atmos_d = pickle.load(file)
+
+    print("Saving selected data to netCDF...")
+
+    for i in id:
+
+        IS_data = icesheet_d[i]
+        AT_data = atmos_d[i]
+
+        time = IS_data.time
+
+        AIS_ds = xr.Dataset(coords={'time': time})
+
+        AIS_ds.attrs = {
+            "title": "Antarctic Ice Sheet VAF and SLE timeseries",
+            "description": f"Ice volume, ice volume above flotation, sea level equivalent, amd SMB timeseries for Antarctica and a GSAT timeseries. Data from the TerraFIRMA overshoot simulation with suite id u-{i}",
+            "creator": "Tom Mitcham",
+            "institution": "CPOM, University of Bristol"
+        }
+
+        vol_tot = xr.DataArray(IS_data.grounded_vol + IS_data.floating_vol, dims='time', coords={'time': time})
+        vol_gr = xr.DataArray(IS_data.grounded_vol, dims='time', coords={'time': time})
+        vol_fl = xr.DataArray(IS_data.floating_vol, dims='time', coords={'time': time})
+        vaf = xr.DataArray(IS_data.VAF, dims='time', coords={'time': time})
+        sle = xr.DataArray(IS_data.SLE, dims='time', coords={'time': time})
+        smb_tot = xr.DataArray(IS_data.grounded_SMB + IS_data.floating_SMB, dims='time', coords={'time': time})
+        smb_gr = xr.DataArray(IS_data.grounded_SMB, dims='time', coords={'time': time})
+        smb_fl = xr.DataArray(IS_data.floating_SMB, dims='time', coords={'time': time})
+        gsat = xr.DataArray(AT_data[1:, 1], dims='time', coords={'time': time})
+
+        AIS_ds['total_vol'] = vol_tot
+        AIS_ds['grounded_vol'] = vol_gr
+        AIS_ds['floating_vol'] = vol_fl
+        AIS_ds['vaf'] = vaf
+        AIS_ds['sle'] = sle
+        AIS_ds['total_smb'] = smb_tot
+        AIS_ds['grounded_smb'] = smb_gr
+        AIS_ds['floating_smb'] = smb_fl
+        AIS_ds['gsat'] = gsat
+
+        AIS_ds['total_vol'].attrs = {
+            "long_name": f"Total ice volume in the Antarctic Ice Sheet",
+            "units": "m$^{3}"
+        }
+
+        AIS_ds['grounded_vol'].attrs = {
+            "long_name": f"Grounded ice volume in the Antarctic Ice Sheet",
+            "units": "m$^{3}"
+        }
+
+        AIS_ds['floating_vol'].attrs = {
+            "long_name": f"Floating ice volume in the Antarctic Ice Sheet",
+            "units": "m$^{3}"
+        }
+
+        AIS_ds['vaf'].attrs = {
+            "long_name": f"Ice volume above flotation in the Antarctic Ice Sheet",
+            "units": "m$^{3}"
+        }
+
+        AIS_ds['sle'].attrs = {
+            "long_name": f"Sea level equivalent of the ice volume above flotation in the Antarctic Ice Sheet",
+            "units": "m"
+        }
+
+        AIS_ds['total_smb'].attrs = {
+            "long_name": f"Total surface mass balance of the Antarctic Ice Sheet (floating + grounded regions)",
+            "units": "m$^{3}/yr$"
+        }
+
+        AIS_ds['grounded_smb'].attrs = {
+            "long_name": f"Surface mass balance of the grounded regions of the Antarctic Ice Sheet",
+            "units": "m$^{3}/yr$"
+        }
+
+        AIS_ds['floating_smb'].attrs = {
+            "long_name": f"Surface mass balance of the floating regions of the Antarctic Ice Sheet",
+            "units": "m$^{3}/yr$"
+        }
+
+        AIS_ds['gsat'].attrs = {
+            "long_name": f"Global mean surface air temperature",
+            "units": "K"
+        }
+
+        AIS_ds.to_netcdf(f"../processed_data/netcdf_files_for_Robin/AIS_and_GSAT_data_{i}_timeseries.nc")
 
         print(f"NetCDF file saved for {i}")
 
