@@ -300,7 +300,11 @@ elif suite_set == "overview" and data_to_netcdf:
         smb_tot = xr.DataArray(IS_data[0].grounded_SMB + IS_data[0].floating_SMB, dims='time', coords={'time': time})
         smb_gr = xr.DataArray(IS_data[0].grounded_SMB, dims='time', coords={'time': time})
         smb_fl = xr.DataArray(IS_data[0].floating_SMB, dims='time', coords={'time': time})
-        gsat = xr.DataArray(AT_data[1:, 1], dims='time', coords={'time': time})
+
+        if time.size == AT_data.shape[0]:
+            gsat = xr.DataArray(AT_data[:, 1], dims='time', coords={'time': time})
+        else:
+            gsat = xr.DataArray(AT_data[:-1, 1], dims='time', coords={'time': time})
 
         AIS_ds['total_vol'] = vol_tot
         AIS_ds['grounded_vol'] = vol_gr
@@ -313,47 +317,47 @@ elif suite_set == "overview" and data_to_netcdf:
         AIS_ds['gsat'] = gsat
 
         AIS_ds['total_vol'].attrs = {
-            "long_name": f"Total ice volume in the Antarctic Ice Sheet",
+            "long_name": "Total ice volume in the Antarctic Ice Sheet",
             "units": "m$^{3}"
         }
 
         AIS_ds['grounded_vol'].attrs = {
-            "long_name": f"Grounded ice volume in the Antarctic Ice Sheet",
+            "long_name": "Grounded ice volume in the Antarctic Ice Sheet",
             "units": "m$^{3}"
         }
 
         AIS_ds['floating_vol'].attrs = {
-            "long_name": f"Floating ice volume in the Antarctic Ice Sheet",
+            "long_name": "Floating ice volume in the Antarctic Ice Sheet",
             "units": "m$^{3}"
         }
 
         AIS_ds['vaf'].attrs = {
-            "long_name": f"Ice volume above flotation in the Antarctic Ice Sheet",
+            "long_name": "Ice volume above flotation in the Antarctic Ice Sheet",
             "units": "m$^{3}"
         }
 
         AIS_ds['sle'].attrs = {
-            "long_name": f"Sea level equivalent of the ice volume above flotation in the Antarctic Ice Sheet",
+            "long_name": "Sea level equivalent of the ice volume above flotation in the Antarctic Ice Sheet",
             "units": "m"
         }
 
         AIS_ds['total_smb'].attrs = {
-            "long_name": f"Total surface mass balance of the Antarctic Ice Sheet (floating + grounded regions)",
+            "long_name": "Total surface mass balance of the Antarctic Ice Sheet (floating + grounded regions)",
             "units": "m$^{3}/yr$"
         }
 
         AIS_ds['grounded_smb'].attrs = {
-            "long_name": f"Surface mass balance of the grounded regions of the Antarctic Ice Sheet",
+            "long_name": "Surface mass balance of the grounded regions of the Antarctic Ice Sheet",
             "units": "m$^{3}/yr$"
         }
 
         AIS_ds['floating_smb'].attrs = {
-            "long_name": f"Surface mass balance of the floating regions of the Antarctic Ice Sheet",
+            "long_name": "Surface mass balance of the floating regions of the Antarctic Ice Sheet",
             "units": "m$^{3}/yr$"
         }
 
         AIS_ds['gsat'].attrs = {
-            "long_name": f"Global mean surface air temperature",
+            "long_name": "Global mean surface air temperature",
             "units": "K"
         }
 
