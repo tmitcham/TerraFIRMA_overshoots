@@ -244,9 +244,9 @@ if process_icesheet_data:
 
 ####################################################################################
 
-# Access VAF data from the Ross and the Filchner-Ronne basins 
-# and convert to an xarray dataset and save in NetCDF format
+# Convert selected data to NetCDF format for plotting in both Robin and Kaitlin's workflows
 
+# For overshoots suite set in Kaitlin's workflow
 if suite_set == "overshoots" and data_to_netcdf:
 
     if not process_icesheet_data:
@@ -304,6 +304,7 @@ if suite_set == "overshoots" and data_to_netcdf:
 
         print(f"NetCDF file saved for {i}")
 
+# For overview suite set in Robin's workflow
 elif suite_set == "overview" and data_to_netcdf:
 
     if not process_icesheet_data:
@@ -330,8 +331,8 @@ elif suite_set == "overview" and data_to_netcdf:
         AIS_ds = xr.Dataset(coords={'time': time})
 
         AIS_ds.attrs = {
-            "title": "Antarctic Ice Sheet VAF and SLE timeseries",
-            "description": f"Ice volume, ice volume above flotation, sea level equivalent, amd SMB timeseries for Antarctica and a GSAT timeseries. Data from the TerraFIRMA overshoot simulation with suite id u-{i}",
+            "title": "Antarctic Ice Sheet and GSAT timeseries, for TerraFIRMA overview paper",
+            "description": f"Ice volume, ice volume above flotation, sea level equivalent, and SMB timeseries for Antarctica and a GSAT timeseries. Data from the TerraFIRMA overshoot simulation with suite id u-{i}",
             "creator": "Tom Mitcham",
             "institution": "CPOM, University of Bristol"
         }

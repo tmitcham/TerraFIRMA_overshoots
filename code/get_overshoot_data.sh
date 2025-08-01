@@ -33,10 +33,6 @@
 #  dc123 dc130
 #)
 
-RUN_IDS=(
-  cz375
-)
-
 ICESHEETS="AIS" # Options: AIS, GrIS, or Both
 ATMOS="Yes" # Options: Yes or No
 
