@@ -21,6 +21,8 @@ END_YEAR=1980
 # File list
 FILE_LIST = [f"{INPUT_DIR}/bisicles_{SUITE_ID}c_{year}0101_plot-AIS.hdf5" for year in range(START_YEAR, END_YEAR + 1)]
 
+print(f"Processing files from {START_YEAR} to {END_YEAR} in directory: {INPUT_DIR}")
+
 # Run the extract tool on selected files
 
 YEAR = 1850
@@ -34,5 +36,7 @@ for input_file in FILE_LIST:
     subprocess.check_output(extract_command, shell=True)
 
     YEAR += 1
+
+    print(f"Processed {input_file} to {output_file}")
 
 print(f"Extracted surface and basal thickness sources from {len(FILE_LIST)} files into {OUTPUT_DIR}.")
