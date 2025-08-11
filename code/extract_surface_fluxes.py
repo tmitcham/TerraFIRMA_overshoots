@@ -22,12 +22,17 @@ END_YEAR=1980
 FILE_LIST = [f"{INPUT_DIR}/bisicles_{SUITE_ID}c_{year}0101_plot-AIS.hdf5" for year in range(START_YEAR, END_YEAR + 1)]
 
 # Run the extract tool on selected files
+
+YEAR = 1850
+
 for input_file in FILE_LIST:
 
-    output_file = f"{OUTPUT_DIR}/SMB_BMB_{os.path.basename(input_file)}"
+    output_file = f"{OUTPUT_DIR}/pi_AIS_SMB_BMB_{YEAR}.hdf5"
 
     extract_command = f"{EXTRACT_EXEC} {input_file} {output_file} activeSurfaceThicknessSource activeBasalThicknessSource"
 
     subprocess.check_output(extract_command, shell=True)
+
+    YEAR += 1
 
 print(f"Extracted surface and basal thickness sources from {len(FILE_LIST)} files into {OUTPUT_DIR}.")
