@@ -11,7 +11,7 @@
 
 #Ignore pp and Licence files
 **/*.pp
-**/MetOffice*
+**/*MetOffice*
 
 # Ignore mac files
 **/.DS_Store
