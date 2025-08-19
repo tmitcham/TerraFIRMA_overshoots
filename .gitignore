@@ -4,13 +4,16 @@
 **/*.csv
 **/*.pkl
 **/*.nc
+**/*.pp
+
+# Ignore output log files
+**/*.out
 
 # Ignore image files
 **/*.png
 **/*.gif
 
-#Ignore pp and Licence files
-**/*.pp
+#Ignore Licence files
 **/*MetOffice*
 
 # Ignore mac files

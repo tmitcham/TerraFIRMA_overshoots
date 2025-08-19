@@ -13,12 +13,16 @@ EXTRACT_EXEC="/gws/nopw/j04/terrafirma/tm17544/BISICLES_filetools/extract2d"
 FLATTEN_EXEC="/gws/nopw/j04/terrafirma/tm17544/BISICLES_filetools/flatten2d"
 
 # Options
-SUITE_ID="cs568"
+#="cs568"
+SUITE_ID="cy623"
 INPUT_DIR=f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/raw_data/{SUITE_ID}/icesheet"
-OUTPUT_DIR=f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/pi_surface_flux_files"
+#OUTPUT_DIR=f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/pi_surface_flux_files"
+OUTPUT_DIR=f"/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/hist_surface_flux_files"
 
-START_YEAR=1951
-END_YEAR=1980
+START_YEAR=1851
+
+START_YEAR=1851
+END_YEAR=2014
 
 FLATTEN_LEVEL=3
 
@@ -33,7 +37,8 @@ YEAR = 1850
 
 for input_file in FILE_LIST:
 
-    extract_output_file = f"{OUTPUT_DIR}/pi_AIS_SMB_BMB_{YEAR}.hdf5"
+    #extract_output_file = f"{OUTPUT_DIR}/pi_AIS_SMB_BMB_{YEAR}.hdf5"
+    extract_output_file = f"{OUTPUT_DIR}/hist_AIS_SMB_BMB_{YEAR}.hdf5"
 
     extract_command = f"{EXTRACT_EXEC} {input_file} {extract_output_file} activeSurfaceThicknessSource activeBasalThicknessSource"
 
@@ -41,7 +46,8 @@ for input_file in FILE_LIST:
 
     print(f"Extracted surface and basal thickness sources from {input_file} to {extract_output_file}")
 
-    flatten_output_file = f"{OUTPUT_DIR}/pi_AIS_SMB_BMB_{YEAR}_1km.hdf5"
+    #flatten_output_file = f"{OUTPUT_DIR}/pi_AIS_SMB_BMB_{YEAR}_1km.hdf5"
+    flatten_output_file = f"{OUTPUT_DIR}/hist_AIS_SMB_BMB_{YEAR}_1km.hdf5"
 
     flatten_command = f"{FLATTEN_EXEC} {extract_output_file} {flatten_output_file} {FLATTEN_LEVEL}"
 
