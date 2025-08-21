@@ -23,11 +23,11 @@ def vaf_to_sle(vaf):
 
 # Options for the script
 icesheet = "AIS" # Options: "AIS" or "GrIS"
-suite_set = "overview" # Options: "overshoots", "overview","historical_rampups"
+suite_set = "overshoots" # Options: "overshoots", "overview","historical_rampups"
 process_atmos_data = True # Options: True, False
 process_icesheet_data = True # Options: True, False
 data_to_netcdf = True # Options: True, False
-basin_mask = False # Options: True, False
+basin_mask = True # Options: True, False
 basins_for_netcdf = [8,15] # Options: any from 0-16 - 0 (whole AIS), 8 (Ross), 10, (ASE), 15 (Filchner-Ronne)
 
 # Printout of the options chosen
@@ -43,14 +43,14 @@ print(f"Save to NetCDF: {data_to_netcdf}")
 
 # Define id based on suite set
 if suite_set == "overshoots":
-    id=["cs568", "cx209", "cw988", "cw989", "cw990", "cy837", "cy838", "cz374", "cz375", "cz376", 
-        "cz377", "cz378", "cz834", "cz855", "cz859", "db587", "db723", "db731", "da087", "da266", 
-        "db597", "db733", "dc324", "di335", "da800", "da697", "da892", "db223", "df453", 
-        "de620", "dc251", "dc051", "dc052", "dc248", "dc249", "dc565", "dd210", 
-        "df028", "de621", "dc123", "dc130", "df025", "df027", "df021", "df023", "dh541", "dh859", 
-        "dg093", "dg094", "dg095", "de943", "de962", "de963", "dm357", "dm358", "dm359",
-        "dc163", "dm929", "dm930", "dn822", "do135", "do136"]
-    
+    id=["cs568", "cx209", "cw988", "cw989", "cw990", "cy837", "cy838", "cz374", "cz375", "cz376",
+        "cz377", "cz378", "cz834", "cz855", "cz859", "db587", "db723", "db731", "da087", "da266",
+        "db597", "db733", "dc324", "cz944", "di335", "da800", "da697", "da892", "db223", "df453",
+        "de620", "dc251", "dc051", "dc052", "dc248", "dc249", "dm757", "dc565", "dd210", "dc032",
+        "df028", "de621", "dc123", "dc130", "df025", "df027", "df021", "df023", "dh541", "dh859",
+        "dg093", "dg094", "dg095", "de943", "de962", "de963", "dk554", "dk555", "dk556", "dm357",
+        "dm358", "dm359", "dc163", "dm929", "dm930", "dn822", "dn966", "do135", "do136"]
+
 elif suite_set == "overview":
     id = ["cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028",
           "dc123", "dc130"]
@@ -258,10 +258,6 @@ if suite_set == "overshoots" and data_to_netcdf:
     print("Saving selected data to netCDF...")
 
     for i in id:
-
-        if i == "cz375":
-            print(f"Skipping {i} as it does not have the required data.")
-            continue
 
         IS_data = icesheet_d[i]
 
