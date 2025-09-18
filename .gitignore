@@ -5,6 +5,7 @@
 **/*.pkl
 **/*.nc
 **/*.pp
+**/*.bk
 
 # Ignore output log files
 **/*.out

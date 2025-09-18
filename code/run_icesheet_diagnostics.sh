@@ -7,12 +7,24 @@
 suite_set="overshoots" # Options: overshoots, overview, historical_rampups, individual
 icesheet="AIS" # Options: AIS, GrIS
 masked="True" # Options: True, False
-maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_bedmachine_imbie2_basins_4km.hdf5"
-#maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/sectorMask-1.2km.2d.hdf5"
+
+if [[ "$icesheet" == "AIS" ]]; then
+    # the old mask was maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_bedmachine_imbie2_basins_4km.hdf5"
+    maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/antarctica_IMBIE_basins_extended_250916_TMM_BISICLES_extent_1km.hdf5"
+    # the old mask_no_end="16"
+    mask_no_end="18"
+
+elif [[ "$icesheet" == "GrIS" ]]; then
+    maskfile="/home/users/tm17544/gws_terrafirma/TerraFIRMA_overshoots/aux_data/sectorMask-1.2km.2d.hdf5"
+    mask_no_end="6"
+else
+    echo "Invalid ice sheet: $icesheet"
+    echo "Valid options: AIS or GrIS"
+    exit 1
+fi
+
 mask_no_start="0"
-mask_no_end="16"
-#mask_no_end="6"
-jobs_per_batch=5
+jobs_per_batch=10
 
 ###############################################################################
 
@@ -40,7 +52,7 @@ elif [[ "$suite_set" == "historical_rampups" ]]; then
 
 elif [[ "$suite_set" == "individual" ]]; then
     idlist=(
-        "cw988"
+        "cz378"
     )
 
 else
@@ -64,8 +76,8 @@ for id in "${idlist[@]}"; do
     
     if [[ "$masked" == "True" ]]; then
 
-        csvfile="${id}_${icesheet}_diagnostics_masked.csv"
-        outfile="${id}_${icesheet}_diagnostics_masked.out"
+        csvfile="${id}_${icesheet}_diagnostics_masked_newmask_1km.csv"
+        outfile="${id}_${icesheet}_diagnostics_masked_newmask_1km.out"
 
         echo "Using mask file: ${maskfile}" 
         echo "Saving results in: ${csvfile}"

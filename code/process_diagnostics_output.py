@@ -23,12 +23,12 @@ def vaf_to_sle(vaf):
 
 # Options for the script
 icesheet = "AIS" # Options: "AIS" or "GrIS"
-suite_set = "overshoots" # Options: "overshoots", "overview","historical_rampups"
-process_atmos_data = True # Options: True, False
+suite_set = "overshoots" # Options: "overshoots", "overview", "historical_rampups", "individual"
+process_atmos_data = False # Options: True, False
 process_icesheet_data = True # Options: True, False
 data_to_netcdf = True # Options: True, False
 basin_mask = True # Options: True, False
-basins_for_netcdf = [8,15] # Options: any from 0-16 - 0 (whole AIS), 8 (Ross), 10, (ASE), 15 (Filchner-Ronne)
+basins_for_netcdf = [8,9,16,17] # Options: any from 0-18 - 0 (whole AIS), 8 + 9 (Ross), 11, (ASE), 16 + 17 (Filchner-Ronne)
 
 # Printout of the options chosen
 print("Running process_diagnostics_output.py with the following arguments:")
@@ -58,9 +58,24 @@ elif suite_set == "overview":
 elif suite_set == "historical_rampups":
     id = ["cs568", "cx209", "cw988", "cw989", "cw990", "cy623", "da914", "da916", "da917"]
 
+elif suite_set == "individual":
+    id = ["cz378"]
+
 # Define ice sheet data filenames
-IS_filename_prefix = "/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/"
-IS_filename_suffix = f"_{icesheet}_diagnostics_masked.csv"
+if suite_set == "overshoots":
+    IS_filename_prefix = "/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/"
+    # the old IS_filename_suffix=f"_{icesheet}_diagnostics_masked.csv"
+    IS_filename_suffix = f"_{icesheet}_diagnostics_masked_newmask_1km.csv"
+
+elif suite_set == "overview" || suite_set == "historical_rampups":
+    IS_filename_prefix = "/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/"
+    IS_filename_suffix = f"_{icesheet}_diagnostics.csv"
+
+elif suite_set == "individual":
+    IS_filename_prefix = "/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/"
+    # Could be either based on the test being done -- choose manually
+    #IS_filename_suffix = f"_{icesheet}_diagnostics.csv"
+    IS_filename_suffix = f"_{icesheet}_diagnostics_masked_newmask_1km.csv"
 
 ####################################################################################
 
@@ -169,7 +184,8 @@ if process_icesheet_data:
         if icesheet == "GrIS":
             range_limit = 7
         elif icesheet == "AIS":
-            range_limit = 17
+            # the old range_limit = 17
+            range_limit = 19
 
         for j in range(range_limit):
 
@@ -239,7 +255,10 @@ if process_icesheet_data:
     # Save ice sheet data
     print("Saving ice sheet data to file...")
 
-    with open(f"../processed_data/{icesheet}_data_{suite_set}{'_masked' if basin_mask else ''}.pkl", 'wb') as icesheet_save_file:
+    #with open(f"../processed_data/{icesheet}_data_{suite_set}{'_masked' if basin_mask else ''}.pkl", 'wb') as icesheet_save_file:
+    #    pickle.dump(icesheet_d, icesheet_save_file)
+
+    with open(f"../processed_data/{icesheet}_data_{suite_set}{'_masked_newmask_1km' if basin_mask else ''}.pkl", 'wb') as icesheet_save_file:
         pickle.dump(icesheet_d, icesheet_save_file)
 
 ####################################################################################
@@ -252,7 +271,7 @@ if suite_set == "overshoots" and data_to_netcdf:
     if not process_icesheet_data:
         
         # Read ice sheet data
-        with open(f"../processed_data/{icesheet}_data_{suite_set}_{'masked' if basin_mask else ''}.pkl", 'rb') as file:
+        with open(f"../processed_data/{icesheet}_data_{suite_set}_{'masked_newmask_1km' if basin_mask else ''}.pkl", 'rb') as file:
             icesheet_d = pickle.load(file)
 
     print("Saving selected data to netCDF...")
@@ -267,10 +286,10 @@ if suite_set == "overshoots" and data_to_netcdf:
 
         vaf_ds.attrs = {
             "title": "Ross and Filchner-Ronne VAF and SLE timeseries",
-            "description": f"Ice volume above flotation and sea level equivalent timeseries for the basins that feed into the Ross and Filchner-Ronne ice shelves in Antarctica. Data from the TerraFIRMA overshoots simulation with suite id u-{i}",
+            "description": f"Ice volume above flotation and sea level equivalent timeseries for the basins that feed into the Ross and Filchner-Ronne ice shelves in Antarctica. Each basin is broken down into components that form part of the EAIS and WAIS. Data from the TerraFIRMA overshoots simulation with suite id u-{i}",
             "creator": "Tom Mitcham",
             "institution": "CPOM, University of Bristol",
-            "comment": "This is just a provisional .nc file for testing in Kailtin's plotting workflow. Processing of the ice sheet data is continuing and this file will be updated before finalising plots and analysis."
+            "comment": "This is the updated, and final, version of the data based on analysis using the new IMBIE-based basin mask created by Tom Mitcham on 15/09/2025. To be used in Naughten et al. [in prep.]."
         }
 
         for j in basins_for_netcdf:
@@ -278,10 +297,26 @@ if suite_set == "overshoots" and data_to_netcdf:
             vaf = xr.DataArray(IS_data[j].VAF, dims='time', coords={'time': time})
             sle = xr.DataArray(IS_data[j].SLE, dims='time', coords={'time': time})
 
-            data_label_vaf = "ross_vaf" if j == 8 else "filchner_ronne_vaf"
-            data_label_sle = "ross_sle" if j == 8 else "filchner_ronne_sle"
+            if j == 8:
+                data_label_vaf = "ross_wais_vaf"
+                data_label_sle = "ross_wais_sle"
+                data_desc = "Ross_WAIS (IMBIE Basin ID = Ep-F)"
 
-            data_desc = "Ross" if j == 8 else "Filchner-Ronne"
+            elif j == 9:
+                data_label_vaf = "ross_eais_vaf"
+                data_label_sle = "ross_eais_sle"
+                data_desc = "Ross_EAIS (IMBIE Basin ID = E-Ep)"
+
+            elif j == 16:
+                data_label_vaf = "filchner_ronne_wais_vaf"
+                data_label_sle = "filchner_ronne_wais_sle"
+                data_desc = "Filchner-Ronne_WAIS (IMBIE Basin ID = J-Jpp)"
+
+
+            elif j == 17:
+                data_label_vaf = "filchner_ronne_eais_vaf"
+                data_label_sle = "filchner_ronne_eais_sle"
+                data_desc = "Filchner-Ronne_EAIS (IMBIE Basin ID = Jpp-K)"
 
             vaf_ds[data_label_vaf] = vaf
             vaf_ds[data_label_sle] = sle
@@ -324,14 +359,23 @@ elif suite_set == "overview" and data_to_netcdf:
 
         time = IS_data[0].time
 
-        AIS_ds = xr.Dataset(coords={'time': time})
+        IS_ds = xr.Dataset(coords={'time': time})
 
-        AIS_ds.attrs = {
-            "title": "Antarctic Ice Sheet and GSAT timeseries, for TerraFIRMA overview paper",
-            "description": f"Ice volume, ice volume above flotation, sea level equivalent, and SMB timeseries for Antarctica and a GSAT timeseries. Data from the TerraFIRMA overshoot simulation with suite id u-{i}",
-            "creator": "Tom Mitcham",
-            "institution": "CPOM, University of Bristol"
-        }
+        if icesheet == "AIS":
+            IS_ds.attrs = {
+                "title": "Antarctic Ice Sheet and GSAT timeseries, for TerraFIRMA overview paper",
+                "description": f"Ice volume, ice volume above flotation, sea level equivalent, and SMB timeseries for Antarctica and a GSAT timeseries. Data from the TerraFIRMA overshoot simulation with suite id u-{i}",
+                "creator": "Tom Mitcham",
+                "institution": "CPOM, University of Bristol"
+            }
+
+        else:
+            IS_ds.attrs = {
+                "title": "Greenland Ice Sheet and GSAT timeseries, for TerraFIRMA overview paper",
+                "description": f"Ice volume, ice volume above flotation, sea level equivalent, and SMB timeseries for Greenland and a GSAT timeseries. Data from the TerraFIRMA overshoot simulation with suite id u-{i}",
+                "creator": "Tom Mitcham",
+                "institution": "CPOM, University of Bristol"
+            }
 
         vol_tot = xr.DataArray(IS_data[0].grounded_vol + IS_data[0].floating_vol, dims='time', coords={'time': time})
         vol_gr = xr.DataArray(IS_data[0].grounded_vol, dims='time', coords={'time': time})
@@ -347,62 +391,67 @@ elif suite_set == "overview" and data_to_netcdf:
         else:
             gsat = xr.DataArray(AT_data[:-1, 1], dims='time', coords={'time': time})
 
-        AIS_ds['total_vol'] = vol_tot
-        AIS_ds['grounded_vol'] = vol_gr
-        AIS_ds['floating_vol'] = vol_fl
-        AIS_ds['vaf'] = vaf
-        AIS_ds['sle'] = sle
-        AIS_ds['total_smb'] = smb_tot
-        AIS_ds['grounded_smb'] = smb_gr
-        AIS_ds['floating_smb'] = smb_fl
-        AIS_ds['gsat'] = gsat
+        IS_ds['total_vol'] = vol_tot
+        IS_ds['grounded_vol'] = vol_gr
+        IS_ds['floating_vol'] = vol_fl
+        IS_ds['vaf'] = vaf
+        IS_ds['sle'] = sle
+        IS_ds['total_smb'] = smb_tot
+        IS_ds['grounded_smb'] = smb_gr
+        IS_ds['floating_smb'] = smb_fl
+        IS_ds['gsat'] = gsat
 
-        AIS_ds['total_vol'].attrs = {
-            "long_name": "Total ice volume in the Antarctic Ice Sheet",
+
+        IS_ds['total_vol'].attrs = {
+            "long_name": "Total ice volume",
             "units": "m$^{3}"
         }
 
-        AIS_ds['grounded_vol'].attrs = {
-            "long_name": "Grounded ice volume in the Antarctic Ice Sheet",
+        IS_ds['grounded_vol'].attrs = {
+            "long_name": "Grounded ice volume",
             "units": "m$^{3}"
         }
 
-        AIS_ds['floating_vol'].attrs = {
-            "long_name": "Floating ice volume in the Antarctic Ice Sheet",
+        IS_ds['floating_vol'].attrs = {
+            "long_name": "Floating ice volume",
             "units": "m$^{3}"
         }
 
-        AIS_ds['vaf'].attrs = {
-            "long_name": "Ice volume above flotation in the Antarctic Ice Sheet",
+        IS_ds['vaf'].attrs = {
+            "long_name": "Ice volume above flotation",
             "units": "m$^{3}"
         }
 
-        AIS_ds['sle'].attrs = {
-            "long_name": "Sea level equivalent of the ice volume above flotation in the Antarctic Ice Sheet",
+        IS_ds['sle'].attrs = {
+            "long_name": "Sea level equivalent of the ice volume above flotation",
             "units": "m"
         }
 
-        AIS_ds['total_smb'].attrs = {
-            "long_name": "Total surface mass balance of the Antarctic Ice Sheet (floating + grounded regions)",
+        IS_ds['total_smb'].attrs = {
+            "long_name": "Total surface mass balance (floating + grounded regions)",
             "units": "m$^{3}/yr$"
         }
 
-        AIS_ds['grounded_smb'].attrs = {
-            "long_name": "Surface mass balance of the grounded regions of the Antarctic Ice Sheet",
+        IS_ds['grounded_smb'].attrs = {
+            "long_name": "Surface mass balance of the grounded regions",
             "units": "m$^{3}/yr$"
         }
 
-        AIS_ds['floating_smb'].attrs = {
-            "long_name": "Surface mass balance of the floating regions of the Antarctic Ice Sheet",
+        IS_ds['floating_smb'].attrs = {
+            "long_name": "Surface mass balance of the floating regions",
             "units": "m$^{3}/yr$"
         }
 
-        AIS_ds['gsat'].attrs = {
+        IS_ds['gsat'].attrs = {
             "long_name": "Global mean surface air temperature",
             "units": "K"
         }
 
-        AIS_ds.to_netcdf(f"../processed_data/netcdf_files_for_robin/AIS_and_GSAT_data_{i}_timeseries.nc")
+        if icesheet == "AIS":
+            IS_ds.to_netcdf(f"../processed_data/netcdf_files_for_robin/AIS_and_GSAT_data_{i}_timeseries.nc")
+
+        else:
+            IS_ds.to_netcdf(f"../processed_data/netcdf_files_for_robin/GrIS_and_GSAT_data_{i}_timeseries.nc")
 
         print(f"NetCDF file saved for {i}")
 

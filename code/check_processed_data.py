@@ -18,21 +18,26 @@ RUN_IDS=[
   "dm358", "dm359", "dc163", "dm929", "dm930", "dn822", "dn966", "do135", "do136"
 ]
 
+RUN_IDS=[
+    "cs568", "cx209", "cy837", "cy838", "cz375", "cz376", "cz377", "dc052", "dc051", "df028",
+    "dc123", "dc130"
+]
+
 suites_to_fix = []
 
 for suite in RUN_IDS:
 
     print(f"Checking suite: {suite}")
 
-    last_raw_file = subprocess.run([f"ls ../raw_data/{suite}/icesheet/*AIS.hdf5 | tail -n 1"], shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+    last_raw_file = subprocess.run([f"ls ../raw_data/{suite}/icesheet/*GrIS.hdf5 | tail -n 1"], shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
 
     last_raw_year = last_raw_file[43:47]
 
-    last_processed_file = subprocess.run([f"tail -n 1 ../processed_data/{suite}_AIS_diagnostics_masked.csv"], shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
+    last_processed_file = subprocess.run([f"tail -n 1 ../processed_data/{suite}_GrIS_diagnostics.csv"], shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
 
     last_processed_year = last_processed_file[105:109]
 
-    correct_data_string = "16,nonice,area"
+    correct_data_string = "0,nonice,area"
 
     if correct_data_string not in last_processed_file:
         print(f"Partially processed file for suite {suite}")
