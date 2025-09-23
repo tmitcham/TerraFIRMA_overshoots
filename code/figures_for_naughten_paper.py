@@ -80,7 +80,7 @@ suite_ids = {
 #    'do136': ['_fix', '#ffc0cb', 'solid']
 }
 
-basins = [0, 8, 10, 15] # 8 = Ross, 10 = ASE, 15 = Filchner-Ronne
+basins = [0, 8, 9, 11, 16, 17] # 8/9 = Ross, 11 = ASE, 16/17 = Filchner-Ronne
 
 # Plot settings
 plt.rcParams.update({'font.size': 6})
@@ -89,7 +89,7 @@ plt.rcParams.update({'font.size': 6})
 
 # Load data from pickle file
 
-with open("C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/AIS_data_overshoots_masked.pkl", 'rb') as file:
+with open("C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/AIS_data_overshoots_masked_newmask_1km.pkl", 'rb') as file:
     icesheet_d = pickle.load(file)
 
 ####################################################################################
