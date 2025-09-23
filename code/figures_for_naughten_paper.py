@@ -8,32 +8,77 @@ import matplotlib.pyplot as plt
 
 ####################################################################################
 
-id=["cs568", "cx209", "cw988", "cw989", "cw990", "cy837", "cy838", "cz375", "cz376", "cz377", "cz378",
-    "cz834", "cz855", "db587", "db723", "db731", "da087", "da266", "db597", "db733", "dc324",
-    "di335", "da800", "da697", "da892", "db223", "df453", "de620", "dc251",
-    "dc051", "dc052", "dc248", "dc249", "dc565", "dd210", "df028", "de621", "dc123", "dc130",
-    "df025", "df027", "df021", "df023", "dh541", "dh859", "de943", "de962", "de963", "dg093", "dg094", "dg095", "dm357", "dm358", "dm359"]
-
-run_type = ["ZE-0","Up8", "_Up8", "_Up8", "_Up8", "ZE-1.5", "ZE-2", "ZE-3", "ZE-4", "ZE-5", "ZE-6",
-            "_ZE-1.5", "_ZE-2", "_ZE-3", "_ZE-4", "_ZE-5", "_ZE-1.5", "_ZE-2", "_ZE-3", "_ZE-4", "_ZE-5",
-            "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X",
-            "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X",
-            "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X", "_X"]
-            
-runs = dict(zip(id, run_type)) 
-
-line_cols = ['#000000','#C30F0E','#C30F0E','#C30F0E','#C30F0E','#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0','#964b00',
-             '#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0', '#0003C7','#168039','#FFE11A','#FA5B0F','#9C27B0',
-             '#168039','#168039','#0003C7','#FA5B0F','#FFE11A','#FFE11A','#FFE11A','#9C27B0',
-             '#168039','#0003C7','#0003C7','#FFE11A','#168039','#FA5B0F','#FFE11A','#FFE11A','#FA5B0F','#9C27B0',
-             '#168039','#168039','#FFE11A','#FFE11A','#FA5B0F','#FA5B0F','#964b00','#964b00','#964b00','#9C27B0','#9C27B0','#9C27B0','#964b00','#964b00','#964b00']
-
-line_stys = ["solid","solid","solid","solid","solid","solid","solid","solid","solid","solid","solid",
-             "solid","solid","solid","solid","solid","solid","solid","solid","solid","solid",
-             "dotted","dotted","dotted","dotted","dotted","dotted","dotted","dotted",
-             "dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed","dashed",
-             "dashdot","dashdot","dashdot","dashdot","dashdot","dashdot","dotted","dashed","dashdot","dotted","dashed","dashdot","dotted","dashed","dashdot"]
-
+suite_ids = {
+    'cs568': ['ZE-0', '#000000', 'solid'],
+    'cx209': ['Up8', '#C30F0E', 'solid'],
+    'cw988': ['_Up8', '#C30F0E', 'solid'],
+    'cw989': ['_Up8', '#C30F0E', 'solid'],
+    'cw990': ['_Up8', '#C30F0E', 'solid'],
+    'cy837': ['ZE-1.5', '#0003C7', 'solid'],
+    'cy838': ['ZE-2', '#168039', 'solid'],
+    'cz374': ['ZE-2.5', '#ffc0cb', 'solid'],
+    'cz375': ['ZE-3', '#FFE11A', 'solid'],
+    'cz376': ['ZE-4', '#FA5B0F', 'solid'],
+    'cz377': ['ZE-5', '#9C27B0', 'solid'],
+    'cz378': ['ZE-6', '#964b00', 'solid'],
+    'cz834': ['_ZE-1.5', '#0003C7', 'solid'],
+    'cz855': ['_ZE-2', '#168039', 'solid'],
+    'cz859': ['_ZE-2.5', '#ffc0cb', 'solid'],
+    'db587': ['_ZE-3', '#FFE11A', 'solid'],
+    'db723': ['_ZE-4', '#FA5B0F', 'solid'],
+    'db731': ['_ZE-5', '#9C27B0', 'solid'],
+    'da087': ['_ZE-1.5', '#0003C7', 'solid'],
+    'da266': ['_ZE-2', '#168039', 'solid'],
+    'db597': ['_ZE-3', '#FFE11A', 'solid'],
+    'db733': ['_ZE-4', '#FA5B0F', 'solid'],
+    'dc324': ['_ZE-5', '#9C27B0', 'solid'],
+    'cz944': ['_Dn8-X_ZE-2', '#168039', 'dotted'],
+    'di335': ['_Dn8-X_ZE-2', '#168039', 'dotted'],
+    'da800': ['_Dn8-X_ZE-2', '#168039', 'dotted'],
+    'da697': ['_Dn8-X_ZE-1.5', '#0003C7', 'dotted'],
+    'da892': ['_Dn8-X_ZE-4', '#FA5B0F', 'dotted'],
+    'db223': ['_Dn8-X_ZE-3', '#FFE11A', 'dotted'],
+    'df453': ['_Dn8-X_ZE-3', '#FFE11A', 'dotted'],
+    'de620': ['_Dn8-X_ZE-3', '#FFE11A', 'dotted'],
+    'dc251': ['_Dn8-X_ZE-5', '#9C27B0', 'dotted'],
+    'dc051': ['_Dn4-X_ZE-2', '#168039', 'dashed'],
+    'dc052': ['_Dn4-X_ZE-1.5', '#0003C7', 'dashed'],
+    'dc248': ['_Dn4-X_ZE-1.5', '#0003C7', 'dashed'],
+    'dc249': ['_Dn4-X_ZE-3', '#FFE11A', 'dashed'],
+    'dm757': ['_Dn8-X_ZE-4', '#FA5B0F', 'dotted'],
+    'dc565': ['_Dn4-X_ZE-2', '#168039', 'dashed'],
+    'dd210': ['_Dn4-X_ZE-4', '#FA5B0F', 'dashed'],
+    'dc032': ['_Dn4-X_ZE-3', '#FFE11A', 'dashed'],
+    'df028': ['_Dn4-X_ZE-3', '#FFE11A', 'dashed'],
+    'de621': ['_Dn4-X_ZE-3', '#FFE11A', 'dashed'],
+    'dc123': ['_Dn4-X_ZE-4', '#FA5B0F', 'dashed'],
+    'dc130': ['_Dn4-X_ZE-5', '#9C27B0', 'dashed'],
+    'df025': ['_Dn2-X_ZE-2', '#168039', 'dashdot'],
+    'df027': ['_Dn2-X_ZE-2', '#168039', 'dashdot'],
+    'df021': ['_Dn2-X_ZE-3', '#FFE11A', 'dashdot'],
+    'df023': ['_Dn2-X_ZE-3', '#FFE11A', 'dashdot'],
+    'dh541': ['_Dn2-X_ZE-4', '#FA5B0F', 'dashdot'],
+    'dh859': ['_Dn2-X_ZE-4', '#FA5B0F', 'dashdot'],
+    'dg093': ['_Dn8-X_ZE-5', '#9C27B0', 'dotted'],
+    'dg094': ['_Dn4-X_ZE-5', '#9C27B0', 'dashed'],
+    'dg095': ['_Dn2-X_ZE-5', '#9C27B0', 'dashdot'],
+    'de943': ['_Dn8-X_ZE-6', '#964b00', 'dotted'],
+    'de962': ['_Dn4-X_ZE-6', '#964b00', 'dashed'],
+    'de963': ['_Dn2-X_ZE-6', '#964b00', 'dashdot'],
+    'dk554': ['_Dn8-X_ZE-6', '#964b00', 'dotted'],
+    'dk555': ['_Dn4-X_ZE-6', '#964b00', 'dashed'],
+    'dk556': ['_Dn2-X_ZE-6', '#964b00', 'dashdot'],
+    'dm357': ['_Dn8-X_ZE-6', '#964b00', 'dotted'],
+    'dm358': ['_Dn4-X_ZE-6', '#964b00', 'dashed'],
+    'dm359': ['_Dn2-X_ZE-6', '#964b00', 'dashdot'],
+    'dc163': ['_1.5_Dn8-X_ZE-2', '#168039', 'dotted'],
+    'dm929': ['_0_Dn4-X_ZE-2', '#168039', 'dashed'],
+    'dm930': ['_0_Dn4-X_ZE-2', '#168039', 'dashed'],
+    'dn822': ['_2_Dn8-X_ZE-4', '#FA5B0F', 'dotted'],
+    'dn966': ['fix', '#ffc0cb', 'solid'],
+    'do135': ['fix', '#ffc0cb', 'solid'],
+    'do136': ['fix', '#ffc0cb', 'solid']
+}
 
 basins = [0, 8, 10, 15] # 8 = Ross, 10 = ASE, 15 = Filchner-Ronne
 
@@ -71,7 +116,7 @@ for basin in basins:
 
     count = 0
 
-    for i in id:
+    for i, info in suite_ids:
 
         plot_data = icesheet_d[i]
         
@@ -81,12 +126,12 @@ for basin in basins:
         if i == "cs568":
             
             # *(0.918/1e9) to convert from m^3 to Gt
-            plt.plot(plot_data[basin]["time"] - 1850, (plot_data[basin]["VAF"] - initialVAFpi)*(0.918/1e9), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+            plt.plot(plot_data[basin]["time"] - 1850, (plot_data[basin]["VAF"] - initialVAFpi)*(0.918/1e9), label = info[0], lw=0.8, color = info[1], linestyle = info[2])
 
         else:
             
             # *(0.918/1e9) to convert from m^3 to Gt
-            plt.plot(plot_data[basin]["time"] - 1850, (plot_data[basin]["VAF"] - initialVAF)*(0.918/1e9), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+            plt.plot(plot_data[basin]["time"] - 1850, (plot_data[basin]["VAF"] - initialVAF)*(0.918/1e9), label = info[0], lw=0.8, color = info[1], linestyle = info[2])
         
         count = count + 1
 
@@ -101,35 +146,38 @@ for basin in basins:
         
         plot_file_id = "AIS"
     
-    if basin == 8:
+    elif basin == 8:
 
-        plt.title("Ross Basin")
+        plt.title("Ross Basin EAIS")
         
-        plot_file_id = "Ross"
+        plot_file_id = "Ross_eais"
         
-    elif basin == 15:
+    elif basin == 9:
+        
+        plt.title("Ross Basin WAIS")
+        
+        plot_file_id = "Ross_wais"
+        
+    elif basin == 16:
 
-        plt.title("Filchner-Ronne Basin")
+        plt.title("Filchner-Ronne Basin WAIS")
         
-        plot_file_id = "FRIS"
+        plot_file_id = "FRIS_wais"
+        
+    elif basin == 17:
 
-    elif basin == 10:
+        plt.title("Filchner-Ronne Basin EAIS")
+        
+        plot_file_id = "FRIS_eais"
+
+    elif basin == 11:
 
         plt.title("Amundsen Sea Basin")
         
         plot_file_id = "ASE"
-        
 
-    handles, labels = ax.get_legend_handles_labels()
-    handles.append(plt.Line2D([0], [0], color='black', lw=0.8, linestyle='dotted'))
-    handles.append(plt.Line2D([0], [0], color='black', lw=0.8, linestyle='dashed'))
-    handles.append(plt.Line2D([0], [0], color='black', lw=0.8, linestyle='dashdot'))
-    labels.append('Dn8-X')
-    labels.append('Dn4-X')
-    labels.append('Dn2-X')
+    ax.legend(loc = 'best', prop={'size': 5})
 
-    ax.legend(handles, labels, loc = 'best', prop={'size': 5})
-    
     secax = ax.secondary_yaxis('right', functions=(mass2sle, sle2mass)) 
     secax.set_ylabel('Sea level contribution (mm)')
 
