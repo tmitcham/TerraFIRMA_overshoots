@@ -15,7 +15,7 @@ ICE_DENSITY = 918.0 # As defined in BISICLES input files
 OCEAN_DENSITY = 1028.0
 OCEAN_AREA = 3.625e14 # as in Gregory et al. 2019 (https://doi.org/10.1007/s10712-019-09525-z)
 
-# Following simplest calculation from Goelzer et al. 2020 (https://doi.org/10.5194/tc-14-833-2020)
+# Following simplest calculation from Goelzer et al. 2020 (Eqn. 2, without map scale factor applied) (https://doi.org/10.5194/tc-14-833-2020)
 def vaf_to_sle(vaf):
     return (vaf/OCEAN_AREA)*(ICE_DENSITY/OCEAN_DENSITY)
 
@@ -38,6 +38,7 @@ print(f"Process atmospheric data: {process_atmos_data}")
 print(f"Process ice sheet data: {process_icesheet_data}")
 print(f"Basin mask: {basin_mask}")
 print(f"Save to NetCDF: {data_to_netcdf}")
+print(f"Basins to save to NetCDF: {basins_for_netcdf}")
 
 ####################################################################################
 
@@ -67,7 +68,7 @@ if suite_set == "overshoots":
     # the old IS_filename_suffix=f"_{icesheet}_diagnostics_masked.csv"
     IS_filename_suffix = f"_{icesheet}_diagnostics_masked_newmask_1km.csv"
 
-elif suite_set == "overview" || suite_set == "historical_rampups":
+elif suite_set == "overview" or suite_set == "historical_rampups":
     IS_filename_prefix = "/gws/nopw/j04/terrafirma/tm17544/TerraFIRMA_overshoots/processed_data/"
     IS_filename_suffix = f"_{icesheet}_diagnostics.csv"
 
@@ -180,7 +181,7 @@ if process_icesheet_data:
         VAF = []
         SLE = []
 
-        # set range to 7 for the GrIS and 17 for the AIS
+        # set range to 7 for the GrIS and 19 (17 for old mask) for the AIS
         if icesheet == "GrIS":
             range_limit = 7
         elif icesheet == "AIS":
@@ -289,7 +290,7 @@ if suite_set == "overshoots" and data_to_netcdf:
             "description": f"Ice volume above flotation and sea level equivalent timeseries for the basins that feed into the Ross and Filchner-Ronne ice shelves in Antarctica. Each basin is broken down into components that form part of the EAIS and WAIS. Data from the TerraFIRMA overshoots simulation with suite id u-{i}",
             "creator": "Tom Mitcham",
             "institution": "CPOM, University of Bristol",
-            "comment": "This is the updated, and final, version of the data based on analysis using the new IMBIE-based basin mask created by Tom Mitcham on 15/09/2025. To be used in Naughten et al. [in prep.]."
+            "comment": "This is the updated, and final, version of the data based on analysis using the new IMBIE-based basin mask (with 1 km resolution). Used in Naughten et al. 2025 [in prep.]."
         }
 
         for j in basins_for_netcdf:
@@ -331,7 +332,7 @@ if suite_set == "overshoots" and data_to_netcdf:
                 "units": "m"
             }
     
-        vaf_ds.to_netcdf(f"../processed_data/netcdf_files/vaf_{i}_timeseries.nc")
+        vaf_ds.to_netcdf(f"../processed_data/netcdf_files/vaf_{i}_timeseries_newmask_1km.nc")
 
         print(f"NetCDF file saved for {i}")
 
