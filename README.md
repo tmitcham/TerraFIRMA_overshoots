@@ -1,6 +1,6 @@
 # TerraFIRMA_overshoots
 
-Repository of code developed as part of the NERC [TerraFIRMA]{https://terrafirma.ac.uk/} project, to analyse ice sheet data from UKESM simulations:
+Repository of code developed as part of the NERC [TerraFIRMA](https://terrafirma.ac.uk/) project, to analyse ice sheet data from UKESM simulations:
 
 1) Download ice sheet and global mean temperature data from the TerraFIRMA overhsoot simulations (and the UKESM1.2 historical simulations) from MASS onto JASMIN
 2) Process the BISICLES output using the diagnostics filetool (with optional masking of diagnostics into ice sheet basins) and store all necessary data for analysis and figures in pickle and netcdf files
