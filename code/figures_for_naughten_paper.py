@@ -71,13 +71,13 @@ suite_ids = {
     'dm357': ['_Dn8-X_ZE-6', '#964b00', 'dotted'],
     'dm358': ['_Dn4-X_ZE-6', '#964b00', 'dashed'],
     'dm359': ['_Dn2-X_ZE-6', '#964b00', 'dashdot'],
-    'dc163': ['_1.5_Dn8-X_ZE-2', '#168039', 'dotted'],
-    'dm929': ['_0_Dn4-X_ZE-2', '#168039', 'dashed'],
-    'dm930': ['_0_Dn4-X_ZE-2', '#168039', 'dashed'],
-    'dn822': ['_2_Dn8-X_ZE-4', '#FA5B0F', 'dotted'],
-    'dn966': ['fix', '#ffc0cb', 'solid'],
-    'do135': ['fix', '#ffc0cb', 'solid'],
-    'do136': ['fix', '#ffc0cb', 'solid']
+    'dc163': ['_1.5_Dn8-X_ZE-2', '#0003C7', (0, (1, 10))],
+    'dm929': ['_0_Dn4-X_ZE-2', '#000000', (0, (5, 10))],
+    'dm930': ['_0_Dn4-X_ZE-2', '#000000', (0, (5, 10))],
+    'dn822': ['_2_Dn8-X_ZE-4', '#168039', (0, (1, 10))]
+#    'dn966': ['_fix', '#ffc0cb', 'solid'],
+#    'do135': ['_fix', '#ffc0cb', 'solid'],
+#    'do136': ['_fix', '#ffc0cb', 'solid']
 }
 
 basins = [0, 8, 10, 15] # 8 = Ross, 10 = ASE, 15 = Filchner-Ronne
@@ -116,7 +116,7 @@ for basin in basins:
 
     count = 0
 
-    for i, info in suite_ids:
+    for i, info in suite_ids.items():
 
         plot_data = icesheet_d[i]
         
@@ -181,7 +181,7 @@ for basin in basins:
     secax = ax.secondary_yaxis('right', functions=(mass2sle, sle2mass)) 
     secax.set_ylabel('Sea level contribution (mm)')
 
-    ax.set_xlim([0, 800])
+    ax.set_xlim([0, 900])
 
     print(f"Finished and saving VAF vs Time plot for basin {basin}...")
 
