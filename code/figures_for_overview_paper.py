@@ -275,7 +275,7 @@ print("Starting AIS total SMB vs Time plot...")
 
 count = 0
 
-box_size = 11
+box_size = 31
 
 plt.figure(figsize=(4, 3))
 
@@ -287,26 +287,30 @@ for i in id:
 
     time_series = plot_data["time"]
 
-    if i == "cs568":
-        
-        ax[0].plot(time_series - 1850, (IS_data_SMB)*(0.918/1e9), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
-
-    else:
-        
-        ax[0].plot(time_series - 1850, (IS_data_SMB)*(0.918/1e9), label = runs[i], lw=0.8, color = line_cols[count], linestyle = line_stys[count])
+    #plt.plot(time_series - 1850, (IS_data_SMB)*(0.918/1e9), label = "_none", lw=0.8, linestyle="solid", color=line_cols[count], alpha=0.1)
+    
+    ma_y = smooth((IS_data_SMB)*(0.918/1e9), box_size)
+    
+    ma_x = time_series
+    ma_x = ma_x[int((box_size-1)/2):]
+    ma_x = ma_x[:-int((box_size-1)/2)]
+    
+    plt.plot(ma_x-1850, ma_y, label = runs[i], lw=0.8, linestyle=line_stys[count], color=line_cols[count])
     
     count = count + 1
 
-ax[0].set_ylabel("Total SMB (Gt/yr)")
-ax[0].set_xlabel('Years')
+ax = plt.gca()
+ax.set_ylabel("Total SMB (Gt/yr)")
+ax.set_xlabel('Years')
+ax.set_xlim([0, 750])
 
-ax[0].legend(handles, labels, loc = 'best', prop={'size': 8})
-handles, labels = ax[0].get_legend_handles_labels()
+ax.legend(handles, labels, loc = 'best', prop={'size': 8})
+handles, labels = ax.get_legend_handles_labels()
 handles.append(plt.Line2D([0], [0], color='black', lw=0.8, linestyle='dashed'))
 labels.append('Dn4-X')
-ax[0].legend(handles, labels, loc = 'lower left', prop={'size': 5})
+ax.legend(handles, labels, loc = 'lower left', prop={'size': 5})
 
-ax[0].annotate('a)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
+ax.annotate('a)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
 
 plt.tight_layout()
 
@@ -314,5 +318,110 @@ print("Finished Total SMB vs Time plot...")
 
 print("Saving plot to file...")
 
-plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/{icesheet}TotalSMB.pdf", dpi = 600,  bbox_inches='tight')  
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/{icesheet}TotalSMBvsTime.png", dpi = 600,  bbox_inches='tight')  
 print("Plot saved successfully.")
+
+####
+
+print("Starting AIS grounded SMB vs Time plot...")
+
+count = 0
+
+box_size = 31
+
+plt.figure(figsize=(4, 3))
+
+for i in id:
+
+    plot_data = icesheet_d[i][0]
+
+    IS_data_SMB = plot_data["grounded_SMB"]
+
+    time_series = plot_data["time"]
+
+    #plt.plot(time_series - 1850, (IS_data_SMB)*(0.918/1e9), label = "_none", lw=0.8, linestyle="solid", color=line_cols[count], alpha=0.1)
+    
+    ma_y = smooth((IS_data_SMB)*(0.918/1e9), box_size)
+    
+    ma_x = time_series
+    ma_x = ma_x[int((box_size-1)/2):]
+    ma_x = ma_x[:-int((box_size-1)/2)]
+    
+    plt.plot(ma_x-1850, ma_y, label = runs[i], lw=0.8, linestyle=line_stys[count], color=line_cols[count])
+    
+    count = count + 1
+
+ax = plt.gca()
+ax.set_ylabel("Grounded SMB (Gt/yr)")
+ax.set_xlabel('Years')
+ax.set_xlim([0, 750])
+
+ax.legend(handles, labels, loc = 'best', prop={'size': 8})
+handles, labels = ax.get_legend_handles_labels()
+handles.append(plt.Line2D([0], [0], color='black', lw=0.8, linestyle='dashed'))
+labels.append('Dn4-X')
+ax.legend(handles, labels, loc = 'lower left', prop={'size': 5})
+
+ax.annotate('a)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
+
+plt.tight_layout()
+
+print("Finished Total SMB vs Time plot...")
+
+print("Saving plot to file...")
+
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/{icesheet}GroundedSMBvsTime.png", dpi = 600,  bbox_inches='tight')  
+print("Plot saved successfully.")
+
+#####
+
+print("Starting AIS floating SMB vs Time plot...")
+
+count = 0
+
+box_size = 31
+
+plt.figure(figsize=(4, 3))
+
+for i in id:
+
+    plot_data = icesheet_d[i][0]
+
+    IS_data_SMB = plot_data["floating_SMB"]
+
+    time_series = plot_data["time"]
+
+    #plt.plot(time_series - 1850, (IS_data_SMB)*(0.918/1e9), label = "_none", lw=0.8, linestyle="solid", color=line_cols[count], alpha=0.1)
+    
+    ma_y = smooth((IS_data_SMB)*(0.918/1e9), box_size)
+    
+    ma_x = time_series
+    ma_x = ma_x[int((box_size-1)/2):]
+    ma_x = ma_x[:-int((box_size-1)/2)]
+    
+    plt.plot(ma_x-1850, ma_y, label = runs[i], lw=0.8, linestyle=line_stys[count], color=line_cols[count])
+    
+    count = count + 1
+
+ax = plt.gca()
+ax.set_ylabel("Floating SMB (Gt/yr)")
+ax.set_xlabel('Years')
+ax.set_xlim([0, 750])
+
+ax.legend(handles, labels, loc = 'best', prop={'size': 8})
+handles, labels = ax.get_legend_handles_labels()
+handles.append(plt.Line2D([0], [0], color='black', lw=0.8, linestyle='dashed'))
+labels.append('Dn4-X')
+ax.legend(handles, labels, loc = 'lower left', prop={'size': 5})
+
+ax.annotate('a)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
+
+plt.tight_layout()
+
+print("Finished Total SMB vs Time plot...")
+
+print("Saving plot to file...")
+
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/{icesheet}FloatingSMBvsTime.png", dpi = 600,  bbox_inches='tight')  
+print("Plot saved successfully.")
+
