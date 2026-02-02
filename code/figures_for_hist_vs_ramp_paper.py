@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 import pickle
 import matplotlib.pyplot as plt
+import xarray as xr
+import cftime
 
 ####################################################################################
 
@@ -25,7 +27,91 @@ print("Loading ice sheet data from file...")
 with open('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/archive/processed_data/historical_icesheet_data.pkl', 'rb') as file:
 
     icesheet_d = pickle.load(file)
-    
+
+# Also read in the new NEMO-derived BMB
+
+print("Loading NEMO-derived BMB data from files...")
+
+time_coder = xr.coders.CFDatetimeCoder(use_cftime=True)
+
+cx209_bmb = xr.open_dataset('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/cx209/timeseries.nc', decode_times=time_coder)
+cw988_bmb = xr.open_dataset('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/cw988/timeseries.nc', decode_times=time_coder)
+cw989_bmb = xr.open_dataset('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/cw989/timeseries.nc', decode_times=time_coder)
+cw990_bmb = xr.open_dataset('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/cw990/timeseries.nc', decode_times=time_coder)
+
+cy623_bmb = xr.open_dataset('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/cy623/timeseries.nc', decode_times=time_coder)
+da914_bmb = xr.open_dataset('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/da914/timeseries.nc', decode_times=time_coder)
+da916_bmb = xr.open_dataset('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/da916/timeseries.nc', decode_times=time_coder)
+da917_bmb = xr.open_dataset('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/da917/timeseries.nc', decode_times=time_coder)
+
+
+cx209_bmb_sliced = cx209_bmb.sel(time_centered=slice(cftime.Datetime360Day(1860, 1, 1), cftime.Datetime360Day(1899, 12, 30)))
+cw988_bmb_sliced = cw988_bmb.sel(time_centered=slice(cftime.Datetime360Day(1860, 1, 1), cftime.Datetime360Day(1899, 12, 30)))
+cw989_bmb_sliced = cw989_bmb.sel(time_centered=slice(cftime.Datetime360Day(1860, 1, 1), cftime.Datetime360Day(1899, 12, 30)))
+cw990_bmb_sliced = cw990_bmb.sel(time_centered=slice(cftime.Datetime360Day(1860, 1, 1), cftime.Datetime360Day(1899, 12, 30)))
+
+cy623_bmb_sliced = cy623_bmb.sel(time_centered=slice(cftime.Datetime360Day(1975, 1, 1), cftime.Datetime360Day(2015, 12, 30)))
+da914_bmb_sliced = da914_bmb.sel(time_centered=slice(cftime.Datetime360Day(1975, 1, 1), cftime.Datetime360Day(2015, 12, 30)))
+da916_bmb_sliced = da916_bmb.sel(time_centered=slice(cftime.Datetime360Day(1975, 1, 1), cftime.Datetime360Day(2015, 12, 30)))
+da917_bmb_sliced = da917_bmb.sel(time_centered=slice(cftime.Datetime360Day(1975, 1, 1), cftime.Datetime360Day(2015, 12, 30)))
+
+cx209_bmb_ts = cx209_bmb_sliced.resample(time_centered='1YE').mean()
+cw988_bmb_ts = cw988_bmb_sliced.resample(time_centered='1YE').mean()
+cw989_bmb_ts = cw989_bmb_sliced.resample(time_centered='1YE').mean()
+cw990_bmb_ts = cw990_bmb_sliced.resample(time_centered='1YE').mean()
+
+cy623_bmb_ts = cy623_bmb_sliced.resample(time_centered='1YE').mean()
+da914_bmb_ts = da914_bmb_sliced.resample(time_centered='1YE').mean()
+da916_bmb_ts = da916_bmb_sliced.resample(time_centered='1YE').mean()
+da917_bmb_ts = da917_bmb_sliced.resample(time_centered='1YE').mean()
+
+cx209_bmb_ts = cx209_bmb_ts.rename({'time_centered': 'time', 'all_massloss': 'cx209_nemo_bmb'})
+cw988_bmb_ts = cw988_bmb_ts.rename({'time_centered': 'time', 'all_massloss': 'cw988_nemo_bmb'})
+cw989_bmb_ts = cw989_bmb_ts.rename({'time_centered': 'time', 'all_massloss': 'cw989_nemo_bmb'})
+cw990_bmb_ts = cw990_bmb_ts.rename({'time_centered': 'time', 'all_massloss': 'cw990_nemo_bmb'})
+
+cy623_bmb_ts = cy623_bmb_ts.rename({'time_centered': 'time', 'all_massloss': 'cy623_nemo_bmb'})
+da914_bmb_ts = da914_bmb_ts.rename({'time_centered': 'time', 'all_massloss': 'da914_nemo_bmb'})
+da916_bmb_ts = da916_bmb_ts.rename({'time_centered': 'time', 'all_massloss': 'da916_nemo_bmb'})
+da917_bmb_ts = da917_bmb_ts.rename({'time_centered': 'time', 'all_massloss': 'da917_nemo_bmb'})
+
+cx209_bmb_ts_select = cx209_bmb_ts[['time', 'cx209_nemo_bmb']]
+cw988_bmb_ts_select = cw988_bmb_ts[['time', 'cw988_nemo_bmb']]
+cw989_bmb_ts_select = cw989_bmb_ts[['time', 'cw989_nemo_bmb']]
+cw990_bmb_ts_select = cw990_bmb_ts[['time', 'cw990_nemo_bmb']]
+
+cy623_bmb_ts_select = cy623_bmb_ts[['time', 'cy623_nemo_bmb']]
+da914_bmb_ts_select = da914_bmb_ts[['time', 'da914_nemo_bmb']]
+da916_bmb_ts_select = da916_bmb_ts[['time', 'da916_nemo_bmb']]
+da917_bmb_ts_select = da917_bmb_ts[['time', 'da917_nemo_bmb']]
+
+ramp_bmb = xr.merge([cx209_bmb_ts_select, cw988_bmb_ts_select, cw989_bmb_ts_select, cw990_bmb_ts_select])
+hist_bmb = xr.merge([cy623_bmb_ts_select, da914_bmb_ts_select, da916_bmb_ts_select, da917_bmb_ts_select])
+
+ramp_bmb = ramp_bmb.drop_vars('deptht')
+hist_bmb = hist_bmb.drop_vars('deptht')
+
+max_ramp = ramp_bmb.to_array(dim = 'new').max('new')
+max_hist = hist_bmb.to_array(dim = 'new').max('new')
+
+min_ramp = ramp_bmb.to_array(dim = 'new').min('new')
+min_hist = hist_bmb.to_array(dim = 'new').min('new')
+
+mean_ramp = ramp_bmb.to_array(dim = 'new').mean('new')
+mean_hist = hist_bmb.to_array(dim = 'new').mean('new')
+
+ramp_bmb = ramp_bmb.assign({'max': max_ramp, 'min': min_ramp, 'mean': mean_ramp})
+hist_bmb = hist_bmb.assign({'max': max_hist, 'min': min_hist, 'mean': mean_hist})
+
+ramp_bmb = ramp_bmb.to_dataframe().reset_index()
+hist_bmb = hist_bmb.to_dataframe().reset_index()
+
+ramp_bmb = ramp_bmb.drop(columns='time')
+hist_bmb = hist_bmb.drop(columns='time')
+
+ramp_bmb["time"] = list(range(1975, 2015))
+hist_bmb["time"] = list(range(1975, 2015))
+
 ####################################################################################
 
 # Define some useful functions for plotting 
@@ -42,7 +128,6 @@ def mass2sle(x):
 
 def sle2mass(x):
     return x*(-1)*361.8
-
 
 ####################################################################################
 
@@ -205,8 +290,8 @@ print("Starting AIS SMB vs Time plot...")
 
 plt.figure(figsize=(4, 3))
 
-# Process the data for plotting in the same way as for the VAF plot but choosing the 
-# grounded SMB data from the original data frame
+# Process the data for plotting in the same way as for the VAF plot but choosing the
+# grounded SMB and floating SMB data from the original data frame
 
 for i in id:
 
@@ -264,7 +349,7 @@ for i in id:
         elif i == "da917":
 
             hist_SMB["da917"] = plot_data.iloc[:,10]
-            
+        
 ramp_SMB.reset_index(inplace=True, drop=True)
 hist_SMB.reset_index(inplace=True, drop=True)
 
@@ -589,11 +674,11 @@ ax[0].plot(noel.Year, noel["ANT"], label = "Noel '23", color = 'Black', lw=0.8, 
 ax[0].plot(mottram.Year, mottram["SMB"], label = "Mottram '21", color = 'Black', lw=0.8, linestyle='--')
 ax[0].fill_between(mottram.Year, mottram["Min"], mottram["Max"],color = 'black', alpha = 0.1, lw=0)
 
-ax[1].plot(ramp_flBMB.time, (ramp_flBMB["mean"])*0.917/1e9, label = "esm-up2p0", color = 'red', lw=0.8)
-ax[1].fill_between(ramp_flBMB.time, (ramp_flBMB["min"])*0.917/1e9, (ramp_flBMB["max"])*0.917/1e9, color = 'red', alpha = 0.2, lw=0)
+ax[1].plot(ramp_bmb.time, (ramp_bmb["mean"]*-1), label = "esm-up2p0", color = 'red', lw=0.8)
+ax[1].fill_between(ramp_bmb.time, (ramp_bmb["min"]*-1), (ramp_bmb["max"]*-1), color = 'red', alpha = 0.2, lw=0)
 
-ax[1].plot(hist_flBMB.time, (hist_flBMB["mean"])*0.917/1e9, label = "esm-hist", color = 'blue', lw=0.8)
-ax[1].fill_between(hist_flBMB.time, (hist_flBMB["min"])*0.917/1e9, (hist_flBMB["max"])*0.917/1e9, color = 'blue', alpha = 0.2, lw=0)
+ax[1].plot(hist_bmb.time, (hist_bmb["mean"]*-1), label = "esm-hist", color = 'blue', lw=0.8)
+ax[1].fill_between(hist_bmb.time, (hist_bmb["min"]*-1), (hist_bmb["max"]*-1), color = 'blue', alpha = 0.2, lw=0)
 
 # Add the Davison data
 ax[1].plot(davison.Year, davison["Basal melt"], label = 'Davison et al. (2023)', color = 'Black', lw=0.8, linestyle='dashdot')
@@ -620,4 +705,4 @@ ax[1].annotate('b)', xy=(0, 1), xycoords='axes fraction', xytext=(0.8, -1.0), te
 
 print("Finished and saving AIS SMB vs Time plot...")
 
-plt.savefig('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/NewHistAISSMBandBMBvsTime.png', dpi = 600,  bbox_inches='tight') 
+plt.savefig('C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/NewHistAISSMBandNEMOBMBvsTime.png', dpi = 600,  bbox_inches='tight') 
