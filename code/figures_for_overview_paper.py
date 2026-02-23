@@ -39,6 +39,20 @@ elif icesheet == "GrIS":
 with open("C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/atmos_data_overview.pkl", 'rb') as file:
     atmos_d = pickle.load(file)
 
+with open("C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/cs495_SMB_AIS_GR_FL_masked_new_mask.pkl", 'rb') as file:
+    cs495_SMB = pickle.load(file)
+
+with open("C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/atmos_data_cs495.pkl", 'rb') as file:
+    cs495_GSAT = pickle.load(file)
+
+## for comparison of methods load some cs568 data processed with pyglint
+with open("C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/cs568_SMB_AIS_GR_FL_masked_new_mask.pkl", 'rb') as file:
+    cs568_SMB = pickle.load(file)
+
+## for comparison of methods load some cx209 data processed with pyglint
+with open("C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/processed_data/cx209_SMB_AIS_GR_FL_masked_new_mask.pkl", 'rb') as file:
+    cx209_SMB = pickle.load(file)
+
 ####################################################################################
 
 # Prepare data for SMB vs GSAT plots
@@ -54,6 +68,43 @@ for i in id:
 
     # Sort the rows into order of lowest to highest GSAT
     SMB[i] = SMB[i].sort_values(by="GSAT")
+
+## Get cs495 data into the right format for plotting with other suites
+cs495_GSAT = pd.DataFrame(cs495_GSAT["cs495"], columns=['time', 'GSAT'])
+cs495_GSAT.time = cs495_GSAT.time - 1950
+#cs495_GSAT = cs495_GSAT.iloc[:731] # only keep first 731 years to match others
+cs495_GSAT = cs495_GSAT.iloc[:100]
+
+cs495_SMB = pd.DataFrame(cs495_SMB)
+cs495_SMB = cs495_SMB.iloc[:731]
+cs495_SMB = pd.concat([cs495_SMB, pd.DataFrame(cs495_GSAT.GSAT)], axis=1)
+cs495_SMB.columns = ["time","total_SMB","grounded_SMB","floating_SMB","GSAT"]
+
+cs495_SMB_sorted_by_GSAT = cs495_SMB.sort_values(by="GSAT")
+
+## for testing plot of cs568 and cx209 data processed with pyglint
+cs568_SMB = pd.DataFrame(cs568_SMB, columns=['time', 'total_SMB','grounded_SMB','floating_SMB'])
+
+cs568_SMB = cs568_SMB.iloc[1:-1]
+
+cs568_SMB = cs568_SMB.reset_index(drop=True)
+
+cx209_SMB = pd.DataFrame(cx209_SMB, columns=['time', 'total_SMB','grounded_SMB','floating_SMB'])
+
+cx209_SMB.time = cx209_SMB.time + 1
+
+cx209_SMB = cx209_SMB.iloc[:-1]
+
+# Create full year range
+full_range = range(int(cx209_SMB["time"].min()), int(cx209_SMB["time"].max()) + 1)
+
+# Reindex
+cx209_SMB = (
+    cx209_SMB.set_index("time")
+      .reindex(full_range)
+      .rename_axis("time")
+      .reset_index()
+)
 
 ####################################################################################
 
@@ -86,6 +137,15 @@ count = 0
 box_size = 11
 
 plt.figure(figsize=(4, 3))
+
+plt.plot(cs495_GSAT.time, cs495_GSAT.GSAT - initialT, label = "_none", lw=0.8, color='black', alpha=0.1)
+
+ma_y = smooth(cs495_GSAT.GSAT - initialT, box_size)
+ma_x = cs495_GSAT.time
+ma_x = ma_x[int((box_size-1)/2):]
+ma_x = ma_x[:-int((box_size-1)/2)]
+
+plt.plot(ma_x, ma_y, label = "PI", lw=0.8, color='black')
 
 for i in id:
 
@@ -188,6 +248,18 @@ box_size = 21
 
 initialT = atmos_d["cx209"][0,1]
 
+ax[2].plot(cs495_SMB_sorted_by_GSAT["GSAT"] - initialT, (cs495_SMB_sorted_by_GSAT["grounded_SMB"]), label = "_none", lw=0.8, color='black', alpha=0.1)
+ax[3].plot(cs495_SMB_sorted_by_GSAT["GSAT"] - initialT, (cs495_SMB_sorted_by_GSAT["floating_SMB"]), label = "_none", lw=0.8, color='black', alpha=0.1)
+
+ma_y_gr = smooth((cs495_SMB_sorted_by_GSAT["grounded_SMB"]), box_size)
+ma_y_fl = smooth((cs495_SMB_sorted_by_GSAT["floating_SMB"]), box_size)
+ma_x = (cs495_SMB_sorted_by_GSAT["GSAT"] - initialT).values
+ma_x = ma_x[int((box_size-1)/2):]
+ma_x = ma_x[:-int((box_size-1)/2)]
+
+ax[2].plot(ma_x, ma_y_gr, label = "PI", lw=0.8, color='black')
+ax[3].plot(ma_x, ma_y_fl, label = "PI", lw=0.8, color='black')
+
 for i in id:
     
     plot_data = SMB[i]
@@ -263,7 +335,7 @@ print("Finished Volume vs Time plot...")
 
 print("Saving plot to file...")
 
-plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/{icesheet}VafVolSmb.pdf", dpi = 600,  bbox_inches='tight')  
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/{icesheet}VafVolSmb_new_mask.png", dpi = 600,  bbox_inches='tight')  
 
 print("Plot saved successfully.")
 
@@ -278,6 +350,13 @@ count = 0
 box_size = 31
 
 plt.figure(figsize=(4, 3))
+
+ma_y = smooth((cs495_SMB["total_SMB"]), box_size)
+ma_x = cs495_SMB["time"].values
+ma_x = ma_x[int((box_size-1)/2):]
+ma_x = ma_x[:-int((box_size-1)/2)]
+
+plt.plot(ma_x, ma_y, label = "PI", lw=0.8, color='black')
 
 for i in id:
 
@@ -308,7 +387,7 @@ ax.legend(handles, labels, loc = 'best', prop={'size': 8})
 handles, labels = ax.get_legend_handles_labels()
 handles.append(plt.Line2D([0], [0], color='black', lw=0.8, linestyle='dashed'))
 labels.append('Dn4-X')
-ax.legend(handles, labels, loc = 'lower left', prop={'size': 5})
+ax.legend(handles, labels, loc = 'best', prop={'size': 5})
 
 ax.annotate('a)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
 
@@ -318,7 +397,7 @@ print("Finished Total SMB vs Time plot...")
 
 print("Saving plot to file...")
 
-plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/{icesheet}TotalSMBvsTime.png", dpi = 600,  bbox_inches='tight')  
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/{icesheet}TotalSMBvsTime_new_mask.png", dpi = 600,  bbox_inches='tight')  
 print("Plot saved successfully.")
 
 ####
@@ -330,6 +409,13 @@ count = 0
 box_size = 31
 
 plt.figure(figsize=(4, 3))
+
+ma_y = smooth((cs495_SMB["grounded_SMB"]), box_size)
+ma_x = cs495_SMB["time"].values
+ma_x = ma_x[int((box_size-1)/2):]
+ma_x = ma_x[:-int((box_size-1)/2)]
+
+plt.plot(ma_x, ma_y, label = "PI", lw=0.8, color='black')
 
 for i in id:
 
@@ -360,7 +446,7 @@ ax.legend(handles, labels, loc = 'best', prop={'size': 8})
 handles, labels = ax.get_legend_handles_labels()
 handles.append(plt.Line2D([0], [0], color='black', lw=0.8, linestyle='dashed'))
 labels.append('Dn4-X')
-ax.legend(handles, labels, loc = 'lower left', prop={'size': 5})
+ax.legend(handles, labels, loc = 'best', prop={'size': 5})
 
 ax.annotate('a)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
 
@@ -370,7 +456,7 @@ print("Finished Total SMB vs Time plot...")
 
 print("Saving plot to file...")
 
-plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/{icesheet}GroundedSMBvsTime.png", dpi = 600,  bbox_inches='tight')  
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/{icesheet}GroundedSMBvsTime_new_mask.png", dpi = 600,  bbox_inches='tight')  
 print("Plot saved successfully.")
 
 #####
@@ -382,6 +468,13 @@ count = 0
 box_size = 31
 
 plt.figure(figsize=(4, 3))
+
+ma_y = smooth((cs495_SMB["floating_SMB"]), box_size)
+ma_x = cs495_SMB["time"].values
+ma_x = ma_x[int((box_size-1)/2):]
+ma_x = ma_x[:-int((box_size-1)/2)]
+
+plt.plot(ma_x, ma_y, label = "PI", lw=0.8, color='black')
 
 for i in id:
 
@@ -412,7 +505,7 @@ ax.legend(handles, labels, loc = 'best', prop={'size': 8})
 handles, labels = ax.get_legend_handles_labels()
 handles.append(plt.Line2D([0], [0], color='black', lw=0.8, linestyle='dashed'))
 labels.append('Dn4-X')
-ax.legend(handles, labels, loc = 'lower left', prop={'size': 5})
+ax.legend(handles, labels, loc = 'best', prop={'size': 5})
 
 ax.annotate('a)', xy=(1, 1), xycoords='axes fraction', xytext=(-1.0, -1.2), textcoords='offset fontsize', ha='center', fontsize=9)
 
@@ -422,6 +515,171 @@ print("Finished Total SMB vs Time plot...")
 
 print("Saving plot to file...")
 
-plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/{icesheet}FloatingSMBvsTime.png", dpi = 600,  bbox_inches='tight')  
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/{icesheet}FloatingSMBvsTime_new_mask.png", dpi = 600,  bbox_inches='tight')  
 print("Plot saved successfully.")
 
+####################################################################################
+
+# Plots to explore why using pyglint and BISICLES diagnostic tools (post Glint transform) 
+# are giving different results
+
+def max_scaled_diff(x, y, eps=1e-8):
+    return (x - y) / (abs(x) + abs(y) + eps)
+
+cx209_diff = cx209_SMB.total_SMB - (icesheet_d["cx209"][0].grounded_SMB + icesheet_d["cx209"][0].floating_SMB)*(0.918/1e9)
+cx209_diff_prop = cx209_diff/((icesheet_d["cx209"][0].grounded_SMB + icesheet_d["cx209"][0].floating_SMB)*(0.918/1e9))
+cx209_robust_diff = max_scaled_diff(cx209_SMB.total_SMB, (icesheet_d["cx209"][0].grounded_SMB + icesheet_d["cx209"][0].floating_SMB)*(0.918/1e9))
+
+cx209_diff_grounded = cx209_SMB.grounded_SMB - (icesheet_d["cx209"][0].grounded_SMB)*(0.918/1e9)
+cx209_diff_grounded_prop = cx209_diff_grounded/((icesheet_d["cx209"][0].grounded_SMB)*(0.918/1e9))
+cx209_robust_diff_grounded = max_scaled_diff(cx209_SMB.grounded_SMB, (icesheet_d["cx209"][0].grounded_SMB)*(0.918/1e9))
+
+cx209_diff_floating = cx209_SMB.floating_SMB - (icesheet_d["cx209"][0].floating_SMB)*(0.918/1e9)
+cx209_diff_floating_prop = cx209_diff_floating/((icesheet_d["cx209"][0].floating_SMB)*(0.918/1e9))
+cx209_robust_diff_floating = max_scaled_diff(cx209_SMB.floating_SMB, (icesheet_d["cx209"][0].floating_SMB)*(0.918/1e9))
+
+cs568_diff = cs568_SMB.total_SMB - (icesheet_d["cs568"][0].grounded_SMB + icesheet_d["cs568"][0].floating_SMB)*(0.918/1e9)
+cs568_diff_prop = cs568_diff/((icesheet_d["cs568"][0].grounded_SMB + icesheet_d["cs568"][0].floating_SMB)*(0.918/1e9))
+cs568_robust_diff = max_scaled_diff(cs568_SMB.total_SMB, (icesheet_d["cs568"][0].grounded_SMB + icesheet_d["cs568"][0].floating_SMB)*(0.918/1e9))
+
+cs568_diff_grounded = cs568_SMB.grounded_SMB - (icesheet_d["cs568"][0].grounded_SMB)*(0.918/1e9)
+cs568_diff_grounded_prop = cs568_diff_grounded/((icesheet_d["cs568"][0].grounded_SMB)*(0.918/1e9))
+cs568_robust_diff_grounded = max_scaled_diff(cs568_SMB.grounded_SMB, (icesheet_d["cs568"][0].grounded_SMB)*(0.918/1e9))
+
+cs568_diff_floating = cs568_SMB.floating_SMB - (icesheet_d["cs568"][0].floating_SMB)*(0.918/1e9)
+cs568_diff_floating_prop = cs568_diff_floating/((icesheet_d["cs568"][0].floating_SMB)*(0.918/1e9))
+cs568_robust_diff_floating = max_scaled_diff(cs568_SMB.floating_SMB, (icesheet_d["cs568"][0].floating_SMB)*(0.918/1e9))
+
+# Start with a figure of just SMBs (total, grounded, floating) vs time for cx209 and cs568 raw data (no smoothing)
+
+plt.figure(figsize=(4, 3))
+
+plt.plot(cs568_SMB.time, cs568_SMB.total_SMB, label = "cs568 pyglint", lw=0.8, color='Orange')
+plt.plot(icesheet_d["cs568"][0].time-1850, (icesheet_d["cs568"][0].grounded_SMB + icesheet_d["cs568"][0].floating_SMB)*(0.918/1e9), label = "cs568 orig", lw=0.8, color='Red')
+
+plt.plot(cx209_SMB.time-1850, cx209_SMB.total_SMB, label = "cx209 pyglint", lw=0.8, color='Pink')
+plt.plot(icesheet_d["cx209"][0].time-1850, (icesheet_d["cx209"][0].grounded_SMB + icesheet_d["cx209"][0].floating_SMB)*(0.918/1e9), label = "cx209 orig", lw=0.8, color='Purple')
+
+ax = plt.gca()
+ax.set_ylabel("Total SMB (Gt/yr)")
+ax.set_xlabel('Years')
+ax.set_xlim([0, 600])
+ax.legend(loc = 'best', prop={'size': 5})
+
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/cs568_cx209_SMB_pyglint_orig_comparison_total_SMB.png", dpi = 600,  bbox_inches='tight')
+
+plt.figure(figsize=(4, 3))
+
+plt.plot(cs568_SMB.time, cs568_SMB.grounded_SMB, label = "cs568 pyglint", lw=0.8, color='Orange')
+plt.plot(icesheet_d["cs568"][0].time-1850, (icesheet_d["cs568"][0].grounded_SMB)*(0.918/1e9), label = "cs568 orig", lw=0.8, color='Red')
+
+plt.plot(cx209_SMB.time-1850, cx209_SMB.grounded_SMB, label = "cx209 pyglint", lw=0.8, color='Pink')
+plt.plot(icesheet_d["cx209"][0].time-1850, (icesheet_d["cx209"][0].grounded_SMB)*(0.918/1e9), label = "cx209 orig", lw=0.8, color='Purple')
+
+ax = plt.gca()
+ax.set_ylabel("Grounded SMB (Gt/yr)")
+ax.set_xlabel('Years')
+ax.set_xlim([0, 600])
+ax.legend(loc = 'best', prop={'size': 5})
+
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/cs568_cx209_SMB_pyglint_orig_comparison_grounded_SMB.png", dpi = 600,  bbox_inches='tight')
+
+plt.figure(figsize=(4, 3))
+
+plt.plot(cs568_SMB.time, cs568_SMB.floating_SMB, label = "cs568 pyglint", lw=0.8, color='Orange')
+plt.plot(icesheet_d["cs568"][0].time-1850, (icesheet_d["cs568"][0].floating_SMB)*(0.918/1e9), label = "cs568 orig", lw=0.8, color='Red')
+
+plt.plot(cx209_SMB.time-1850, cx209_SMB.floating_SMB, label = "cx209 pyglint", lw=0.8, color='Pink')
+plt.plot(icesheet_d["cx209"][0].time-1850, (icesheet_d["cx209"][0].floating_SMB)*(0.918/1e9), label = "cx209 orig", lw=0.8, color='Purple')
+
+ax = plt.gca()
+ax.set_ylabel("Floating SMB (Gt/yr)")
+ax.set_xlabel('Years')
+ax.set_xlim([0, 600])
+ax.legend(loc = 'best', prop={'size': 5})
+
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/cs568_cx209_SMB_pyglint_orig_comparison_floating_SMB.png", dpi = 600,  bbox_inches='tight')
+
+### now make the difference plots (first absolute, then proportional differences) again broken down by total, grounded and floating SMB
+
+plt.figure(figsize=(4, 3))
+
+plt.plot(cs568_SMB.time, cs568_diff, label = "cs568 diff (pyglint - orig)", lw=0.8, color='Orange')
+plt.plot(cx209_SMB.time-1850, cx209_diff, label = "cx209 diff (pyglint - orig)", lw=0.8, color='Pink')
+
+ax = plt.gca()
+ax.set_ylabel("Difference in total SMB (Gt/yr)")
+ax.set_xlabel('Years')
+ax.set_xlim([0, 600])
+ax.legend(loc = 'best', prop={'size': 5})
+
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/cs568_cx209_SMB_pyglint_orig_comparison_total_SMB_diff.png", dpi = 600,  bbox_inches='tight')
+
+plt.figure(figsize=(4, 3))
+plt.plot(cs568_SMB.time, cs568_diff_prop, label = "cs568 diff prop (pyglint - orig)", lw=0.8, color='Orange')
+plt.plot(cx209_SMB.time-1850, cx209_diff_prop, label = "cx209 diff prop (pyglint - orig)", lw=0.8, color='Pink')
+plt.plot(cs568_SMB.time, cs568_robust_diff, label = "cs568 robust diff (pyglint - orig)", lw=0.8, color='blue')
+plt.plot(cx209_SMB.time-1850, cx209_robust_diff, label = "cx209 robust diff (pyglint - orig)", lw=0.8, color='cyan')
+
+ax = plt.gca()
+ax.set_ylabel("Prop/robust difference in total SMB")
+ax.set_xlabel('Years')
+ax.set_xlim([0, 600])
+ax.legend(loc = 'best', prop={'size': 5})
+
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/cs568_cx209_SMB_pyglint_orig_comparison_total_SMB_diff_prop.png", dpi = 600,  bbox_inches='tight')
+
+plt.figure(figsize=(4, 3))
+
+plt.plot(cs568_SMB.time, cs568_diff_grounded, label = "cs568 diff (pyglint - orig)", lw=0.8, color='Orange')
+plt.plot(cx209_SMB.time-1850, cx209_diff_grounded, label = "cx209 diff (pyglint - orig)", lw=0.8, color='Pink')
+
+ax = plt.gca()
+ax.set_ylabel("Difference in grounded SMB (Gt/yr)")
+ax.set_xlabel('Years')
+ax.set_xlim([0, 600])
+ax.legend(loc = 'best', prop={'size': 5})
+
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/cs568_cx209_SMB_pyglint_orig_comparison_grounded_SMB_diff.png", dpi = 600,  bbox_inches='tight')
+
+plt.figure(figsize=(4, 3))
+
+plt.plot(cs568_SMB.time, cs568_diff_grounded_prop, label = "cs568 diff prop (pyglint - orig)", lw=0.8, color='Orange')
+plt.plot(cx209_SMB.time-1850, cx209_diff_grounded_prop, label = "cx209 diff prop (pyglint - orig)", lw=0.8, color='Pink')
+plt.plot(cs568_SMB.time, cs568_robust_diff_grounded, label = "cs568 robust diff (pyglint - orig)", lw=0.8, color='blue')
+plt.plot(cx209_SMB.time-1850, cx209_robust_diff_grounded, label = "cx209 robust diff (pyglint - orig)", lw=0.8, color='cyan')
+
+ax = plt.gca()
+ax.set_ylabel("Prop/robust difference in grounded SMB")
+ax.set_xlabel('Years')
+ax.set_xlim([0, 600])
+ax.legend(loc = 'best', prop={'size': 5})
+
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/cs568_cx209_SMB_pyglint_orig_comparison_grounded_SMB_diff_prop.png", dpi = 600,  bbox_inches='tight')
+
+plt.figure(figsize=(4, 3))
+
+plt.plot(cs568_SMB.time, cs568_diff_floating, label = "cs568 diff (pyglint - orig)", lw=0.8, color='Orange')
+plt.plot(cx209_SMB.time-1850, cx209_diff_floating, label = "cx209 diff (pyglint - orig)", lw=0.8, color='Pink')
+
+ax = plt.gca()
+ax.set_ylabel("Difference in floating SMB (Gt/yr)")
+ax.set_xlabel('Years')
+ax.set_xlim([0, 600])
+ax.legend(loc = 'best', prop={'size': 5})
+
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/cs568_cx209_SMB_pyglint_orig_comparison_floating_SMB_diff.png", dpi = 600,  bbox_inches='tight')
+
+plt.figure(figsize=(4, 3))
+plt.plot(cs568_SMB.time, cs568_diff_floating_prop, label = "cs568 diff prop (pyglint - orig)", lw=0.8, color='Orange')
+#plt.plot(cx209_SMB.time-1850, cx209_diff_floating_prop, label = "cx209 diff prop (pyglint - orig)", lw=0.8, color='Pink')
+plt.plot(cs568_SMB.time, cs568_robust_diff_floating, label = "cs568 robust diff (pyglint - orig)", lw=0.8, color='blue')
+#plt.plot(cx209_SMB.time-1850, cx209_robust_diff_floating, label = "cx209 robust diff (pyglint - orig)", lw=0.8, color='cyan')
+
+ax = plt.gca()
+ax.set_ylabel("Prop/robust difference in floating SMB")
+ax.set_xlabel('Years')
+ax.set_xlim([0, 600])
+ax.legend(loc = 'best', prop={'size': 5})   
+
+plt.savefig(f"C:/Users/tm17544/OneDrive - University of Bristol/Projects/TerraFIRMA/figures/cs568_cx209_SMB_pyglint_orig_comparison_floating_SMB_diff_prop.png", dpi = 600,  bbox_inches='tight')
