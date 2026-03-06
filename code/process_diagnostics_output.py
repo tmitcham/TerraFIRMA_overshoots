@@ -23,11 +23,11 @@ def vaf_to_sle(vaf):
 
 # Options for the script
 icesheet = "AIS" # Options: "AIS" or "GrIS"
-suite_set = "overshoots" # Options: "overshoots", "overview", "historical_rampups", "individual"
-process_atmos_data = False # Options: True, False
-process_icesheet_data = True # Options: True, False
-data_to_netcdf = True # Options: True, False
-basin_mask = True # Options: True, False
+suite_set = "individual" # Options: "overshoots", "overview", "historical_rampups", "individual"
+process_atmos_data = True # Options: True, False
+process_icesheet_data = False # Options: True, False
+data_to_netcdf = False # Options: True, False
+basin_mask = False # Options: True, False
 basins_for_netcdf = [8,9,16,17] # Options: any from 0-18 - 0 (whole AIS), 8 + 9 (Ross), 11, (ASE), 16 + 17 (Filchner-Ronne)
 
 # Printout of the options chosen
@@ -60,7 +60,7 @@ elif suite_set == "historical_rampups":
     id = ["cs568", "cx209", "cw988", "cw989", "cw990", "cy623", "da914", "da916", "da917"]
 
 elif suite_set == "individual":
-    id = ["cz378"]
+    id = ["cs495"]
 
 # Define ice sheet data filenames
 if suite_set == "overshoots":
@@ -140,9 +140,12 @@ if process_atmos_data:
     # Save atmosphere data
     print("Saving atmosphere data to file...")
 
-    with open(f"../processed_data/atmos_data_{suite_set}.pkl", 'wb') as atmos_save_file:
-        pickle.dump(atmos_d, atmos_save_file)
+    #with open(f"../processed_data/atmos_data_{suite_set}.pkl", 'wb') as atmos_save_file:
+    #    pickle.dump(atmos_d, atmos_save_file)
 
+    with open(f"/home/users/tm17544/gws_terrafirma/UKESM/processed_data/atmos_data_cs495.pkl", 'wb') as atmos_save_file:
+        pickle.dump(atmos_d, atmos_save_file)
+        
 ####################################################################################
 
 # 'Process and save' (or don't) the ice sheet data produced from diagnsotics filetool
