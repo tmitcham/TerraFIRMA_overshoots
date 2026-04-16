@@ -38,8 +38,10 @@ SUITE_IDS=(
 )
 
 MASS_STREAM="apm"                       # PP stream (apm = atmosphere monthly)
-OUTPUT_BASE="/gws/nopw/j04/myproject/pp"  # one sub-directory per suite created here
-LOG_DIR="/gws/nopw/j04/myproject/logs"   # one log file per suite written here
+# Base directory for outputs/logs (must be set in the environment).
+: "${DATADIR:?Please set DATADIR, e.g. export DATADIR=/path/to/data}"
+OUTPUT_BASE="${DATADIR}/terrafirma_oggm/pp"  # one sub-directory per suite created here
+LOG_DIR="${DATADIR}/terrafirma_oggm/logs"    # one log file per suite written here
 
 # Precipitation mode — must match the setting in ukesm_pp_to_cmor.py.
 # "single"     → retrieve m01s05i216 (total precip flux)
