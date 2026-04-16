@@ -9,6 +9,7 @@
 #
 # Run on a JASMIN server with the MOOSE client available,
 # e.g. mass-cli1.jasmin.ac.uk or a sci server with moose loaded.
+# Or run on Met OFfice Azure SPICE
 #
 # Usage:
 #   bash retrieve_ukesm_pp_test.sh
@@ -20,8 +21,10 @@ set -uo pipefail
 SUITE_ID="u-cx209"    # single suite to test against
 
 MASS_STREAM="apm"
-OUTPUT_DIR="./pp_test/${SUITE_ID}"   # local sub-directory; adjust as needed
-LOG_DIR="./pp_test/logs"
+# Base directory for test outputs/logs (must be set in the environment).
+: "${DATADIR:?Please set DATADIR, e.g. export DATADIR=/path/to/datadir}"
+OUTPUT_DIR="${DATADIR}/terrafirm_oggm/pp_test/${SUITE_ID}"
+LOG_DIR="${DATADIR}/terrafirm_oggm/pp_test/logs"
 
 # Precipitation mode — must match retrieve_ukesm_pp.sh.
 # "single"     → retrieve m01s05i216 (total precip flux)
