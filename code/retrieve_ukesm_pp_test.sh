@@ -29,9 +29,10 @@ LOG_DIR="./pp_test/logs"
 PRECIP_MODE="single"
 
 # Date range for the test — keep this short to limit the number of files.
-# Format: yyyymmdd.  Five months of monthly PP = 5 files per STASH code.
-TEST_START="18500101"
-TEST_END="18500601"
+# Format: {YYYY/MM/DD hh:mm}  (required by MOOSE T1 field syntax).
+# Five months of monthly PP = ~5 files per STASH code.
+TEST_START="{1850/01/01 00:00}"
+TEST_END="{1850/06/01 00:00}"
 
 # ── End of configuration ──────────────────────────────────────────────────────
 
@@ -46,8 +47,8 @@ cat > "${QUERY_FILE}" << EOF
 # tas – screen-level (1.5 m) air temperature  (m01s03i236)
 begin
   stash=3236
-  begin_date=${TEST_START}
-  end_date=${TEST_END}
+  T1>=${TEST_START}
+  T1<=${TEST_END}
 end
 
 EOF
@@ -57,8 +58,8 @@ if [[ "${PRECIP_MODE}" == "single" ]]; then
 # pr – total precipitation flux  (m01s05i216)
 begin
   stash=5216
-  begin_date=${TEST_START}
-  end_date=${TEST_END}
+  T1>=${TEST_START}
+  T1<=${TEST_END}
 end
 EOF
 
@@ -67,15 +68,15 @@ elif [[ "${PRECIP_MODE}" == "components" ]]; then
 # pr (large-scale component)  (m01s04i203)
 begin
   stash=4203
-  begin_date=${TEST_START}
-  end_date=${TEST_END}
+  T1>=${TEST_START}
+  T1<=${TEST_END}
 end
 
 # pr (convective component)  (m01s05i205)
 begin
   stash=5205
-  begin_date=${TEST_START}
-  end_date=${TEST_END}
+  T1>=${TEST_START}
+  T1<=${TEST_END}
 end
 EOF
 
@@ -95,7 +96,7 @@ echo
 echo "Suite  : ${SUITE_ID}"
 echo "Source : ${MASS_URI}"
 echo "Dest   : ${OUTPUT_DIR}/"
-echo "Period : ${TEST_START} – ${TEST_END}"
+echo "Period : ${TEST_START} to ${TEST_END}"
 echo
 
 if moo select -I "${QUERY_FILE}" "${MASS_URI}" "${OUTPUT_DIR}"; then
