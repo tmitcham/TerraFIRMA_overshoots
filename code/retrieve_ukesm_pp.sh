@@ -7,6 +7,7 @@
 #
 # Run this on a JASMIN server that has the MOOSE client available,
 # e.g. mass-cli1.jasmin.ac.uk or a sci server with moose loaded.
+# Or run on Met OFfice Azure SPICE
 #
 # Usage:
 #   bash retrieve_ukesm_pp.sh
@@ -97,14 +98,16 @@ echo "────────────────────"
 echo
 
 # ── Per-suite retrieval function ──────────────────────────────────────────────
-# Runs moo select for one suite and writes output to a dedicated log file.
-# Returns the moo select exit code.
+# Runs moo select for one suite, writes output to a dedicated log file, and
+# writes the exit code to a .rc file so the main loop can detect completion
+# without needing to know which PID finished.
 
 retrieve_suite() {
     local suite_id="$1"
     local mass_uri="moose:/crum/${suite_id}/${MASS_STREAM}.pp"
     local output_dir="${OUTPUT_BASE}/${suite_id}"
     local log_file="${LOG_DIR}/${suite_id}.log"
+    local rc=0
 
     mkdir -p "${output_dir}"
 
@@ -120,19 +123,50 @@ retrieve_suite() {
             echo
             echo "$(date '+%Y-%m-%dT%H:%M:%S')  [${suite_id}]  Done"
         else
-            local rc=$?
+            rc=$?
             echo
             echo "$(date '+%Y-%m-%dT%H:%M:%S')  [${suite_id}]  FAILED (exit code ${rc})"
-            exit "${rc}"
         fi
     } > "${log_file}" 2>&1
 
-    echo "[${suite_id}]  Done  →  ${log_file}"
+    # Write exit code for the main loop to read, then report to stdout.
+    echo "${rc}" > "${LOG_DIR}/${suite_id}.rc"
+    if (( rc == 0 )); then
+        echo "[${suite_id}]  Done  →  ${log_file}"
+    else
+        echo "[${suite_id}]  FAILED  →  ${log_file}"
+    fi
+    return "${rc}"
+}
+
+# ── Reap any jobs that have written a .rc file ────────────────────────────────
+# Called after wait -n signals that at least one job has finished.
+# Updates running_pids / running_suites in-place and appends to failed.
+
+reap_finished() {
+    local new_pids=() new_suites=()
+    local i rc
+    for i in "${!running_pids[@]}"; do
+        local sid="${running_suites[$i]}"
+        local rc_file="${LOG_DIR}/${sid}.rc"
+        if [[ -f "${rc_file}" ]]; then
+            rc=$(< "${rc_file}")
+            wait "${running_pids[$i]}" 2>/dev/null || true   # reap zombie
+            if (( rc != 0 )); then
+                failed+=("${sid}")
+            fi
+        else
+            new_pids+=("${running_pids[$i]}")
+            new_suites+=("${sid}")
+        fi
+    done
+    running_pids=("${new_pids[@]+"${new_pids[@]}"}")
+    running_suites=("${new_suites[@]+"${new_suites[@]}"}")
 }
 
 # ── Launch suites in parallel, up to MAX_PARALLEL at a time ──────────────────
 
-MAX_PARALLEL=10
+MAX_PARALLEL=20
 
 echo "Processing ${#SUITE_IDS[@]} suite(s) with up to ${MAX_PARALLEL} running in parallel..."
 echo
@@ -144,18 +178,17 @@ failed=()
 
 for suite_id in "${SUITE_IDS[@]}"; do
 
-    # If the pool is full, wait for the oldest job to free a slot.
-    # Waiting on the oldest (index 0) means every PID is waited on exactly
-    # once, so exit codes are always captured correctly.
-    if (( ${#running_pids[@]} >= MAX_PARALLEL )); then
-        oldest_suite="${running_suites[0]}"
-        if ! wait "${running_pids[0]}"; then
-            failed+=("${oldest_suite}")
-            echo "[${oldest_suite}]  FAILED  →  ${LOG_DIR}/${oldest_suite}.log"
-        fi
-        running_pids=("${running_pids[@]:1}")     # drop first element
-        running_suites=("${running_suites[@]:1}")
-    fi
+    # Remove any stale .rc file from a previous run of this suite.
+    rm -f "${LOG_DIR}/${suite_id}.rc"
+
+    # While the pool is full, wait for any job to finish then reap it.
+    # wait -n (bash 4.3+) returns as soon as the first available child exits,
+    # so a new suite is launched the moment a slot opens rather than waiting
+    # for a specific (possibly slow) job.
+    while (( ${#running_pids[@]} >= MAX_PARALLEL )); do
+        wait -n || true
+        reap_finished
+    done
 
     retrieve_suite "${suite_id}" &
     running_pids+=($!)
@@ -169,11 +202,9 @@ done
 echo
 echo "All suites launched — waiting for the last ${#running_pids[@]} to finish..."
 
-for i in "${!running_pids[@]}"; do
-    if ! wait "${running_pids[$i]}"; then
-        failed+=("${running_suites[$i]}")
-        echo "[${running_suites[$i]}]  FAILED  →  ${LOG_DIR}/${running_suites[$i]}.log"
-    fi
+while (( ${#running_pids[@]} > 0 )); do
+    wait -n || true
+    reap_finished
 done
 
 # ── Summary ───────────────────────────────────────────────────────────────────

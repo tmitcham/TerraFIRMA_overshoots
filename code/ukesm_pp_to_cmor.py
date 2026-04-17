@@ -39,16 +39,19 @@ INPUT_FILES = sorted(glob.glob("/path/to/pp/files/*.pp"))
 
 # ── STASH codes ──────────────────────────────────────────────────────────────
 # Screen-level (1.5 m) air temperature.
-TAS_STASH = "m01s03i236"
+TAS_STASH          = "m01s03i236"
+TAS_TIME_INTERVAL  = "6 hour"   # cell_method interval to select for tas
 
 # Precipitation: choose "single" if a total-precipitation field exists,
 # or "components" to sum large-scale and convective parts separately.
-PRECIP_MODE = "single"          # "single" | "components"
-PR_STASH    = "m01s05i216"      # total precip flux  (PRECIP_MODE = "single")
-PR_LS_STASH = "m01s04i203"      # large-scale precip (PRECIP_MODE = "components")
-PR_CV_STASH = "m01s05i205"      # convective precip  (PRECIP_MODE = "components")
+PRECIP_MODE       = "single"    # "single" | "components"
+PR_STASH          = "m01s05i216"    # total precip flux  (PRECIP_MODE = "single")
+PR_LS_STASH       = "m01s04i203"    # large-scale precip (PRECIP_MODE = "components")
+PR_CV_STASH       = "m01s05i205"    # convective precip  (PRECIP_MODE = "components")
+PR_TIME_INTERVAL  = "24 hour"   # cell_method interval to select for pr
 
 # ── CMIP DRS metadata ────────────────────────────────────────────────────────
+SUITE_ID   = "u-ab123"          # Rose suite ID, written as mo_runid in output files
 MODEL      = "UKESM1-2-LL"
 EXPERIMENT = "TerraFIRMA"
 VARIANT    = "r1i1p1f1"
@@ -90,14 +93,50 @@ CMIP_META = {
 # ── End of configuration ─────────────────────────────────────────────────────
 
 
-def load_variable(files: list, stash_code: str) -> iris.cube.Cube:
-    """Load a single STASH field from *files* and concatenate into one cube."""
+def filter_by_time_interval(
+    cubes: iris.cube.CubeList, interval: str, stash_code: str
+) -> iris.cube.CubeList:
+    """Return only cubes whose time cell_method has the given interval.
+
+    Raises RuntimeError if no cubes match, so the caller always gets a
+    non-empty CubeList or an informative error.
+    """
+    matched = iris.cube.CubeList(
+        c for c in cubes
+        if any(
+            "time" in cm.coord_names and interval in (cm.intervals or ())
+            for cm in c.cell_methods
+        )
+    )
+    if not matched:
+        available = sorted({
+            iv
+            for c in cubes
+            for cm in c.cell_methods
+            if "time" in cm.coord_names
+            for iv in (cm.intervals or ())
+        })
+        raise RuntimeError(
+            f"No cube for STASH {stash_code!r} has time cell_method interval "
+            f"{interval!r}. Available interval(s): {available}"
+        )
+    return matched
+
+
+def load_variable(files: list, stash_code: str, time_interval: str) -> iris.cube.Cube:
+    """Load a single STASH field from *files* and concatenate into one cube.
+
+    Only cubes whose time cell_method interval matches *time_interval* are kept,
+    so that when the PP files contain multiple averaging periods for the same
+    STASH code the correct one is always selected.
+    """
     constraint = iris.AttributeConstraint(STASH=stash_code)
     cubes = iris.load(files, constraint)
     if not cubes:
         raise RuntimeError(
             f"No cubes found for STASH {stash_code!r} in the supplied files."
         )
+    cubes = filter_by_time_interval(cubes, time_interval, stash_code)
     # Remove attributes that differ between cubes (e.g. history, date) so
     # concatenation does not fail.
     iris.util.equalise_attributes(cubes)
@@ -107,11 +146,11 @@ def load_variable(files: list, stash_code: str) -> iris.cube.Cube:
 def load_precipitation(files: list) -> iris.cube.Cube:
     """Load total precipitation, either as one field or by summing components."""
     if PRECIP_MODE == "single":
-        return load_variable(files, PR_STASH)
+        return load_variable(files, PR_STASH, PR_TIME_INTERVAL)
 
     if PRECIP_MODE == "components":
-        ls_cube = load_variable(files, PR_LS_STASH)
-        cv_cube = load_variable(files, PR_CV_STASH)
+        ls_cube = load_variable(files, PR_LS_STASH, PR_TIME_INTERVAL)
+        cv_cube = load_variable(files, PR_CV_STASH, PR_TIME_INTERVAL)
         total   = ls_cube + cv_cube          # iris broadcasts & preserves coords
         return total
 
@@ -192,6 +231,7 @@ def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str) -> iris.cube.Cube:
             "variant_label":  VARIANT,
             "grid_label":     GRID,
             "mip_table":      MIP_TABLE,
+            "mo_runid":       SUITE_ID,
             "creation_date":  datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }
     )
@@ -246,7 +286,7 @@ def save_cube(cube: iris.cube.Cube, var_name: str) -> None:
             chunk_cube, filepath,
             fill_value=FILL_VALUE,
             chunksizes=CHUNK_SIZES,
-            local_keys=["comment", "original_name", "cell_measures", "missing_value"],
+            local_keys=["comment", "original_name", "cell_measures", "missing_value", "mo_runid"],
         )
         print(f"  Written: {filepath}")
 
@@ -264,7 +304,7 @@ def main() -> None:
 
     # ── Surface air temperature ──────────────────────────────────────────────
     print("Loading tas (surface air temperature) …")
-    tas = load_variable(INPUT_FILES, TAS_STASH)
+    tas = load_variable(INPUT_FILES, TAS_STASH, TAS_TIME_INTERVAL)
     tas = apply_cmip_metadata(tas, "tas")
     print(f"  Cube: {tas.summary(shorten=True)}")
     save_cube(tas, "tas")
