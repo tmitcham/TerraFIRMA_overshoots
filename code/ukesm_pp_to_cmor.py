@@ -17,10 +17,12 @@ Dependencies
 
 Usage
 -----
-  python ukesm_pp_to_cmor.py
-  # or point INPUT_FILES at your data and run directly.
+  python ukesm_pp_to_cmor.py /path/to/pp/files/
+
+  Output is written to $DATADIR/cmor_outputs/.
 """
 
+import argparse
 import glob
 import os
 from datetime import datetime, timezone
@@ -33,9 +35,6 @@ import iris.coords
 import cf_units
 
 # ── User configuration ───────────────────────────────────────────────────────
-
-# Glob pattern (or list) of PP files to read.
-INPUT_FILES = sorted(glob.glob("/path/to/pp/files/*.pp"))
 
 # ── STASH codes ──────────────────────────────────────────────────────────────
 # Screen-level (1.5 m) air temperature.
@@ -51,7 +50,6 @@ PR_CV_STASH       = "m01s05i205"    # convective precip  (PRECIP_MODE = "compone
 PR_TIME_INTERVAL  = "24 hour"   # cell_method interval to select for pr
 
 # ── CMIP DRS metadata ────────────────────────────────────────────────────────
-SUITE_ID   = "u-ab123"          # Rose suite ID, written as mo_runid in output files
 MODEL      = "UKESM1-2-LL"
 EXPERIMENT = "TerraFIRMA"
 VARIANT    = "r1i1p1f1"
@@ -59,7 +57,7 @@ GRID       = "gn"
 MIP_TABLE  = "Amon"             # Amon = atmosphere monthly/annual
 
 # ── Output ───────────────────────────────────────────────────────────────────
-OUTPUT_DIR  = "./output"
+# OUTPUT_DIR is derived at runtime from $DATADIR/cmor_outputs/ (see main()).
 CHUNK_YEARS = 50    # number of years per output file (set to None for one file)
 FILL_VALUE  = 1e20  # missing_value and _FillValue written to every output variable
 CHUNK_SIZES = None  # NetCDF4 chunk sizes, e.g. [12, 144, 192] for (time, lat, lon)
@@ -170,7 +168,7 @@ def promote_coords_to_double(cube: iris.cube.Cube) -> None:
             cube.replace_coord(coord.copy(points=new_points, bounds=new_bounds))
 
 
-def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str) -> iris.cube.Cube:
+def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str, suite_id: str) -> iris.cube.Cube:
     """Apply CMIP variable metadata and global attributes to *cube* in-place."""
     meta = CMIP_META[cmip_key]
 
@@ -231,7 +229,7 @@ def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str) -> iris.cube.Cube:
             "variant_label":  VARIANT,
             "grid_label":     GRID,
             "mip_table":      MIP_TABLE,
-            "mo_runid":       SUITE_ID,
+            "mo_runid":       suite_id,
             "creation_date":  datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }
     )
@@ -254,9 +252,9 @@ def build_drs_filename(var_name: str, time_str: str) -> str:
     return f"{var_name}_{MIP_TABLE}_{MODEL}_{EXPERIMENT}_{VARIANT}_{GRID}_{time_str}.nc"
 
 
-def save_cube(cube: iris.cube.Cube, var_name: str) -> None:
+def save_cube(cube: iris.cube.Cube, var_name: str, output_dir: str) -> None:
     """Save *cube* as NetCDF4 in chunks of CHUNK_YEARS years (or one file if None)."""
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    os.makedirs(output_dir, exist_ok=True)
 
     time_coord = cube.coord("time")
     dates = time_coord.units.num2date(time_coord.points)
@@ -281,7 +279,7 @@ def save_cube(cube: iris.cube.Cube, var_name: str) -> None:
             continue
         time_str = time_range_str(chunk_cube)
         filename = build_drs_filename(var_name, time_str)
-        filepath = os.path.join(OUTPUT_DIR, filename)
+        filepath = os.path.join(output_dir, filename)
         iris.save(
             chunk_cube, filepath,
             fill_value=FILL_VALUE,
@@ -292,30 +290,49 @@ def save_cube(cube: iris.cube.Cube, var_name: str) -> None:
 
 
 def main() -> None:
-    """Load tas and pr from INPUT_FILES, apply CMIP metadata, and write NetCDF4."""
-    if not INPUT_FILES:
+    """Load tas and pr from a PP directory, apply CMIP metadata, and write NetCDF4."""
+    parser = argparse.ArgumentParser(
+        description="CMORise UKESM PP files to NetCDF4."
+    )
+    parser.add_argument(
+        "pp_dir",
+        help="Directory containing the input PP files.",
+    )
+    args = parser.parse_args()
+
+    input_files = sorted(glob.glob(os.path.join(args.pp_dir, "*.pp")))
+    if not input_files:
         raise FileNotFoundError(
-            "INPUT_FILES is empty. Update the INPUT_FILES glob pattern at the "
-            "top of this script to point at your PP files."
+            f"No .pp files found in {args.pp_dir!r}."
         )
 
-    print(f"Found {len(INPUT_FILES)} PP file(s).")
+    # Derive suite ID from the path: .../u-cs568/pp/ → "u-cs568"
+    suite_id = os.path.basename(os.path.dirname(os.path.abspath(args.pp_dir)))
+
+    datadir = os.environ.get("DATADIR")
+    if not datadir:
+        raise EnvironmentError("The DATADIR environment variable is not set.")
+    output_dir = os.path.join(datadir, "cmor_outputs")
+
+    print(f"Suite  : {suite_id}")
+    print(f"Input  : {args.pp_dir}  ({len(input_files)} file(s))")
+    print(f"Output : {output_dir}")
     print()
 
     # ── Surface air temperature ──────────────────────────────────────────────
     print("Loading tas (surface air temperature) …")
-    tas = load_variable(INPUT_FILES, TAS_STASH, TAS_TIME_INTERVAL)
-    tas = apply_cmip_metadata(tas, "tas")
+    tas = load_variable(input_files, TAS_STASH, TAS_TIME_INTERVAL)
+    tas = apply_cmip_metadata(tas, "tas", suite_id)
     print(f"  Cube: {tas.summary(shorten=True)}")
-    save_cube(tas, "tas")
+    save_cube(tas, "tas", output_dir)
     print()
 
     # ── Precipitation ────────────────────────────────────────────────────────
     print(f"Loading pr (precipitation, mode={PRECIP_MODE!r}) …")
-    pr = load_precipitation(INPUT_FILES)
-    pr = apply_cmip_metadata(pr, "pr")
+    pr = load_precipitation(input_files)
+    pr = apply_cmip_metadata(pr, "pr", suite_id)
     print(f"  Cube: {pr.summary(shorten=True)}")
-    save_cube(pr, "pr")
+    save_cube(pr, "pr", output_dir)
     print()
 
     print("Done.")
