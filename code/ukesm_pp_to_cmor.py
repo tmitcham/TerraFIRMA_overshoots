@@ -121,10 +121,6 @@ def filter_by_time_interval(
     return matched
 
 
-def _loading_callback(*args):
-    print(f"    {os.path.basename(args[2])}")
-
-
 def load_variable(files: list, stash_code: str, time_interval: str) -> iris.cube.Cube:
     """Load a single STASH field from *files* and concatenate into one cube.
 
@@ -134,7 +130,10 @@ def load_variable(files: list, stash_code: str, time_interval: str) -> iris.cube
     """
     constraint = iris.AttributeConstraint(STASH=stash_code)
     print(f"  Reading {len(files)} file(s):")
-    cubes = iris.load(files, constraint, callback=_loading_callback)
+    cubes = iris.cube.CubeList()
+    for f in files:
+        print(f"    {os.path.basename(f)}", flush=True)
+        cubes.extend(iris.load(f, constraint))
     if not cubes:
         raise RuntimeError(
             f"No cubes found for STASH {stash_code!r} in the supplied files."
