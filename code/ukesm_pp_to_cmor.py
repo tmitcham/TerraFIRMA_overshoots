@@ -306,8 +306,8 @@ def main() -> None:
             f"No .pp files found in {args.pp_dir!r}."
         )
 
-    # Derive suite ID from the path: .../u-cs568/pp/ → "u-cs568"
-    suite_id = os.path.basename(os.path.dirname(os.path.abspath(args.pp_dir)))
+    # Derive suite ID from the path: .../pp/u-cs568/ → "u-cs568"
+    suite_id = os.path.basename(os.path.abspath(args.pp_dir))
 
     datadir = os.environ.get("DATADIR")
     if not datadir:
