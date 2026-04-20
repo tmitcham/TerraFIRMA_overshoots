@@ -148,7 +148,11 @@ def load_variable(files: list, stash_code: str, time_interval: str) -> iris.cube
             if cube.coords(coord):
                 cube.remove_coord(coord)
     iris.util.equalise_attributes(cubes)
-    return cubes.concatenate_cube()
+    # Use merge rather than concatenate: PP files often have time as a scalar
+    # coordinate (one time step per cube), and merge promotes those scalar
+    # coordinates to a dimension before combining.  If the cubes already have
+    # time as a dimension coordinate, merge handles that too.
+    return cubes.merge_cube()
 
 
 def load_precipitation(files: list) -> iris.cube.Cube:
