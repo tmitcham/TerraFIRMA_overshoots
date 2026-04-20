@@ -139,8 +139,14 @@ def load_variable(files: list, stash_code: str, time_interval: str) -> iris.cube
             f"No cubes found for STASH {stash_code!r} in the supplied files."
         )
     cubes = filter_by_time_interval(cubes, time_interval, stash_code)
-    # Remove attributes that differ between cubes (e.g. history, date) so
-    # concatenation does not fail.
+    # Remove coordinates and attributes that differ between cubes and would
+    # prevent concatenation.  forecast_period and forecast_reference_time are
+    # per-field PP metadata that vary across time steps and are not needed in
+    # CMOR output.
+    for cube in cubes:
+        for coord in ["forecast_period", "forecast_reference_time"]:
+            if cube.coords(coord):
+                cube.remove_coord(coord)
     iris.util.equalise_attributes(cubes)
     return cubes.concatenate_cube()
 
