@@ -166,7 +166,7 @@ reap_finished() {
 
 # ── Launch suites in parallel, up to MAX_PARALLEL at a time ──────────────────
 
-MAX_PARALLEL=20
+MAX_PARALLEL=5
 
 echo "Processing ${#SUITE_IDS[@]} suite(s) with up to ${MAX_PARALLEL} running in parallel..."
 echo

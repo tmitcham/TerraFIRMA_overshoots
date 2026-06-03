@@ -25,6 +25,7 @@ Usage
 import argparse
 import glob
 import os
+import uuid
 from datetime import datetime, timezone
 
 import numpy as np
@@ -50,15 +51,36 @@ PR_CV_STASH       = "m01s05i205"    # convective precip  (PRECIP_MODE = "compone
 PR_TIME_INTERVAL  = "24 hour"   # cell_method interval to select for pr
 
 # ── CMIP DRS metadata ────────────────────────────────────────────────────────
-MODEL      = "UKESM1-2-LL"
+SOURCE_ID  = "UKESM1-2-LL"
 EXPERIMENT = "TerraFIRMA"
 VARIANT    = "r1i1p1f1"
 GRID       = "gn"
 MIP_TABLE  = "Amon"             # Amon = atmosphere monthly/annual
 
+# ── Model / institution metadata ─────────────────────────────────────────────
+SOURCE             = "UKESM1-2-LL (2024)"
+SOURCE_TYPE        = "AOGCM AER"
+INSTITUTION        = "Met Office Hadley Centre, Fitzroy Road, Exeter, Devon, EX1 3PB, UK"
+INSTITUTION_ID     = "MOHC"
+GRID_DESCRIPTION   = "Native N96 grid; 192 x 144 longitude/latitude"
+NOMINAL_RESOLUTION = "250 km"
+
+# ── Project / CV metadata ─────────────────────────────────────────────────────
+MIP_ERA        = "GCModelDev"
+CV_VERSION     = "GCModelDev v0.0.17"
+ACTIVITY_ID    = "TerraFIRMA"
+BRANCH_METHOD  = "no parent"
+TABLE_INFO     = "Creation Date:(28 May 2020) MD5:c25ff4bde574d7d518c1f35c4da1830e"
+TITLE          = f"{SOURCE_ID} output prepared for GCModelDev"
+LICENSE        = (
+    "GCModelDev model data is licensed under the Open Government License v3 "
+    "(https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/)"
+)
+
 # ── Output ───────────────────────────────────────────────────────────────────
 # OUTPUT_DIR is derived at runtime from $DATADIR/cmor_outputs/ (see main()).
-CHUNK_YEARS = 50    # number of years per output file (set to None for one file)
+TIME_UNITS  = "days since 1850-01-01"   # target time axis units for output files
+CHUNK_YEARS = None    # number of years per output file (set to None for one file)
 FILL_VALUE  = 1e20  # missing_value and _FillValue written to every output variable
 CHUNK_SIZES = None  # NetCDF4 chunk sizes, e.g. [12, 144, 192] for (time, lat, lon)
                     # None lets the netCDF4 library choose; set to control _ChunkSizes
@@ -70,8 +92,8 @@ CMIP_META = {
         "long_name":     "Near-Surface Air Temperature",
         "var_name":      "tas",
         "units":         "K",
-        "comment":       "Monthly mean near-surface (usually 2 m) air temperature.",
-        "original_name": TAS_STASH,
+        "comment":       "near-surface (usually, 2 meter) air temperature",
+        "original_name": f"mo: (stash: {TAS_STASH}, lbproc: 128)",
         "cell_measures": "area: areacella",
     },
     "pr": {
@@ -79,10 +101,10 @@ CMIP_META = {
         "long_name":     "Precipitation",
         "var_name":      "pr",
         "units":         "kg m-2 s-1",
-        "comment":       "Monthly mean precipitation flux.",
+        "comment":       "includes both liquid and solid phases",
         "original_name": (
-            PR_STASH if PRECIP_MODE == "single"
-            else f"{PR_LS_STASH} + {PR_CV_STASH}"
+            f"mo: (stash: {PR_STASH}, lbproc: 128)" if PRECIP_MODE == "single"
+            else f"mo: (stash: {PR_LS_STASH}, lbproc: 128) + mo: (stash: {PR_CV_STASH}, lbproc: 128)"
         ),
         "cell_measures": "area: areacella",
     },
@@ -147,6 +169,13 @@ def load_variable(files: list, stash_code: str, time_interval: str) -> iris.cube
         for coord in ["forecast_period", "forecast_reference_time"]:
             if cube.coords(coord):
                 cube.remove_coord(coord)
+        # Normalise time units across all cubes before merging — differing
+        # reference epochs (e.g. "hours since 1970-01-01" vs "hours since
+        # 1859-12-01") will otherwise block the merge.
+        time_coord = cube.coord("time")
+        target_time_units = cf_units.Unit(TIME_UNITS, calendar=time_coord.units.calendar)
+        if time_coord.units != target_time_units:
+            time_coord.convert_units(target_time_units)
     iris.util.equalise_attributes(cubes)
     # Use merge rather than concatenate: PP files often have time as a scalar
     # coordinate (one time step per cube), and merge promotes those scalar
@@ -219,6 +248,30 @@ def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str, suite_id: str) -> i
     else:
         cube.units = target_units
 
+    # ── Cast data to float32 (CMIP convention; coordinates stay float64) ────
+    cube.data = cube.data.astype(np.float32)
+
+    # ── Time coordinate units ────────────────────────────────────────────────
+    time_coord = cube.coord("time")
+    target_time_units = cf_units.Unit(TIME_UNITS, calendar=time_coord.units.calendar)
+    if time_coord.units != target_time_units:
+        time_coord.convert_units(target_time_units)
+
+    # ── height scalar coordinate (tas only) ──────────────────────────────────
+    if cmip_key == "tas":
+        if not cube.coords("height"):
+            cube.add_aux_coord(iris.coords.AuxCoord(
+                np.float64(1.5),
+                standard_name="height",
+                long_name="height",
+                units=cf_units.Unit("m"),
+                attributes={"axis": "Z", "positive": "up"},
+            ))
+        else:
+            h = cube.coord("height")
+            h.attributes.setdefault("axis", "Z")
+            h.attributes.setdefault("positive", "up")
+
     # ── Cell methods: CMIP standard "area: time: mean" ───────────────────────
     # Replace any pre-existing time: mean with the full area: time: mean form.
     cmip_cm     = iris.coords.CellMethod("mean", coords=["area", "time"])
@@ -232,19 +285,50 @@ def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str, suite_id: str) -> i
     cube.attributes["comment"]       = meta["comment"]
     cube.attributes["original_name"] = meta["original_name"]
     cube.attributes["cell_measures"] = meta["cell_measures"]
-    cube.attributes["missing_value"] = FILL_VALUE
+    cube.attributes["missing_value"] = np.float32(FILL_VALUE)
 
     # ── CMIP global attributes ────────────────────────────────────────────────
+    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     cube.attributes.update(
         {
-            "Conventions":    "CF-1.7",
-            "source_model":   MODEL,
-            "experiment_id":  EXPERIMENT,
-            "variant_label":  VARIANT,
-            "grid_label":     GRID,
-            "mip_table":      MIP_TABLE,
-            "mo_runid":       suite_id,
-            "creation_date":  datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "Conventions":          "CF-1.7 CMIP-6.2",
+            "activity_id":          ACTIVITY_ID,
+            "branch_method":        BRANCH_METHOD,
+            "creation_date":        now_str,
+            "cv_version":           CV_VERSION,
+            "data_specs_version":   CV_VERSION,
+            "experiment":           "unknown",
+            "experiment_id":        EXPERIMENT,
+            "external_variables":   "areacella",
+            "forcing_index":        np.int32(1),
+            "frequency":            "mon",
+            "further_info_url":     "none",
+            "grid":                 GRID_DESCRIPTION,
+            "grid_label":           GRID,
+            "history":              f"{now_str} ; CMOR rewrote data to be consistent with GCModelDev, CF-1.7 CMIP-6.2 and CF standards.",
+            "initialization_index": np.int32(1),
+            "institution":          INSTITUTION,
+            "institution_id":       INSTITUTION_ID,
+            "license":              LICENSE,
+            "mip_era":              MIP_ERA,
+            "mo_runid":             suite_id,
+            "nominal_resolution":   NOMINAL_RESOLUTION,
+            "physics_index":        np.int32(1),
+            "product":              "model-output",
+            "realization_index":    np.int32(1),
+            "realm":                "atmos",
+            "source":               SOURCE,
+            "source_id":            SOURCE_ID,
+            "source_type":          SOURCE_TYPE,
+            "sub_experiment":       "none",
+            "sub_experiment_id":    "none",
+            "table_id":             MIP_TABLE,
+            "table_info":           TABLE_INFO,
+            "title":                TITLE,
+            "tracking_id":          f"GCMODELDEV/{uuid.uuid4()}",
+            "variable_id":          meta["var_name"],
+            "variable_name":        meta["var_name"],
+            "variant_label":        VARIANT,
         }
     )
 
@@ -263,7 +347,7 @@ def time_range_str(cube: iris.cube.Cube) -> str:
 
 def build_drs_filename(var_name: str, time_str: str) -> str:
     """Return a CMIP DRS filename (without directory)."""
-    return f"{var_name}_{MIP_TABLE}_{MODEL}_{EXPERIMENT}_{VARIANT}_{GRID}_{time_str}.nc"
+    return f"{var_name}_{MIP_TABLE}_{SOURCE_ID}_{EXPERIMENT}_{VARIANT}_{GRID}_{time_str}.nc"
 
 
 def save_cube(cube: iris.cube.Cube, var_name: str, output_dir: str) -> None:
@@ -298,7 +382,7 @@ def save_cube(cube: iris.cube.Cube, var_name: str, output_dir: str) -> None:
             chunk_cube, filepath,
             fill_value=FILL_VALUE,
             chunksizes=CHUNK_SIZES,
-            local_keys=["comment", "original_name", "cell_measures", "missing_value", "mo_runid"],
+            local_keys=["comment", "original_name", "cell_measures", "missing_value"],
         )
         print(f"  Written: {filepath}")
 
