@@ -26,6 +26,7 @@ import argparse
 import glob
 import os
 import uuid
+from collections import defaultdict
 from datetime import datetime, timezone
 
 import numpy as np
@@ -143,6 +144,27 @@ def filter_by_time_interval(
     return matched
 
 
+def _batch_concatenate(cubes: iris.cube.CubeList) -> iris.cube.Cube:
+    """Concatenate in annual batches to avoid O(n²) cost with many cubes.
+
+    Grouping 6000 monthly cubes by year and concatenating 12 at a time is
+    orders of magnitude faster than one concatenate_cube() call on all 6000.
+    """
+    def first_year(cube):
+        t = cube.coord("time")
+        val = t.points.flat[0]
+        return t.units.num2date(val).year
+
+    by_year = defaultdict(iris.cube.CubeList)
+    for cube in cubes:
+        by_year[first_year(cube)].append(cube)
+
+    annual = iris.cube.CubeList(
+        by_year[y].concatenate_cube() for y in sorted(by_year)
+    )
+    return annual.concatenate_cube()
+
+
 def load_variable(files: list, stash_code: str, time_interval: str) -> iris.cube.Cube:
     """Load a single STASH field from *files* and concatenate into one cube.
 
@@ -184,7 +206,7 @@ def load_variable(files: list, stash_code: str, time_interval: str) -> iris.cube
     try:
         return cubes.merge_cube()
     except iris.exceptions.MergeError:
-        return cubes.concatenate_cube()
+        return _batch_concatenate(cubes)
 
 
 def load_precipitation(files: list) -> iris.cube.Cube:
@@ -250,9 +272,6 @@ def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str, suite_id: str, expe
                 )
     else:
         cube.units = target_units
-
-    # ── Cast data to float32 (CMIP convention; coordinates stay float64) ────
-    cube.data = cube.data.astype(np.float32)
 
     # ── Time coordinate units ────────────────────────────────────────────────
     time_coord = cube.coord("time")
@@ -373,6 +392,10 @@ def save_cube(cube: iris.cube.Cube, var_name: str, output_dir: str, experiment_i
         if chunk_cube is None:
             print(f"  WARNING: no data found for years {yr_min}-{yr_max}, skipping.")
             continue
+        # Cast to float32 here rather than up-front so only one chunk of data
+        # is materialised at a time, keeping peak memory proportional to
+        # CHUNK_YEARS rather than the full run length.
+        chunk_cube.data = chunk_cube.data.astype(np.float32)
         time_str = time_range_str(chunk_cube)
         filename = build_drs_filename(var_name, time_str, experiment_id)
         filepath = os.path.join(output_dir, filename)
