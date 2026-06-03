@@ -421,6 +421,14 @@ def main() -> None:
         "experiment_id",
         help="Experiment code inserted into the output filename and metadata, e.g. 'esm-up2p0'.",
     )
+    parser.add_argument(
+        "--variables", "-v",
+        nargs="+",
+        choices=["tas", "pr"],
+        default=["tas", "pr"],
+        metavar="VAR",
+        help="Variables to process. Choices: tas, pr. Defaults to both.",
+    )
     args = parser.parse_args()
 
     input_files = sorted(glob.glob(os.path.join(args.pp_dir, "*.pp")))
@@ -443,20 +451,22 @@ def main() -> None:
     print()
 
     # ── Surface air temperature ──────────────────────────────────────────────
-    print("Loading tas (surface air temperature) …")
-    tas = load_variable(input_files, TAS_STASH, TAS_TIME_INTERVAL)
-    tas = apply_cmip_metadata(tas, "tas", suite_id, args.experiment_id)
-    print(f"  Cube: {tas.summary(shorten=True)}")
-    save_cube(tas, "tas", output_dir, args.experiment_id)
-    print()
+    if "tas" in args.variables:
+        print("Loading tas (surface air temperature) …")
+        tas = load_variable(input_files, TAS_STASH, TAS_TIME_INTERVAL)
+        tas = apply_cmip_metadata(tas, "tas", suite_id, args.experiment_id)
+        print(f"  Cube: {tas.summary(shorten=True)}")
+        save_cube(tas, "tas", output_dir, args.experiment_id)
+        print()
 
     # ── Precipitation ────────────────────────────────────────────────────────
-    print(f"Loading pr (precipitation, mode={PRECIP_MODE!r}) …")
-    pr = load_precipitation(input_files)
-    pr = apply_cmip_metadata(pr, "pr", suite_id, args.experiment_id)
-    print(f"  Cube: {pr.summary(shorten=True)}")
-    save_cube(pr, "pr", output_dir, args.experiment_id)
-    print()
+    if "pr" in args.variables:
+        print(f"Loading pr (precipitation, mode={PRECIP_MODE!r}) …")
+        pr = load_precipitation(input_files)
+        pr = apply_cmip_metadata(pr, "pr", suite_id, args.experiment_id)
+        print(f"  Cube: {pr.summary(shorten=True)}")
+        save_cube(pr, "pr", output_dir, args.experiment_id)
+        print()
 
     print("Done.")
 
