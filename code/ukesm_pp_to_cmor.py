@@ -211,7 +211,7 @@ def promote_coords_to_double(cube: iris.cube.Cube) -> None:
             cube.replace_coord(coord.copy(points=new_points, bounds=new_bounds))
 
 
-def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str, suite_id: str) -> iris.cube.Cube:
+def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str, suite_id: str, experiment_id: str) -> iris.cube.Cube:
     """Apply CMIP variable metadata and global attributes to *cube* in-place."""
     meta = CMIP_META[cmip_key]
 
@@ -298,7 +298,7 @@ def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str, suite_id: str) -> i
             "cv_version":           CV_VERSION,
             "data_specs_version":   CV_VERSION,
             "experiment":           "unknown",
-            "experiment_id":        EXPERIMENT,
+            "experiment_id":        experiment_id,
             "external_variables":   "areacella",
             "forcing_index":        np.int32(1),
             "frequency":            "mon",
@@ -345,12 +345,12 @@ def time_range_str(cube: iris.cube.Cube) -> str:
     return f"{first.year:04d}{first.month:02d}-{last.year:04d}{last.month:02d}"
 
 
-def build_drs_filename(var_name: str, time_str: str) -> str:
+def build_drs_filename(var_name: str, time_str: str, experiment_id: str) -> str:
     """Return a CMIP DRS filename (without directory)."""
-    return f"{var_name}_{MIP_TABLE}_{SOURCE_ID}_{EXPERIMENT}_{VARIANT}_{GRID}_{time_str}.nc"
+    return f"{var_name}_{MIP_TABLE}_{SOURCE_ID}_{experiment_id}_{VARIANT}_{GRID}_{time_str}.nc"
 
 
-def save_cube(cube: iris.cube.Cube, var_name: str, output_dir: str) -> None:
+def save_cube(cube: iris.cube.Cube, var_name: str, output_dir: str, experiment_id: str) -> None:
     """Save *cube* as NetCDF4 in chunks of CHUNK_YEARS years (or one file if None)."""
     os.makedirs(output_dir, exist_ok=True)
 
@@ -376,7 +376,7 @@ def save_cube(cube: iris.cube.Cube, var_name: str, output_dir: str) -> None:
             print(f"  WARNING: no data found for years {yr_min}-{yr_max}, skipping.")
             continue
         time_str = time_range_str(chunk_cube)
-        filename = build_drs_filename(var_name, time_str)
+        filename = build_drs_filename(var_name, time_str, experiment_id)
         filepath = os.path.join(output_dir, filename)
         iris.save(
             chunk_cube, filepath,
@@ -395,6 +395,10 @@ def main() -> None:
     parser.add_argument(
         "pp_dir",
         help="Directory containing the input PP files.",
+    )
+    parser.add_argument(
+        "experiment_id",
+        help="Experiment code inserted into the output filename and metadata, e.g. 'esm-up2p0'.",
     )
     args = parser.parse_args()
 
@@ -420,17 +424,17 @@ def main() -> None:
     # ── Surface air temperature ──────────────────────────────────────────────
     print("Loading tas (surface air temperature) …")
     tas = load_variable(input_files, TAS_STASH, TAS_TIME_INTERVAL)
-    tas = apply_cmip_metadata(tas, "tas", suite_id)
+    tas = apply_cmip_metadata(tas, "tas", suite_id, args.experiment_id)
     print(f"  Cube: {tas.summary(shorten=True)}")
-    save_cube(tas, "tas", output_dir)
+    save_cube(tas, "tas", output_dir, args.experiment_id)
     print()
 
     # ── Precipitation ────────────────────────────────────────────────────────
     print(f"Loading pr (precipitation, mode={PRECIP_MODE!r}) …")
     pr = load_precipitation(input_files)
-    pr = apply_cmip_metadata(pr, "pr", suite_id)
+    pr = apply_cmip_metadata(pr, "pr", suite_id, args.experiment_id)
     print(f"  Cube: {pr.summary(shorten=True)}")
-    save_cube(pr, "pr", output_dir)
+    save_cube(pr, "pr", output_dir, args.experiment_id)
     print()
 
     print("Done.")
