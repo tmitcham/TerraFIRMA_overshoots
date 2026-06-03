@@ -265,12 +265,7 @@ def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str, suite_id: str, expe
                 standard_name="height",
                 long_name="height",
                 units=cf_units.Unit("m"),
-                attributes={"axis": "Z", "positive": "up"},
             ))
-        else:
-            h = cube.coord("height")
-            h.attributes.setdefault("axis", "Z")
-            h.attributes.setdefault("positive", "up")
 
     # ── Cell methods: CMIP standard "area: time: mean" ───────────────────────
     # Replace any pre-existing time: mean with the full area: time: mean form.
