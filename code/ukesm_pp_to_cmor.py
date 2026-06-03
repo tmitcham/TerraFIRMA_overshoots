@@ -253,6 +253,7 @@ def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str, suite_id: str, expe
         if cube.coords(std_name):
             coord = cube.coord(std_name)
             coord.var_name = var_name
+            coord.coord_system = None
             if not coord.has_bounds():
                 coord.guess_bounds()
 
