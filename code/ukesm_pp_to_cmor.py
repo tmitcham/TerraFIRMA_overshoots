@@ -251,7 +251,10 @@ def apply_cmip_metadata(cube: iris.cube.Cube, cmip_key: str, suite_id: str, expe
     # ── Rename lat/lon coordinates to CMIP standard short names ──────────────
     for std_name, var_name in [("latitude", "lat"), ("longitude", "lon")]:
         if cube.coords(std_name):
-            cube.coord(std_name).var_name = var_name
+            coord = cube.coord(std_name)
+            coord.var_name = var_name
+            if not coord.has_bounds():
+                coord.guess_bounds()
 
     # ── Variable metadata ────────────────────────────────────────────────────
     cube.standard_name = meta["standard_name"]
