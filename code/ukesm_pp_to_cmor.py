@@ -41,7 +41,7 @@ import cf_units
 # ── STASH codes ──────────────────────────────────────────────────────────────
 # Screen-level (1.5 m) air temperature.
 TAS_STASH          = "m01s03i236"
-TAS_TIME_INTERVAL  = "6 hour"   # cell_method interval to select for tas
+TAS_TIME_INTERVAL  = "1 hour"   # cell_method interval to select for tas
 
 # Precipitation: choose "single" if a total-precipitation field exists,
 # or "components" to sum large-scale and convective parts separately.
@@ -49,7 +49,7 @@ PRECIP_MODE       = "single"    # "single" | "components"
 PR_STASH          = "m01s05i216"    # total precip flux  (PRECIP_MODE = "single")
 PR_LS_STASH       = "m01s04i203"    # large-scale precip (PRECIP_MODE = "components")
 PR_CV_STASH       = "m01s05i205"    # convective precip  (PRECIP_MODE = "components")
-PR_TIME_INTERVAL  = "24 hour"   # cell_method interval to select for pr
+PR_TIME_INTERVAL  = "1 hour"   # cell_method interval to select for pr
 
 # ── CMIP DRS metadata ────────────────────────────────────────────────────────
 SOURCE_ID  = "UKESM1-2-LL"
@@ -198,6 +198,11 @@ def load_variable(files: list, stash_code: str, time_interval: str) -> iris.cube
         target_time_units = cf_units.Unit(TIME_UNITS, calendar=time_coord.units.calendar)
         if time_coord.units != target_time_units:
             time_coord.convert_units(target_time_units)
+        # If time is a non-scalar aux coord (not yet a dim coord), promote it
+        # so that concatenate can use it as the joining axis.
+        dims = cube.coord_dims(time_coord)
+        if dims and not cube.coords(dimensions=dims, dim_coords=True):
+            iris.util.promote_aux_coord_to_dim_coord(cube, time_coord)
     iris.util.equalise_attributes(cubes)
     # PP files can structure time either as a scalar coordinate (one timestep
     # per cube, needing merge to promote it to a dimension) or as an existing
